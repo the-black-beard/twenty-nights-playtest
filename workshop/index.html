@@ -1,0 +1,1136 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Nether Maze Workshop</title><style>
+:root{color-scheme:dark;--bg:#141922;--panel:#202937;--line:#3d4b60;--ink:#f3f5f7;--dim:#c1c9d5;--gold:#f5c56b;--blue:#79c6ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:24px 18px 50px}h1{font-size:clamp(26px,5vw,40px);line-height:1.15}h2{font-size:22px;margin:8px 0 12px}h3{font-size:17px;margin:4px 0}p{margin:8px 0 16px}.dim{color:var(--dim)}.tag{color:var(--gold);font-size:12px;letter-spacing:.12em;text-transform:uppercase}.box{background:var(--panel);padding:18px;border-radius:16px;margin:16px 0;border:1px solid var(--line)}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.card{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:12px}.card.selected{border-color:var(--gold)}.card svg{width:100%;display:block;max-height:150px;margin:8px auto}.card button{width:100%}.card p{font-size:14px;min-height:62px;margin-bottom:8px}.play-grid{display:grid;grid-template-columns:minmax(270px,1.2fr) minmax(240px,1fr);gap:22px;align-items:start}#stage{position:relative;max-width:560px;margin:auto}#cv{display:block;border-radius:10px;touch-action:none;width:100%}#flash{position:absolute;inset:0;pointer-events:none;border-radius:10px;background:#ff6b6b;opacity:0}#flash.on{opacity:.25}#say{position:absolute;top:7px;left:5px;right:5px;text-align:center;background:#111d;color:var(--gold);border-radius:12px;opacity:0;pointer-events:none}#say.on{opacity:1}button,select,input,textarea{font:inherit}button{background:#2c3d52;color:var(--ink);border:1px solid #6f8095;border-radius:10px;padding:10px 12px;cursor:pointer;min-height:44px}button.primary{background:var(--gold);color:#191e26;border-color:var(--gold);font-weight:700}button:disabled{opacity:.45;cursor:not-allowed}button[aria-pressed=true]{border-color:var(--gold);background:#42516b}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--blue);outline-offset:3px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}label{display:block;margin:12px 0 4px}input,textarea,select{width:100%;color:var(--ink);background:#131c29;border:1px solid #667990;border-radius:8px;padding:9px}textarea{resize:vertical;min-height:64px;touch-action:auto}table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:7px;text-align:left;border-bottom:1px solid var(--line)}.scroll{overflow-x:auto}.steps button{margin:4px 6px 4px 0}.step-help{color:var(--gold);min-height:48px}#state{border-left:4px solid var(--gold);padding-left:12px}details{margin:12px 0}summary{cursor:pointer;font-weight:600;min-height:44px}#report{min-height:240px}.layer{border-top:1px solid var(--line);padding:8px 0}.legend{font-size:13px}#legacy{display:none}.print-only{display:none}@media(max-width:750px){.cards{grid-template-columns:1fr 1fr}.play-grid{grid-template-columns:1fr}main{padding:16px 12px 36px}}@media print{body{background:white;color:black;font-size:12px}main{max-width:none;padding:0}.box,.card{background:white;border:1px solid #999;break-inside:avoid}.dim,.tag{color:#444}button,#stage,#legacy,.no-print,#report{display:none}.cards{grid-template-columns:repeat(4,1fr)}input,textarea,select{background:white;color:black;border:1px solid #999}.print-only{display:block}.play-grid{display:block}.box{padding:10px;margin:10px 0}}
+</style></head><body><main>
+<div class="tag">Your game · design sketches · nothing decided for you</div>
+<h1>What kind of Nether maze do you want?</h1>
+<p>You are the designer. Try a route, say what happened, then change one thing. These little chase maps help you choose; the final Nether layers, breakable walls and hammer come later.</p>
+<div class="cards" id="cards"></div>
+<section class="box"><h2>1. Pick a way to try it</h2>
+<div class="actions" role="group" aria-label="Guided experiments">
+<button class="guide" data-guide="learn">Learn one maze</button><button class="guide" data-guide="view">Try a different view</button><button class="guide" data-guide="routes">Change the routes</button><button class="guide" data-guide="own">Make your own</button></div>
+<p id="guideText">Start wherever you like. You can also choose any map above.</p><div class="steps" id="steps"></div><p class="step-help" id="stepHelp"></p></section>
+<section class="box"><div class="play-grid"><div><h2 id="mapTitle">Reference maze</h2>
+<p id="hint">Hold and drag on the maze. Dodge is on.</p><div id="stage"><canvas id="cv" aria-label="Maze play area; hold and drag to move, or tap squares in edit mode"></canvas><div id="flash"></div><div id="say" role="status"></div></div>
+<p class="legend">Blue = you. Gold flags = places to try reaching. Gray pen = waiting monsters. Colored outline = a changed wall or path.</p>
+</div><div><h2>Try, notice, choose</h2><p id="state" role="status" aria-live="polite"></p>
+<div class="actions"><button id="explore" class="primary">Explore: no monsters</button><button id="chase">Try a 45-second chase</button><button id="stop" disabled>Stop and talk</button><button id="replay">Replay this map</button></div>
+<p class="dim">Follow the finger + dodge on. Same chase speeds and release timing on every map. A catch returns you to the start; you can keep trying. Alive time does not pick the best design.</p>
+<div class="actions"><button id="edit">Edit my maze</button><button id="undo" disabled>Undo a square</button><button id="resetOwn">Restore my sketch</button></div>
+<p id="editHelp" class="dim">In your own sketch, tap a square to change wall ↔ path. Start, flags, pen and outside edge stay put.</p>
+<label for="mazeName">Name your maze</label><input id="mazeName" maxlength="60" placeholder="Your name for this place">
+<label for="prediction">I think…</label><textarea id="prediction" placeholder="What do you think will happen when you play this map?"></textarea>
+<label for="noticed">I noticed…</label><textarea id="noticed" placeholder="Tell Dad, point at a square, or type one thing."></textarea>
+<label for="change">My next change…</label><textarea id="change" placeholder="What would you keep, remove or try next?"></textarea>
+<button id="keepNote">Keep my thoughts for this map</button>
+</div></div></section>
+<section class="box"><h2>2. What should a new attempt be like?</h2>
+<label for="repeatChoice">Choose your plan, or leave it open</label><select id="repeatChoice"><option value="undecided">I want to try more before deciding</option value="same">The same maze — I can learn my routes</option value="choose">A small set — I choose which maze to play</option value="surprise">A small set — surprise me each attempt</option value="my-plan">My own plan</option></select>
+<label for="repeatReason">Why? Or describe your own plan</label><textarea id="repeatReason" placeholder="What would make you want to play again?"></textarea>
+<p class="dim">A mirror keeps the same shape of challenge but moves things around. New routes can change the challenge more. Neither option has to win today.</p></section>
+<section class="box"><h2>3. Make the layers feel fair</h2><p>If two maps have the same layer, what should feel equally challenging? Dad can help write; you decide what the challenge is.</p>
+<label for="fairMeaning">When we say “equally difficult,” we mean…</label><select id="fairMeaning"><option value="undecided">We still need to decide</option value="matching">The same layer is about as hard in every map; deeper layers can get harder</option value="flat">All layers should be about as hard as each other</option value="other">Our own idea</option></select>
+<label for="fairOther">Our fairness idea</label><textarea id="fairOther" placeholder="What would make a harder map feel unfair rather than exciting?"></textarea>
+<div id="layers"></div><button id="addLayer">Add a layer to our paper plan</button>
+<p class="dim">The paper plan does not change the chase sketch. Add only the layers you want. Stronger walls and upgrades are already part of your Nether idea; how you earn each upgrade is still a separate choice.</p>
+<details><summary>Dad’s comparison helpers</summary><p>Compare the same stage in each layout: how far to the next goal, escape routes, dead ends, wall-opening choices, monster release pressure and room to see threats. Similar numbers are a clue, not proof of equal difficulty.</p><div class="scroll" id="comparison"></div></details></section>
+<section class="box"><h2>4. Keep your idea</h2><p>You can choose a favourite, mix ideas, reject all of them, or say “not yet.” You do not need to fill in every box. Dad can ask the questions aloud.</p>
+<label for="favourite">My favourite idea</label><select id="favourite"><option value="undecided">Not decided yet</option value="reference">Reference</option value="mirror">Different view</option value="remix">Changed routes</option value="own">My own maze</option><option value="mix">A mixture</option><option value="none">None of these — I have another idea</option></select>
+<label for="choiceReason">What makes it yours?</label><textarea id="choiceReason" placeholder="What would you tell a friend about your maze?"></textarea>
+<div class="actions no-print"><button id="showNotes" class="primary">Show our design notes</button><button id="copyNotes">Copy design notes</button><button id="downloadNotes">Download notes</button><button id="printCards">Print these design cards</button></div>
+<p id="saveStatus" role="status">Notes stay on this page until you copy or download them. Save before closing.</p><textarea id="report" readonly aria-label="Design notes to copy"></textarea>
+<p class="print-only">On paper: circle a map, draw one change, tell Dad “I think…”, then “I noticed…”. Write what to try next.</p></section>
+<div id="legacy" aria-hidden="true"><div id="live"></div><table id="runs"></table><table id="agg"></table><span id="runsub"></span><p id="note"></p><button id="prev"></button><button id="vname"></button><button id="next"></button><button id="tPress"></button><button id="tDodge"></button><button id="tStress"></button><button id="tCopy"></button></div>
+</main>
+<script>
+// Pure maze sketches and structural comparison. No DOM or game state.
+const MazeLab = (() => {
+  const layouts = {"reference": ["####################", "#..................#", "#.###.##.##.##.###.#", "#.###.##.##.##.###.#", "#..................#", "#.##.###.##.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.##.#.######.#.##.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.##.#.###", "#......######......#", "#.####.######.####.#", "#........H.........#", "####################"], "remix": ["####################", "#..................#", "#.###.##.##.##.###.#", "#..##.##.##.##.###.#", "#..................#", "#.##.######.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.##.#.######.#.##.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.#..#.###", "#......######..#...#", "#.####.######.####.#", "#........H.........#", "####################"], "changes": [{"x": 2, "y": 3, "to": "floor"}, {"x": 8, "y": 5, "to": "wall"}, {"x": 13, "y": 15, "to": "floor"}, {"x": 15, "y": 16, "to": "wall"}]};
+  const size = 20;
+  const directions = [[1,0],[-1,0],[0,1],[0,-1]];
+  const flags = [[1,1],[9,1],[18,1]];
+  const baseCorners = [[1,1],[18,1],[1,18],[18,18]];
+  const mirrorPoint = ([x,y]) => [size-1-x,y];
+  const mirrorRows = rows => rows.map(row => [...row].reverse().join(''));
+  function get(key, own) {
+    const rows = key === 'mirror' ? mirrorRows(layouts.reference) : key === 'remix' ? layouts.remix : key === 'own' ? own : layouts.reference;
+    return { rows: rows.slice(), flags: key === 'mirror' ? flags.map(mirrorPoint) : flags.map(p=>p.slice()), corners: key === 'mirror' ? baseCorners.map(mirrorPoint) : baseCorners.map(p=>p.slice()) };
+  }
+  function walk(rows, start, pass) {
+    const seen = new Map([[start.join(','),0]]), queue = [start];
+    for(let p=0;p<queue.length;p++) {
+      const [x,y] = queue[p];
+      for(const [dx,dy] of directions) {
+        const nx=x+dx,ny=y+dy,k=nx+','+ny;
+        if(nx<0||ny<0||nx>=size||ny>=size||!pass(rows[ny][nx])||seen.has(k)) continue;
+        seen.set(k,seen.get(x+','+y)+1); queue.push([nx,ny]);
+      }
+    }
+    return seen;
+  }
+  function inspect(rows, landmarks=flags) {
+    let start=null, floor=0,edges=0,deadEnds=0,junctions=0,mobFloor=0;
+    const open = c=>c==='.'||c==='H';
+    rows.forEach((r,y)=>[...r].forEach((c,x)=>{if(c==='H')start=[x,y];if(c!=='#')mobFloor++;}));
+    if(!start) return {valid:false,reason:'Keep one blue starting square.'};
+    const seen=walk(rows,start,open), mobSeen=walk(rows,start,c=>c!=='#');
+    rows.forEach((r,y)=>[...r].forEach((c,x)=>{
+      if(!open(c))return;floor++;let degree=0;
+      for(const [dx,dy] of directions)if(rows[y+dy]?.[x+dx]&&open(rows[y+dy][x+dx]))degree++;
+      if(degree===1)deadEnds++;if(degree>=3)junctions++;
+      if(open(rows[y]?.[x+1]))edges++;if(open(rows[y+1]?.[x]))edges++;
+    }));
+    const distances=landmarks.map(p=>seen.get(p.join(','))??null);
+    const valid=seen.size===floor&&mobSeen.size===mobFloor&&distances.every(d=>d!==null);
+    return {valid, floor, reachable:seen.size, loops:valid?edges-floor+1:null, deadEnds, junctions, distances,
+      reason:valid?'All ordinary paths connect.':`${floor-seen.size} ordinary squares are cut off. Reopen a connecting path.`, start};
+  }
+  function protectedAt(rows,x,y,landmarks=flags) {
+    return x<=0||y<=0||x>=size-1||y>=size-1||'HMo'.includes(rows[y][x])||landmarks.some(p=>p[0]===x&&p[1]===y);
+  }
+  function edit(rows,x,y) {
+    if(protectedAt(rows,x,y))return rows.slice();
+    const next=rows.slice(),row=[...next[y]];row[x]=row[x]==='#'?'.':'#';next[y]=row.join('');return next;
+  }
+  return {layouts,size,flags,get,inspect,edit,protectedAt};
+})();
+
+let labSeed=1234567;
+function labRandom(){labSeed=(labSeed*1103515245+12345)&0x7fffffff;return labSeed/0x7fffffff;}
+const Workshop={key:'reference',rows:MazeLab.get('reference').rows,own:MazeLab.get('reference').rows,playing:false,chase:false,editing:false,elapsed:0,notes:{},sessions:[],undo:[],currentGuide:'',step:0,flags:MazeLab.flags.map(p=>p.slice()),started:false};
+
+</script>
+<script>
+
+/* ══════════════ 1 · CONSTANTS LIFTED FROM THE REAL GAME ══════════════
+   Change these and the prototype stops answering the question it was built for. */
+const N = 20, TILE = 32;
+const HERO_SPEED = 4.6;            // tiles/sec, full tummy (index.html: updateHero)
+const CATCH      = .55;            // monster has you (index.html: updateMonsters)
+const DPR        = Math.min(2, window.devicePixelRatio || 1);   // same clamp as the game
+
+/* Twenty Nights' own monster speeds. The Nether needs a chase, and at these
+   numbers there is no chase — the hero is 3.4x a shuffler and walks away
+   whistling. So pressure is a dial, and which setting you test at decides
+   the answer. Default is "chase", because that is what the Nether is for. */
+const PRESS = {
+  game:   {label:"game speeds",  slow:1.35, fast:2.60},   // as shipped
+  chase:  {label:"chase .80x",   slow:3.68, fast:4.30},   // Pac-Man-ish
+  brutal: {label:"brutal .95x",  slow:4.37, fast:4.60},
+};
+const PRESS_ORDER = ["chase","game","brutal"];
+
+const MAZE = [
+  "####################",
+  "#..................#",
+  "#.###.##.##.##.###.#",
+  "#.###.##.##.##.###.#",
+  "#..................#",
+  "#.##.###.##.###.##.#",
+  "#....#........#....#",
+  "#.##.#.##oo##.#.##.#",
+  "#.##.#.#MMMM#.#.##.#",
+  "#....#.#MMMM#.#....#",
+  "#.##.#.######.#.##.#",
+  "#....#........#....#",
+  "#.##.###.##.###.##.#",
+  "#.##.#........#.##.#",
+  "#.....##.##.##.....#",
+  "###.#.##.##.##.#.###",
+  "#......######......#",
+  "#.####.######.####.#",
+  "#........H.........#",
+  "####################",
+];
+
+/* ══════════════ 2 · THE BOARD ══════════════ */
+const WALL = 0, FLOOR = 1, GATE = 2;            // GATE: monsters pass, the hero cannot
+const cell = new Uint8Array(N*N);
+const PEN = [];                                  // where monsters wait to be let out
+let START = {x:9, y:18};
+MAZE.forEach((row, y) => {
+  for (let x = 0; x < N; x++){
+    const ch = row[x];
+    cell[y*N+x] = ch === "#" ? WALL : ch === "o" ? GATE : FLOOR;
+    if (ch === "M") PEN.push({x, y});
+    if (ch === "H") START = {x, y};
+  }
+});
+const idx  = (x,y) => y*N + x;
+const inB  = (x,y) => x >= 0 && y >= 0 && x < N && y < N;
+const openHero = i => cell[i] === FLOOR;
+const openMob  = i => cell[i] !== WALL;
+const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
+
+/* 4-way BFS, exactly the shape of heroBFSTo in index.html — including the
+   Math.round start, which is where "imprecise" would come from if it does. */
+function bfsPath(sx, sy, tx, ty, costly){
+  if (!inB(tx,ty) || !openHero(idx(tx,ty))) return null;
+  const from = new Int16Array(N*N).fill(-2);
+  const s = idx(sx,sy);
+  if (!costly){                                   // plain queue: the shipped behaviour
+    const q = [s]; from[s] = -1;
+    for (let h = 0; h < q.length; h++){
+      const i = q[h], x = i % N, y = (i - x) / N;
+      if (x === tx && y === ty) return unwind(from, i);
+      for (const [dx,dy] of DIRS){
+        const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+        const j = idx(nx,ny);
+        if (from[j] === -2 && openHero(j)){ from[j] = i; q.push(j); }
+      }
+    }
+    return null;
+  }
+  // bucket queue, so a tile near a monster can simply cost more — the same trick
+  // computeField() already uses for firelight (LIGHT_COST).
+  const dist = new Int16Array(N*N).fill(-1);
+  const buckets = [[s]]; dist[s] = 0; from[s] = -1;
+  for (let c = 0; c < buckets.length; c++){
+    const list = buckets[c]; if (!list) continue;
+    for (const i of list){
+      if (dist[i] !== c) continue;
+      const x = i % N, y = (i - x) / N;
+      if (x === tx && y === ty) return unwind(from, i);
+      for (const [dx,dy] of DIRS){
+        const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+        const j = idx(nx,ny); if (!openHero(j)) continue;
+        const nc = c + 1 + dread[j];
+        if (dist[j] < 0 || nc < dist[j]){
+          dist[j] = nc; from[j] = i; (buckets[nc] = buckets[nc] || []).push(j);
+        }
+      }
+    }
+  }
+  return null;
+}
+function unwind(from, i){
+  const path = []; let c = i;
+  while (from[c] >= 0){ path.unshift(c); c = from[c]; }
+  return path;                                    // [] = already standing there
+}
+// nearest walkable tile to a sloppy finger
+function nearestOpen(x, y){
+  if (inB(x,y) && openHero(idx(x,y))) return {x,y};
+  for (let r = 1; r <= 3; r++)
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++){
+      const nx = x+dx, ny = y+dy;
+      if (inB(nx,ny) && openHero(idx(nx,ny))) return {x:nx, y:ny};
+    }
+  return null;
+}
+// monster flow field: cheapest-first from one target, monsters walk the gradient down
+function flow(out, tx, ty){
+  out.fill(-1);
+  if (!inB(tx,ty)) return out;
+  const s = idx(tx,ty);
+  if (!openMob(s)) return out;
+  const q = [s]; out[s] = 0;
+  for (let h = 0; h < q.length; h++){
+    const i = q[h], x = i % N, y = (i - x) / N, d = out[i];
+    for (const [dx,dy] of DIRS){
+      const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+      const j = idx(nx,ny);
+      if (out[j] < 0 && openMob(j)){ out[j] = d + 1; q.push(j); }
+    }
+  }
+  return out;
+}
+const dread = new Int16Array(N*N);                // extra cost near a monster, for "dodge"
+
+</script>
+<script>
+
+/* ══════════════ 3 · SCHEMES, CREW, STATE ══════════════ */
+const VARIANTS = [
+  {key:"A", name:"Tap to path",       how:"tap a square — this is the shipped scheme"},
+  {key:"B", name:"Virtual stick",     how:"drag anywhere, or WASD — free movement"},
+  {key:"C", name:"Swipe to turn",     how:"swipe or arrow keys — he never stops"},
+  {key:"D", name:"Follow the finger", how:"hold and drag — re-paths as you move"},
+];
+/* Four chasers with four different ideas, because four greedy ones are a single
+   blob you outrun, and then "evasion" was never tested at all. */
+const CREW = [
+  {name:"chaser", col:"#d2525f", fast:false, corner:[1,1]},
+  {name:"ambush", col:"#dd86cf", fast:false, corner:[18,1]},
+  {name:"flank",  col:"#57c3d6", fast:false, corner:[1,18]},
+  {name:"rusher", col:"#e8974a", fast:true,  corner:[18,18]},
+];
+const AI_EVERY = .12;            // seconds between flow-field rebuilds
+const RELEASE_EVERY = 3.0;       // "monsters released as you open the maze"
+const HERO_R = .34;              // collision radius in tiles, variant B only
+
+const S = {
+  variant:"D", press:"chase", dodge:true, stress:false,
+  hero:{fx:START.x, fy:START.y, path:[], target:null, dir:[0,0], want:[0,0],
+        lastX:START.x, lastY:START.y, invuln:0, sq:0, face:[0,1]},
+  mobs:[], released:0, relT:RELEASE_EVERY, t:0, deaths:0,
+  runs:[], marks:{},
+  m:{inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0},
+  pending:null, hold:null, repathT:0,
+  fps:[], aiMs:0, drawMs:0, stressT:0, stressN:8,
+};
+const press = () => PRESS[S.press];
+const V = () => VARIANTS.find(v => v.key === S.variant);
+
+/* ══════════════ 4 · MONSTERS ══════════════ */
+const fields = CREW.map(() => new Int16Array(N*N).fill(-1));
+let aiT = 0;
+
+function penMob(n){
+  const slot = PEN[n % PEN.length], c = CREW[n % CREW.length];
+  return {
+    cx:slot.x, cy:slot.y, tx:slot.x, ty:slot.y, fx:slot.x, fy:slot.y, prog:1,
+    crew:n % CREW.length, col:c.col, name:c.name,
+    speed:c.fast ? press().fast : press().slow,
+    seed:(labRandom()*4)|0, bob:labRandom()*6.28, out:false, sq:0,
+  };
+}
+function resetMobs(){
+  S.mobs = PEN.map((_, i) => penMob(i));
+  S.released = 0; S.relT = RELEASE_EVERY;
+  for (let i = 0; i < 4; i++) S.mobs[i].out = true;   // the four start loose
+  S.released = 4;
+}
+function reSpeed(){
+  for (const m of S.mobs) m.speed = CREW[m.crew].fast ? press().fast : press().slow;
+}
+function heroTile(){ return {x:Math.round(S.hero.fx), y:Math.round(S.hero.fy)}; }
+
+function aimFor(k){
+  const h = heroTile(), f = S.hero.face;
+  if (k === 0) return h;
+  if (k === 1){                                     // four tiles past his nose
+    const t = nearestOpen(h.x + f[0]*4, h.y + f[1]*4);
+    return t || h;
+  }
+  if (k === 2){                                     // the far side of him from the chaser
+    const c = S.mobs.find(m => m.crew === 0 && m.out);
+    if (!c) return h;
+    const t = nearestOpen(
+      Math.max(0, Math.min(N-1, Math.round(h.x + (h.x - c.fx)))),
+      Math.max(0, Math.min(N-1, Math.round(h.y + (h.y - c.fy)))));
+    return t || h;
+  }
+  const c = CREW[3].corner;                          // loses its nerve up close
+  const near = Math.abs(h.x - (S.mobs.find(m=>m.crew===3)?.fx ?? 99)) +
+               Math.abs(h.y - (S.mobs.find(m=>m.crew===3)?.fy ?? 99));
+  return near < 6 ? {x:c[0], y:c[1]} : h;
+}
+function rebuildAI(){
+  for (let k = 0; k < 4; k++){
+    const t = aimFor(k);
+    flow(fields[k], t.x, t.y);
+    if (fields[k][idx(Math.round(S.mobs.find(m=>m.crew===k)?.fx ?? 0),
+                      Math.round(S.mobs.find(m=>m.crew===k)?.fy ?? 0))] < 0)
+      flow(fields[k], heroTile().x, heroTile().y);    // unreachable aim: fall back to him
+  }
+  // "dodge": a tile near a monster simply costs more to walk through, the same way
+  // firelight costs monsters extra in computeField(). One line, and the tapped
+  // route stops being drawn straight through a chaser.
+  dread.fill(0);
+  if (S.dodge) for (const m of S.mobs){
+    if (!m.out) continue;
+    const mx = Math.round(m.fx), my = Math.round(m.fy);
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++){
+      const d = Math.abs(dx) + Math.abs(dy);
+      if (d > 2 || !inB(mx+dx, my+dy)) continue;
+      const j = idx(mx+dx, my+dy);
+      dread[j] = Math.max(dread[j], d === 0 ? 14 : d === 1 ? 8 : 3);
+    }
+  }
+}
+function stepDown(m){                                 // scanStep from index.html
+  const f = fields[m.crew];
+  let bd = f[idx(m.cx, m.cy)], best = null;
+  if (bd < 0) bd = 32767;
+  for (let k = 0; k < 4; k++){
+    const [dx,dy] = DIRS[(k + m.seed) % 4];
+    const nx = m.cx+dx, ny = m.cy+dy;
+    if (!inB(nx,ny)) continue;
+    const j = idx(nx,ny), v = f[j];
+    if (v < 0 || v >= bd) continue;
+    if (openMob(j)){ bd = v; best = [nx,ny]; }
+  }
+  if (best) return best;
+  /* Standing on its own target — the ambusher does this constantly, because the
+     tile four ahead of a stationary hero is a tile it can actually reach. A ghost
+     that stops is a free kill and reads as broken, so it keeps going instead:
+     anything but a U-turn, and a U-turn only if there is nothing else. */
+  const back = [m.cx - (m.tx - m.cx), m.cy - (m.ty - m.cy)];
+  let fallback = null;
+  for (let k = 0; k < 4; k++){
+    const [dx,dy] = DIRS[(k + m.seed) % 4];
+    const nx = m.cx+dx, ny = m.cy+dy;
+    if (!inB(nx,ny) || !openMob(idx(nx,ny))) continue;
+    if (nx === back[0] && ny === back[1]){ fallback = fallback || [nx,ny]; continue; }
+    return [nx,ny];
+  }
+  return fallback;
+}
+function updateMobs(dt){
+  for (const m of S.mobs){
+    m.bob += dt*7; m.sq = Math.max(0, m.sq - dt*6);
+    if (!m.out){ continue; }
+    if (m.prog >= 1){
+      m.cx = m.tx; m.cy = m.ty;                        // arrive first, then reconsider
+      const s = stepDown(m);
+      if (s){ m.tx = s[0]; m.ty = s[1]; m.prog = 0; m.sq = .5; }
+    } else m.prog = Math.min(1, m.prog + m.speed*dt);
+    m.fx = m.cx + (m.tx - m.cx)*m.prog;
+    m.fy = m.cy + (m.ty - m.cy)*m.prog;
+    if (S.hero.invuln <= 0 && Math.hypot(m.fx - S.hero.fx, m.fy - S.hero.fy) < CATCH) caught();
+  }
+}
+
+</script>
+<script>
+
+/* ══════════════ 5 · THE HERO, FOUR WAYS ══════════════ */
+
+/* A and D: follow a BFS path exactly as updateHero() does — straight at the next
+   tile centre, snap on arrival, one springy hop per tile. */
+function walkPath(dt){
+  const h = S.hero;
+  if (!h.path.length){
+    /* A tapped route cannot express "move half a tile": BFS starts from
+       Math.round(fx), so tapping the tile you are nearly on returns an empty path
+       and he simply stops, up to half a tile short. Invisible when you are walking
+       over to chop a tree. Very visible when you are being chased. */
+    const t = h.target;
+    if (t && openHero(idx(t.x, t.y))){
+      const dx = t.x - h.fx, dy = t.y - h.fy, d = Math.hypot(dx,dy), step = HERO_SPEED*dt;
+      if (d > .001){
+        if (d <= step){ h.fx = t.x; h.fy = t.y; h.sq = 1; }
+        else { h.fx += dx/d*step; h.fy += dy/d*step; }
+      }
+    }
+    return;
+  }
+  const c = h.path[0], tx = c % N, ty = (c - tx)/N;
+  if (!openHero(c)){ h.path = []; return; }
+  const dx = tx - h.fx, dy = ty - h.fy, d = Math.hypot(dx,dy), step = HERO_SPEED*dt;
+  if (d <= step){
+    h.fx = tx; h.fy = ty; h.path.shift(); h.sq = 1;
+  } else {
+    h.fx += dx/d*step; h.fy += dy/d*step;
+    if (d > .001) h.face = [Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) : 0,
+                            Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0];
+  }
+}
+// B: free movement, axis by axis so he slides along a wall instead of sticking
+function blocked(fx, fy){
+  for (const [ox,oy] of [[-HERO_R,-HERO_R],[HERO_R,-HERO_R],[-HERO_R,HERO_R],[HERO_R,HERO_R]]){
+    const x = Math.round(fx+ox), y = Math.round(fy+oy);
+    if (!inB(x,y) || !openHero(idx(x,y))) return true;
+  }
+  return false;
+}
+function driveFree(dt){
+  const h = S.hero;
+  let [dx,dy] = h.want;
+  const mag = Math.hypot(dx,dy);
+  if (mag < .18) return;                              // stick deadzone
+  dx /= mag; dy /= mag;
+  const step = HERO_SPEED*dt*Math.min(1, mag);
+  if (!blocked(h.fx + dx*step, h.fy)) h.fx += dx*step;
+  if (!blocked(h.fx, h.fy + dy*step)) h.fy += dy*step;
+  h.face = [Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) : 0,
+            Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0];
+}
+// C: arcade. He always moves. You only choose the turn, and the turn is buffered.
+function driveTurn(dt){
+  const h = S.hero;
+  const [wx,wy] = h.want, [dx,dy] = h.dir;
+  const atX = Math.abs(h.fx - Math.round(h.fx)), atY = Math.abs(h.fy - Math.round(h.fy));
+  const cx = Math.round(h.fx), cy = Math.round(h.fy);
+  const canGo = (ox,oy) => (ox||oy) && inB(cx+ox, cy+oy) && openHero(idx(cx+ox, cy+oy));
+  if ((wx||wy) && wx === dx && wy === dy){
+    h.want = [0,0];                                   // already going that way: nothing to do.
+  } else if (wx === -dx && wy === -dy && (wx||wy)){   // reversal is instant, as in Pac-Man
+    h.dir = [wx,wy]; h.want = [0,0];
+  } else if ((wx||wy) && atX < .22 && atY < .22 && canGo(wx,wy)){
+    h.fx = cx; h.fy = cy;                             // snap to the junction and turn
+    h.dir = [wx,wy]; h.want = [0,0]; h.sq = .7;
+  }
+  let [ax,ay] = h.dir;
+  if (!ax && !ay) return;
+  const step = HERO_SPEED*dt;
+  const nx = h.fx + ax*step, ny = h.fy + ay*step;
+  // stop dead at a wall, exactly where the tile centre is
+  const ahead = [Math.round(nx + ax*.5), Math.round(ny + ay*.5)];
+  if (!inB(ahead[0],ahead[1]) || !openHero(idx(ahead[0],ahead[1]))){
+    const tx = Math.round(h.fx), ty = Math.round(h.fy);
+    if (Math.abs(nx - tx) > Math.abs(h.fx - tx) || Math.abs(ny - ty) > Math.abs(h.fy - ty)){
+      h.fx = tx; h.fy = ty; h.dir = [0,0]; return;
+    }
+  }
+  h.fx = nx; h.fy = ny;
+  h.face = [ax,ay];
+}
+function updateHero(dt){
+  const h = S.hero;
+  h.invuln = Math.max(0, h.invuln - dt); h.sq = Math.max(0, h.sq - dt*6);
+  h.lastX = h.fx; h.lastY = h.fy;
+  if (S.variant === "A") walkPath(dt);
+  else if (S.variant === "D"){
+    S.repathT -= dt;
+    if (S.hold && S.repathT <= 0){                    // re-aim ten times a second
+      S.repathT = .1;
+      const t = nearestOpen(S.hold.x, S.hold.y);
+      if (t){ const p = bfsPath(Math.round(h.fx), Math.round(h.fy), t.x, t.y, S.dodge);
+              if (p){ h.path = p; h.target = t; } }
+    }
+    walkPath(dt);
+  }
+  else if (S.variant === "B") driveFree(dt);
+  else driveTurn(dt);
+  measureResponse(dt);
+  measurePath(dt);
+}
+
+/* ══════════════ 6 · MEASUREMENT ══════════════
+   Feel is ig-b-dynamix's call. These are the parts of "laggy and imprecise" that are
+   numbers, so the written answer does not have to be an opinion. */
+function command(dx, dy){                             // what the player just asked for
+  const d = Math.hypot(dx,dy) || 1;
+  S.pending = {t:performance.now(), dx:dx/d, dy:dy/d, moved:0, away:0, flagged:false};
+  S.m.inputs++;
+}
+function measureResponse(dt){
+  const p = S.pending; if (!p) return;
+  const h = S.hero, mx = h.fx - h.lastX, my = h.fy - h.lastY;
+  const age = performance.now() - p.t;
+  const along = mx*p.dx + my*p.dy;
+  p.moved += Math.abs(mx) + Math.abs(my);
+  if (along < 0) p.away += -along;
+  if (p.moved > .02 && !p.flagged && age > 140){      // did the first beat go backwards?
+    p.flagged = true;
+    if (p.away > p.moved*.4){ S.m.wrong++; }
+  }
+  const mag = Math.hypot(mx,my);
+  if (mag > .001 && along/mag > .7){                  // he is finally going where you pointed
+    S.m.respSum += age; S.m.respN++;
+    S.m.respWorst = Math.max(S.m.respWorst, age);
+    if (!p.flagged && p.away > .04) S.m.wrong++;
+    S.pending = null;
+  } else if (age > 1400) S.pending = null;            // gave up waiting
+}
+/* The one that matters most for A and D: how much of the time you spend walking a
+   committed route does that route run straight through a monster? BFS does not
+   know monsters exist. */
+function measurePath(dt){
+  if (S.variant !== "A" && S.variant !== "D") return;
+  const h = S.hero; if (!h.path.length) return;
+  S.m.pathT += dt;
+  for (const c of h.path){
+    const x = c % N, y = (c - c % N)/N;
+    for (const m of S.mobs){
+      if (!m.out) continue;
+      if (Math.abs(m.fx - x) + Math.abs(m.fy - y) < .9){ S.m.poisonT += dt; return; }
+    }
+  }
+}
+function tapTo(c){                                    // variant A: the shipped scheme
+  const h = S.hero;
+  command(c.x - h.fx, c.y - h.fy);
+  if (!openHero(idx(c.x,c.y))){ S.m.misses++; say("can't walk there!"); S.pending = null; return; }
+  const p = bfsPath(Math.round(h.fx), Math.round(h.fy), c.x, c.y, S.dodge);
+  if (p){ h.path = p; h.target = c; } else { S.m.misses++; say("can't walk there!"); S.pending = null; }
+}
+
+function caught(){
+  if (S.stress) return;                               // the ramp must not be interrupted
+  S.deaths++;
+  logRun();
+  flash();
+  resetRun();
+}
+function logRun(){
+  const m = S.m;
+  S.runs.unshift({
+    v:S.variant, name:V().name, press:S.press, t:S.t,
+    inputs:m.inputs, ips: S.t > .5 ? m.inputs/S.t : 0,
+    misses:m.misses,
+    resp: m.respN ? m.respSum/m.respN : null,
+    worst: m.respWorst || null,
+    wrong: m.inputs ? m.wrong/m.inputs : 0,
+    poison: m.pathT > .2 ? m.poisonT/m.pathT : null,
+  });
+  S.runs = S.runs.slice(0, 40);
+}
+function resetRun(){
+  const h = S.hero;
+  h.fx = START.x; h.fy = START.y; h.path = []; h.target = null;
+  h.dir = [0,0]; h.want = [0,0]; h.invuln = .9; h.face = [0,-1];
+  S.hold = null; S.pending = null; S.t = 0;
+  S.m = {inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0};
+  resetMobs();
+}
+
+</script>
+<script>
+
+/* ══════════════ 7 · INPUT ══════════════ */
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+const sayEl = document.getElementById("say");
+let sayT = 0;
+function say(msg){ sayEl.textContent = msg; sayEl.classList.add("on"); sayT = 1.6; }
+function flash(){
+  const f = document.getElementById("flash");
+  f.classList.add("on"); setTimeout(() => f.classList.remove("on"), 30);
+}
+function cellAt(e){                                   // canvasCell() from index.html
+  const r = cv.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left)/r.width * N);
+  const y = Math.floor((e.clientY - r.top)/r.height * N);
+  return inB(x,y) ? {x,y} : null;
+}
+let stick = null, swipeFrom = null;
+
+cv.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  try { cv.setPointerCapture(e.pointerId); } catch(err){}
+  const c = cellAt(e); if (!c) return;
+  if (S.variant === "A") tapTo(c);
+  else if (S.variant === "D"){ S.hold = c; S.repathT = 0; command(c.x - S.hero.fx, c.y - S.hero.fy); }
+  else if (S.variant === "B"){ stick = {ox:e.clientX, oy:e.clientY, x:e.clientX, y:e.clientY}; }
+  else swipeFrom = {x:e.clientX, y:e.clientY};
+}, {passive:false});
+
+cv.addEventListener("pointermove", e => {
+  e.preventDefault();
+  if (S.variant === "D" && S.hold){ const c = cellAt(e); if (c) S.hold = c; }
+  else if (S.variant === "B" && stick){
+    stick.x = e.clientX; stick.y = e.clientY;
+    const R = 46, dx = (stick.x - stick.ox)/R, dy = (stick.y - stick.oy)/R;
+    const was = S.hero.want;
+    S.hero.want = [Math.max(-1,Math.min(1,dx)), Math.max(-1,Math.min(1,dy))];
+    const turned = Math.hypot(dx,dy) > .18 &&
+      (Math.hypot(was[0],was[1]) < .18 ||
+       (was[0]*dx + was[1]*dy) / (Math.hypot(was[0],was[1])*Math.hypot(dx,dy)) < .7);
+    if (turned) command(dx, dy);
+  }
+  else if (S.variant === "C" && swipeFrom){
+    const dx = e.clientX - swipeFrom.x, dy = e.clientY - swipeFrom.y;
+    if (Math.hypot(dx,dy) > 16){
+      const d = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx),0] : [0,Math.sign(dy)];
+      S.hero.want = d; command(d[0], d[1]);
+      swipeFrom = {x:e.clientX, y:e.clientY};         // keep dragging to keep turning
+    }
+  }
+}, {passive:false});
+
+const letGo = e => {
+  if (S.variant === "B"){ stick = null; S.hero.want = [0,0]; }
+  if (S.variant === "C") swipeFrom = null;
+  if (S.variant === "D") S.hold = null;               // he keeps going to the last square
+};
+cv.addEventListener("pointerup", letGo);
+cv.addEventListener("pointercancel", letGo);
+
+const KEYDIR = {ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1],
+                a:[-1,0], d:[1,0], w:[0,-1], s:[0,1]};
+const held = new Set();
+addEventListener("keydown", e => {
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+  if (e.key === "[") return cycle(-1);
+  if (e.key === "]") return cycle(1);
+  if ("1234".includes(e.key)) return setVariant(VARIANTS[+e.key - 1].key);
+  if (e.key === "r" || e.key === "R") return resetRun();
+  const drive = S.variant === "B" || S.variant === "C";
+  if (!drive && (e.key === "ArrowLeft" || e.key === "ArrowRight"))
+    return cycle(e.key === "ArrowRight" ? 1 : -1);    // free to cycle where arrows do nothing
+  const d = KEYDIR[e.key]; if (!d) return;
+  e.preventDefault(); held.add(e.key);
+  if (S.variant === "C"){ S.hero.want = d; command(d[0], d[1]); }
+  if (S.variant === "B"){ keysToStick(); command(d[0], d[1]); }
+});
+addEventListener("keyup", e => { held.delete(e.key); if (S.variant === "B") keysToStick(); });
+function keysToStick(){
+  let x = 0, y = 0;
+  for (const k of held){ const d = KEYDIR[k]; if (d){ x += d[0]; y += d[1]; } }
+  S.hero.want = [Math.max(-1,Math.min(1,x)), Math.max(-1,Math.min(1,y))];
+}
+
+/* ══════════════ 8 · STRESS: WHERE DOES CANVAS 2D GIVE OUT? ══════════════ */
+const STRESS_STEP = 1.5, STRESS_ADD = 6, STRESS_CAP = 520;
+function stressSpawn(n){
+  const spots = [];
+  for (let i = 0; i < N*N; i++) if (openMob(i)) spots.push(i);
+  while (S.mobs.length < n){
+    const i = spots[(labRandom()*spots.length)|0];
+    const x = i % N, y = (i - x)/N, k = S.mobs.length % 4, c = CREW[k];
+    S.mobs.push({cx:x, cy:y, tx:x, ty:y, fx:x, fy:y, prog:1, crew:k, col:c.col, name:c.name,
+      speed:c.fast ? press().fast : press().slow, seed:(labRandom()*4)|0,
+      bob:labRandom()*6.28, out:true, sq:0});
+  }
+}
+function stressTick(dt){
+  S.stressT += dt;
+  if (S.stressT >= STRESS_STEP){
+    S.stressT = 0;
+    S.stressN = Math.min(STRESS_CAP, S.stressN + STRESS_ADD);
+    stressSpawn(S.stressN);
+  }
+  const f = fpsNow();
+  for (const th of [55,45,30,20]) if (f && f < th && !S.marks[th]) S.marks[th] = S.mobs.length;
+}
+function fpsNow(){
+  if (S.fps.length < 30) return null;
+  const a = S.fps.slice().sort((x,y) => x - y);
+  return 1 / a[a.length >> 1];
+}
+
+/* ══════════════ 9 · DRAW ══════════════ */
+const PAL = {floor:"#0e1016", wall:"#2e3550", wallHi:"#48547e", gate:"#7b86a8",
+             hero:"#79c6ff", heroHi:"#a9dcff", pupil:"#15161c", shine:"#ffffff",
+             path:"#3d6b8a", target:"#ffd166"};
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+let clockAll = 0;
+/* the real face() — two eyes, pupils, a catchlight, a blink, whites when scared.
+   Per-monster, because that is what the Swarm finale wants and what costs. */
+function face(cx, cy, ex, r, look, mood, seed){
+  const blink = ((clockAll + seed*1.7) % 3.4) < .11;
+  const scared = mood === 2, rr2 = r * (scared ? 1.45 : 1);
+  let gx = 0, gy = 0;
+  if (look){ const d = Math.hypot(look[0], look[1]) || 1;
+             gx = look[0]/d*r*.6; gy = look[1]/d*r*.5; }
+  if (blink){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 1.6; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy); ctx.lineTo(cx-ex+r, cy);
+    ctx.moveTo(cx+ex-r, cy); ctx.lineTo(cx+ex+r, cy); ctx.stroke();
+    return;
+  }
+  if (scared){
+    ctx.fillStyle = PAL.shine;
+    ctx.beginPath(); ctx.arc(cx-ex, cy, rr2+1.1, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx+ex, cy, rr2+1.1, 0, 7); ctx.fill();
+  }
+  ctx.fillStyle = PAL.pupil;
+  ctx.beginPath(); ctx.arc(cx-ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.shine;
+  ctx.beginPath(); ctx.arc(cx-ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  if (mood === 3){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy-r*1.9); ctx.lineTo(cx-ex+r, cy-r*1.1);
+    ctx.moveTo(cx+ex+r, cy-r*1.9); ctx.lineTo(cx+ex-r, cy-r*1.1); ctx.stroke();
+  }
+}
+let board = null;                                     // the maze never moves: cache it
+function paintBoard(){
+  board = document.createElement("canvas");
+  board.width = N*TILE*DPR; board.height = N*TILE*DPR;
+  const b = board.getContext("2d");
+  b.setTransform(DPR,0,0,DPR,0,0);
+  b.fillStyle = PAL.floor; b.fillRect(0,0,N*TILE,N*TILE);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+    const c = cell[idx(x,y)];
+    if (c === WALL){
+      // fill the whole tile so neighbouring walls merge into one mass — separate
+      // rounded blocks read as scattered confetti, and the corridors disappear
+      b.fillStyle = PAL.wall;
+      b.fillRect(x*TILE, y*TILE, TILE, TILE);
+      b.fillStyle = PAL.wallHi;                     // a lip only where a corridor meets it
+      const up = y > 0 && cell[idx(x,y-1)] !== WALL;
+      if (up) b.fillRect(x*TILE, y*TILE, TILE, 3);
+      b.fillStyle = "rgba(0,0,0,.30)";
+      if (y < N-1 && cell[idx(x,y+1)] !== WALL) b.fillRect(x*TILE, y*TILE+TILE-2, TILE, 2);
+    } else if (c === GATE){
+      b.strokeStyle = PAL.gate; b.lineWidth = 3; b.setLineDash([5,4]);
+      b.beginPath(); b.moveTo(x*TILE+2, y*TILE+TILE-3); b.lineTo(x*TILE+TILE-2, y*TILE+TILE-3);
+      b.stroke(); b.setLineDash([]);
+    }
+  }
+}
+function drawMob(m){
+  const px = m.fx*TILE + TILE/2, py = m.fy*TILE + TILE/2 + Math.sin(m.bob)*1.3;
+  const sz = TILE*.62*(1 + m.sq*.12), near = Math.hypot(m.fx - S.hero.fx, m.fy - S.hero.fy);
+  ctx.fillStyle = "rgba(0,0,0,.22)";
+  ctx.beginPath(); ctx.ellipse(px, py + sz*.46, sz*.40, sz*.15, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = m.out ? m.col : "#4a4d5c";
+  rr(px - sz/2, py - sz/2, sz, sz, sz*.34); ctx.fill();
+  face(px, py - 1, sz*.19, sz*.115, [S.hero.fx - m.fx, S.hero.fy - m.fy],
+       near < 3.2 ? 3 : 1, m.seed);
+}
+function drawHero(){
+  const h = S.hero;
+  if (h.invuln > 0 && ((clockAll*14)|0) % 2) return;
+  const px = h.fx*TILE + TILE/2, py = h.fy*TILE + TILE/2;
+  const sq = h.sq, sz = TILE*.70;
+  const w = sz*(1 + sq*.16), ht = sz*(1 - sq*.14);
+  ctx.fillStyle = "rgba(0,0,0,.26)";
+  ctx.beginPath(); ctx.ellipse(px, py + sz*.46, sz*.42, sz*.16, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.hero;
+  rr(px - w/2, py - ht/2, w, ht, sz*.28); ctx.fill();
+  ctx.fillStyle = PAL.heroHi; ctx.fillRect(px - w/2 + 3, py - ht/2 + 3, w - 6, 3);
+  const scared = S.mobs.some(m => m.out && Math.hypot(m.fx - h.fx, m.fy - h.fy) < 2.4);
+  face(px, py - 1, sz*.20, sz*.12, h.face, scared ? 2 : 1, 0);
+}
+function render(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.drawImage(board, 0, 0, N*TILE, N*TILE);
+  if ((S.variant === "A" || S.variant === "D") && S.hero.path.length){
+    const poison = [];
+    ctx.fillStyle = PAL.path;
+    for (const c of S.hero.path){
+      const x = c % N, y = (c - c % N)/N;
+      const hot = S.mobs.some(m => m.out && Math.abs(m.fx-x)+Math.abs(m.fy-y) < .9);
+      if (hot) poison.push([x,y]);
+      ctx.fillStyle = hot ? "#ff6b6b" : PAL.path;
+      ctx.beginPath(); ctx.arc(x*TILE+TILE/2, y*TILE+TILE/2, hot ? 5 : 3, 0, 7); ctx.fill();
+    }
+    if (S.hero.target){
+      ctx.strokeStyle = PAL.target; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(S.hero.target.x*TILE+TILE/2, S.hero.target.y*TILE+TILE/2,
+                               9 + Math.sin(clockAll*6)*1.5, 0, 7); ctx.stroke();
+    }
+  }
+  for (const m of S.mobs) drawMob(m);
+  drawHero();
+  if (S.variant === "B" && stick){                    // show the stick where the thumb is
+    const r = cv.getBoundingClientRect(), k = (N*TILE)/r.width;
+    const ox = (stick.ox - r.left)*k, oy = (stick.oy - r.top)*k;
+    const kx = (stick.x - r.left)*k, ky = (stick.y - r.top)*k;
+    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(ox, oy, 46*k, 0, 7); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.34)";
+    const d = Math.hypot(kx-ox, ky-oy), lim = Math.min(1, 46*k/(d||1));
+    ctx.beginPath(); ctx.arc(ox + (kx-ox)*lim, oy + (ky-oy)*lim, 15*k, 0, 7); ctx.fill();
+  }
+  if (S.stress){
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(0, 0, N*TILE, 26);
+    ctx.fillStyle = PAL.target; ctx.font = "600 15px ui-monospace,Menlo,monospace";
+    ctx.textAlign = "center";
+    const f = fpsNow();
+    ctx.fillText(S.mobs.length + " monsters · " + (f ? f.toFixed(0) : "–") + " fps", N*TILE/2, 18);
+  }
+}
+
+</script>
+<script>
+
+/* ══════════════ 10 · THE SWITCHER AND THE READOUT ══════════════
+   State lives in memory, not in the URL. ADR-0005: the preview pane strips query
+   strings from file URLs, so a prototype that depends on ?variant= is a prototype
+   that silently tests the wrong thing. The URL is kept in step for sharing only. */
+const $ = id => document.getElementById(id);
+function setVariant(k){
+  if (S.variant === k) return;
+  if (S.m.inputs > 2 && S.t > 2) logRun();            // don't lose what the last one measured
+  S.variant = k;
+  const h = S.hero;                                   // C needs him on the grid
+  h.fx = Math.round(h.fx); h.fy = Math.round(h.fy);
+  h.path = []; h.target = null; h.dir = [0,0]; h.want = [0,0];
+  stick = null; swipeFrom = null; S.hold = null; S.pending = null;
+  S.t = 0; S.m = {inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0};
+  syncBar();
+}
+const cycle = d => setVariant(VARIANTS[(VARIANTS.findIndex(v => v.key === S.variant) + d + 4) % 4].key);
+function syncBar(){
+  const v = V();
+  $("vname").textContent = v.key + " · " + v.name;
+  $("hint").textContent = v.how + (S.variant === "B" || S.variant === "C"
+    ? "  ·  [ ] to switch scheme" : "  ·  ← → to switch scheme");
+  $("tPress").textContent = press().label;
+  $("tDodge").classList.toggle("on", S.dodge);
+  $("tStress").classList.toggle("on", S.stress);
+  try {
+    const u = new URL(location.href);
+    u.searchParams.set("variant", S.variant); u.searchParams.set("press", S.press);
+    history.replaceState(null, "", u);
+  } catch(e){}
+}
+$("prev").onclick = () => cycle(-1);
+$("next").onclick = () => cycle(1);
+$("vname").onclick = () => cycle(1);
+$("tPress").onclick = () => {
+  S.press = PRESS_ORDER[(PRESS_ORDER.indexOf(S.press) + 1) % PRESS_ORDER.length];
+  reSpeed(); syncBar(); say(press().label);
+};
+$("tDodge").onclick = () => { S.dodge = !S.dodge; syncBar();
+  say(S.dodge ? "routes now avoid monsters" : "routes ignore monsters (as shipped)"); };
+$("tStress").onclick = () => {
+  S.stress = !S.stress;
+  if (S.stress){ S.marks = {}; S.stressN = 8; S.stressT = 0; S.mobs = []; stressSpawn(8); S.fps = []; }
+  else { resetRun(); S.marks = {}; }
+  syncBar();
+};
+$("tCopy").onclick = () => copyReport();
+
+const row = (k, v) => '<div class="row"><span>' + k + '</span><b>' + v + '</b></div>';
+const ms  = v => v == null ? "–" : v.toFixed(0) + " ms";
+const pc  = v => v == null ? "–" : (v*100).toFixed(0) + "%";
+function refreshPanel(){
+  const h = S.hero, m = S.m, f = fpsNow();
+  const near = S.mobs.filter(x => x.out)
+    .map(x => Math.hypot(x.fx - h.fx, x.fy - h.fy)).sort((a,b) => a-b)[0];
+  $("live").innerHTML =
+    row("scheme", V().key + " · " + V().name) +
+    row("fps", (f ? f.toFixed(0) : "–") + "  (ai " + S.aiMs.toFixed(2) + " · draw " + S.drawMs.toFixed(2) + " ms)") +
+    row("hero tile", Math.round(h.fx) + "," + Math.round(h.fy) +
+        "   (" + h.fx.toFixed(2) + "," + h.fy.toFixed(2) + ")") +
+    row("monsters loose", S.mobs.filter(x => x.out).length + " / " + S.mobs.length) +
+    row("route length", (S.variant === "A" || S.variant === "D") ? h.path.length + " tiles" : "n/a") +
+    row("nearest monster", near == null ? "–" : near.toFixed(2) + " tiles") +
+    row("alive this run", S.t.toFixed(1) + " s") +
+    row("inputs", m.inputs + (S.t > 1 ? "  (" + (m.inputs/S.t).toFixed(1) + "/s)" : "")) +
+    row("taps on a wall", m.misses) +
+    row("time to obey", ms(m.respN ? m.respSum/m.respN : null) + "  worst " + ms(m.respWorst||null)) +
+    row("first beat went wrong way", m.inputs ? pc(m.wrong/m.inputs) : "–") +
+    row("route ran through a monster", m.pathT > .2 ? pc(m.poisonT/m.pathT) : "–") +
+    row("caught", S.deaths + " times") +
+    row("pressure", press().label + " (slow " + press().slow + " · fast " + press().fast +
+        " vs hero " + HERO_SPEED + ")");
+
+  const rs = S.runs.slice(0, 10);
+  $("runsub").textContent = rs.length ? "" : "— get caught once and a row appears";
+  $("runs").innerHTML = rs.length ? "<tr><th>scheme</th><th>speeds</th><th>alive</th><th>inputs/s</th>" +
+    "<th>wall taps</th><th>obey</th><th>wrong way</th><th>route thru mob</th></tr>" +
+    rs.map(r => "<tr><td>" + r.v + " " + r.name + "</td><td>" + r.press + "</td><td>" + r.t.toFixed(1) + "s</td>" +
+      "<td>" + r.ips.toFixed(1) + "</td><td>" + r.misses + "</td><td>" + ms(r.resp) + "</td>" +
+      "<td>" + pc(r.wrong) + "</td><td>" + (r.poison == null ? "–" : pc(r.poison)) + "</td></tr>").join("") : "";
+
+  const by = {};
+  for (const r of S.runs){
+    const k = r.v + "|" + r.press;
+    (by[k] = by[k] || {v:r.v, name:r.name, press:r.press, n:0, t:0, ips:0, resp:0, respN:0,
+                       wrong:0, poison:0, poisonN:0, misses:0});
+    const a = by[k];
+    a.n++; a.t += r.t; a.ips += r.ips; a.wrong += r.wrong; a.misses += r.misses;
+    if (r.resp != null){ a.resp += r.resp; a.respN++; }
+    if (r.poison != null){ a.poison += r.poison; a.poisonN++; }
+  }
+  const list = Object.values(by).sort((a,b) => b.t/b.n - a.t/a.n);
+  $("agg").innerHTML = list.length ? "<tr><th>scheme</th><th>speeds</th><th>runs</th><th>mean alive</th>" +
+    "<th>inputs/s</th><th>obey</th><th>wrong way</th><th>route thru mob</th></tr>" +
+    list.map(a => "<tr><td>" + a.v + " " + a.name + "</td><td>" + a.press + "</td><td>" + a.n + "</td>" +
+      "<td>" + (a.t/a.n).toFixed(1) + "s</td><td>" + (a.ips/a.n).toFixed(1) + "</td>" +
+      "<td>" + ms(a.respN ? a.resp/a.respN : null) + "</td><td>" + pc(a.wrong/a.n) + "</td>" +
+      "<td>" + (a.poisonN ? pc(a.poison/a.poisonN) : "–") + "</td></tr>").join("") : "";
+
+  const marks = [55,45,30,20].filter(t => S.marks[t]);
+  $("note").textContent = (S.stress
+    ? "stress: " + S.mobs.length + " monsters, ramping +" + STRESS_ADD + " every " + STRESS_STEP + "s. " +
+      (marks.length ? marks.map(t => "under " + t + " fps at " + S.marks[t]).join(" · ") : "still smooth.")
+    : "") +
+    "  device: DPR " + DPR + ", canvas " + (N*TILE*DPR) + "px, " + (navigator.hardwareConcurrency || "?") + " cores.";
+}
+function copyReport(){
+  const L = ["TN-C1 chase-control prototype — measurements",
+    "device: DPR " + DPR + " · canvas " + (N*TILE*DPR) + "px · cores " + (navigator.hardwareConcurrency||"?"),
+    "ua: " + navigator.userAgent, ""];
+  const marks = [55,45,30,20].filter(t => S.marks[t]);
+  if (marks.length) L.push("swarm: " + marks.map(t => "<" + t + "fps at " + S.marks[t] + " monsters").join(", "),
+                           "ai " + S.aiMs.toFixed(2) + "ms/frame · draw " + S.drawMs.toFixed(2) + "ms/frame", "");
+  L.push("runs (newest first):");
+  for (const r of S.runs) L.push("  " + r.v + " " + r.name + " / " + r.press + " · " + r.t.toFixed(1) + "s alive · " +
+    r.ips.toFixed(1) + " inputs/s · " + r.misses + " wall taps · obey " + ms(r.resp) +
+    " · wrong way " + pc(r.wrong) + " · route thru mob " + (r.poison == null ? "–" : pc(r.poison)));
+  const txt = L.join("\n");
+  const done = () => say("measurements copied");
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, () => fallback(txt, done));
+  else fallback(txt, done);
+}
+function fallback(txt, done){
+  const ta = document.createElement("textarea");
+  ta.value = txt; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch(e){ say("copy failed"); }
+  ta.remove();
+}
+
+/* ══════════════ 11 · BOOT ══════════════ */
+function fit(){
+  const chrome = 150;
+  const side = Math.max(220, Math.min(window.innerWidth - 16, window.innerHeight - chrome, 560));
+  cv.style.width = side + "px"; cv.style.height = side + "px";
+  cv.width = N*TILE*DPR; cv.height = N*TILE*DPR;
+}
+addEventListener("resize", fit);
+let last = null, panelT = 0;
+function frame(ts){
+  if (last == null) last = ts;
+  const dt = Math.min(.05, (ts - last)/1000); last = ts;
+  if (!Workshop.playing){ render(); requestAnimationFrame(frame); return; }
+  Workshop.elapsed += dt;
+  if (Workshop.elapsed >= 45){ finishPlay(); render(); requestAnimationFrame(frame); return; }
+  clockAll += dt; S.t += dt;
+  S.fps.push(dt); if (S.fps.length > 90) S.fps.shift();
+
+  const t0 = performance.now();
+  aiT -= dt;
+  if (aiT <= 0){ aiT = AI_EVERY; rebuildAI(); }
+  updateHero(dt);
+  if (Workshop.chase) updateMobs(dt);
+  if (S.stress) stressTick(dt);
+  else if (Workshop.chase) {
+    S.relT -= dt;
+    if (S.relT <= 0 && S.released < S.mobs.length){    // one more let out of the pen
+      S.relT = RELEASE_EVERY; S.mobs[S.released++].out = true;
+      say("another one is loose");
+    }
+  }
+  const t1 = performance.now();
+  render();
+  const t2 = performance.now();
+  S.aiMs   = S.aiMs*.9 + (t1-t0)*.1;
+  S.drawMs = S.drawMs*.9 + (t2-t1)*.1;
+
+  if (sayT > 0){ sayT -= dt; if (sayT <= 0) sayEl.classList.remove("on"); }
+  panelT -= dt; if (panelT <= 0){ panelT = .17; refreshPanel(); }
+  requestAnimationFrame(frame);
+}
+paintBoard(); fit(); resetMobs(); resetRun(); rebuildAI(); syncBar();
+S.hero.invuln = 1.4;
+requestAnimationFrame(frame);
+
+</script>
+<script>
+const labelFor={reference:'Reference',mirror:'Different view',remix:'Changed routes',own:'My own maze'};
+const textFor={reference:'Learn the same places and plan your escape.',mirror:'The reference reflected left to right. Does a new view feel new?',remix:'Two walls opened, two paths closed. Which routes do you notice?',own:'Change a square, name your maze, and test your idea.'};
+const ui=id=>document.getElementById(id);
+function thumbnail(rows,flags){
+  let s='<svg viewBox="0 0 200 200" role="img" aria-label="Maze sketch: blue start, gold destinations, gray monster pen">';
+  rows.forEach((r,y)=>[...r].forEach((c,x)=>{s+=`<rect x="${x*10}" y="${y*10}" width="10" height="10" fill="${c==='#'?'#3f536f':c==='M'?'#6c7482':c==='o'?'#bec7d5':'#0d1827'}"/>`;if(c==='H')s+=`<circle cx="${x*10+5}" cy="${y*10+5}" r="4" fill="#79c6ff"/>`;}));
+  flags.forEach(([x,y])=>s+=`<circle cx="${x*10+5}" cy="${y*10+5}" r="3" fill="#f5c56b"/>`);
+  return s+'</svg>';
+}
+function drawCards(){
+  ui('cards').innerHTML=Object.keys(labelFor).map(k=>{const g=MazeLab.get(k,Workshop.own);return `<article class="card ${Workshop.key===k?'selected':''}"><h3>${labelFor[k]}</h3>${thumbnail(g.rows,g.flags)}<p>${textFor[k]}</p><button data-map="${k}" aria-pressed="${Workshop.key===k}">Try this sketch</button></article>`;}).join('');
+  for(const b of document.querySelectorAll('[data-map]'))b.onclick=()=>selectMap(b.dataset.map);
+}
+function keepThoughts(){
+  Workshop.notes[Workshop.key]={name:ui('mazeName').value,prediction:ui('prediction').value,noticed:ui('noticed').value,change:ui('change').value};
+}
+function loadThoughts(){
+  const n=Workshop.notes[Workshop.key]||{};
+  for(const k of ['prediction','noticed','change'])ui(k).value=n[k]||'';
+  ui('mazeName').value=n.name||'';
+}
+function loadGrid(){
+  const g=MazeLab.get(Workshop.key,Workshop.own); Workshop.rows=g.rows;Workshop.flags=g.flags;
+  PEN.length=0;
+  g.rows.forEach((row,y)=>[...row].forEach((ch,x)=>{cell[idx(x,y)]=ch==='#'?WALL:ch==='o'?GATE:FLOOR;if(ch==='M')PEN.push({x,y});if(ch==='H')START={x,y};}));
+  // Preserve crew-to-slot identity under reflection, as well as the corner target.
+  if(Workshop.key==='mirror')PEN.sort((a,b)=>a.y-b.y||b.x-a.x);
+  CREW.forEach((c,i)=>c.corner=g.corners[i].slice());
+  labSeed=1234567;S.variant='D';S.press='chase';S.dodge=true;S.stress=false;S.deaths=0;S.runs=[];S.fps=[];
+  held.clear();stick=null;swipeFrom=null;resetRun();rebuildAI();paintBoard();syncBar();
+  if(!Workshop.chase)for(const m of S.mobs)m.out=false;
+}
+function selectMap(key){
+  if(Workshop.started)finishPlay();keepThoughts();Workshop.key=key;Workshop.editing=false;Workshop.elapsed=0;Workshop.visited=[];
+  loadThoughts();loadGrid();drawCards();compareMaps();updateState();
+}
+function startPlay(chase){
+  if(!MazeLab.inspect(Workshop.rows,Workshop.flags).valid){ui('stepHelp').textContent='Reopen the cut-off paths before playing this sketch.';return;}
+  if(Workshop.started)finishPlay();
+  keepThoughts();Workshop.chase=chase;Workshop.editing=false;Workshop.elapsed=0;Workshop.visited=[];loadGrid();
+  Workshop.playing=true;Workshop.started=true;last=null;updateState();
+  ui('stepHelp').textContent=chase?'Try the route you predicted. A catch is something to learn from.':'Take your time finding a route. Gold flags are places to try, not a score.';
+}
+function finishPlay(){
+  if(!Workshop.started)return;
+  logRun();
+  Workshop.sessions.push({map:Workshop.key,mode:Workshop.chase?'chase':'explore',seconds:+Workshop.elapsed.toFixed(1),catches:S.deaths,flags:Workshop.visited.slice(),rows:Workshop.rows.slice(),runs:S.runs.map(r=>({...r}))});
+  Workshop.started=false;Workshop.playing=false;S.hold=null;S.hero.path=[];S.hero.target=null;S.pending=null;stick=null;held.clear();
+  updateState();ui('stepHelp').textContent='Stop and tell Dad: what surprised you, and what would you change?';
+}
+function updateState(){
+  const m=MazeLab.inspect(Workshop.rows,Workshop.flags);
+  const mode=Workshop.editing?'Editing your sketch':Workshop.playing?(Workshop.chase?'Chase':'Explore'):'Looking at the map';
+  const message=`${labelFor[Workshop.key]} · ${mode} · ${Math.floor(Workshop.elapsed)} / 45 seconds${Workshop.chase?' · caught '+S.deaths+' times':''}. ${m.reason}`;
+  if(ui('state').textContent!==message)ui('state').textContent=message;
+  ui('mapTitle').textContent=Workshop.notes[Workshop.key]?.name||labelFor[Workshop.key];
+  ui('hint').textContent=Workshop.editing?'Tap one ordinary square to change wall ↔ path.':'Hold and drag to move. Lifting finishes the route to the last square. Dodge is on.';
+  ui('stop').disabled=!Workshop.playing;ui('explore').disabled=!m.valid;ui('chase').disabled=!m.valid;ui('replay').disabled=!m.valid;
+  ui('undo').disabled=Workshop.undo.length===0;ui('edit').setAttribute('aria-pressed',Workshop.editing);
+}
+function compareMaps(){
+  const rows=Object.keys(labelFor).map(k=>{const g=MazeLab.get(k,Workshop.own),m=MazeLab.inspect(g.rows,g.flags);return `<tr><td>${labelFor[k]}</td><td>${m.valid?'Connected':'Needs a path'}</td><td>${m.floor}</td><td>${m.loops??'—'}</td><td>${m.deadEnds}</td><td>${m.junctions}</td><td>${m.distances.map(d=>d??'cut off').join(' / ')}</td></tr>`;}).join('');
+  ui('comparison').innerHTML='<table><thead><tr><th>Sketch</th><th>Paths</th><th>Walkable squares</th><th>Escape loops</th><th>Dead ends</th><th>Junctions</th><th>Start → flags, steps</th></tr></thead><tbody>'+rows+'</tbody></table><p class="dim">Reference and changed routes match space, loops, dead ends and these three route lengths. A mirror matches geometry. Chasers can still behave differently; fairness needs play and the real layer rules.</p>';
+}
+const oldRender=render;
+render=function(){
+  oldRender();
+  for(const [i,[x,y]] of Workshop.flags.entries()){
+    ctx.strokeStyle='#f5c56b';ctx.lineWidth=2;ctx.strokeRect(x*TILE+7,y*TILE+7,18,18);ctx.fillStyle='#f5c56b';ctx.font='bold 12px system-ui';ctx.fillText(String(i+1),x*TILE+11,y*TILE+21);
+    if(Workshop.playing&&Math.hypot(S.hero.fx-x,S.hero.fy-y)<.5&&!Workshop.visited.includes(i+1))Workshop.visited.push(i+1);
+  }
+  if(Workshop.key==='remix'||Workshop.key==='own')Workshop.rows.forEach((r,y)=>[...r].forEach((c,x)=>{if(c!==MazeLab.layouts.reference[y][x]){ctx.strokeStyle=c==='#'?'#fb8790':'#72dda5';ctx.lineWidth=2;ctx.strokeRect(x*TILE+2,y*TILE+2,TILE-4,TILE-4);}}));
+};
+const oldRefresh=refreshPanel;refreshPanel=function(){oldRefresh();updateState();};
+fit=function(){const side=Math.max(200,Math.min(560,ui('stage').parentElement.clientWidth||window.innerWidth-40));cv.style.width=side+'px';cv.style.height=side+'px';cv.width=N*TILE*DPR;cv.height=N*TILE*DPR;};
+addEventListener('resize',fit);
+// Intercept input only while editing or looking. Playing uses original D input unchanged.
+cv.addEventListener('pointerdown',e=>{
+  if(Workshop.playing)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  if(!Workshop.editing)return;
+  const c=cellAt(e);if(!c)return;
+  if(MazeLab.protectedAt(Workshop.own,c.x,c.y)){ui('stepHelp').textContent='Keep the start, flags, pen and outside edge. Pick an ordinary wall or path.';return;}
+  Workshop.undo.push(Workshop.own.slice());Workshop.own=MazeLab.edit(Workshop.own,c.x,c.y);loadGrid();drawCards();compareMaps();updateState();
+},{capture:true,passive:false});
+addEventListener('keydown',e=>{if(e.target?.matches('input,textarea,select')||e.target?.isContentEditable){e.stopImmediatePropagation();return;}if(e.key==='r'||e.key==='R'){e.preventDefault();e.stopImmediatePropagation();startPlay(Workshop.chase);return;}if('1234[]'.includes(e.key)||e.key.startsWith('Arrow')){e.preventDefault();e.stopImmediatePropagation();}},{capture:true});
+ui('explore').onclick=()=>startPlay(false);ui('chase').onclick=()=>startPlay(true);ui('stop').onclick=finishPlay;ui('replay').onclick=()=>startPlay(Workshop.chase);
+ui('edit').onclick=()=>{if(Workshop.started)finishPlay();if(Workshop.key!=='own')selectMap('own');Workshop.editing=!Workshop.editing;updateState();};
+ui('undo').onclick=()=>{if(Workshop.started)finishPlay();if(!Workshop.undo.length)return;keepThoughts();Workshop.own=Workshop.undo.pop();Workshop.key='own';Workshop.editing=true;loadThoughts();loadGrid();drawCards();compareMaps();updateState();};
+ui('resetOwn').onclick=()=>{if(Workshop.started)finishPlay();if(Workshop.key!=='own')selectMap('own');Workshop.undo.push(Workshop.own.slice());Workshop.own=MazeLab.get('reference').rows;Workshop.editing=true;loadGrid();drawCards();compareMaps();updateState();};
+ui('keepNote').onclick=()=>{keepThoughts();updateState();ui('stepHelp').textContent='Your thoughts are kept on this page. Copy or download them before closing.';};
+const guides={
+  learn:{text:'Would you enjoy getting better at a maze you know? Predict which route will become easier to remember.',steps:[['Look at reference',()=>selectMap('reference'),'Point to a way out before moving.'],['Practice it',()=>startPlay(false),'Try reaching a gold flag. Where can you turn away?'],['Chase it',()=>startPlay(true),'Does the route still work when monsters follow?'],['Play it again',()=>startPlay(true),'Did knowing the map help? Would that be fun on a new attempt?']]},
+  view:{text:'Can the same shape of maze feel fresh from a different view? The mirror keeps route geometry comparable.',steps:[['Play reference',()=>{selectMap('reference');startPlay(true);},'Remember one useful turn.'],['Play different view',()=>{selectMap('mirror');startPlay(true);},'Try finding the matching turn on the other side.'],['Stop and compare',finishPlay,'Was it a new adventure, a confusing trick, or almost the same?']]},
+  routes:{text:'Does changing a few connections create a better choice? Look for the outlined squares.',steps:[['Explore reference',()=>{selectMap('reference');startPlay(false);},'Find two ways around a wall.'],['Look at changed routes',()=>selectMap('remix'),'Two paths opened and two paths closed. Predict a different escape.'],['Chase changed routes',()=>startPlay(true),'Did your prediction work? Are any corners unfair?'],['Stop and choose',finishPlay,'Keep a change, undo it, or propose a better one.']]},
+  own:{text:'Make one change for a reason. Your sketch can be different from every example.',steps:[['Edit my maze',()=>{selectMap('own');Workshop.editing=true;updateState();},'Tap one square. Say why you chose it.'],['Explore my maze',()=>startPlay(false),'Can you still reach the flags? Look for a path you cut off.'],['Chase my maze',()=>startPlay(true),'Does your change make a useful choice, a trap, or something else?'],['Stop and name it',finishPlay,'Give the maze your own name. What would you try next?']]}
+};
+function chooseGuide(key){
+  if(Workshop.started)finishPlay();Workshop.currentGuide=key;Workshop.step=0;selectMap(key==='own'?'own':'reference');
+  for(const b of document.querySelectorAll('.guide'))b.setAttribute('aria-pressed',b.dataset.guide===key);
+  ui('guideText').textContent=guides[key].text;drawSteps();ui('stepHelp').textContent='Press the steps in order, or explore freely.';
+}
+function drawSteps(){
+  const g=guides[Workshop.currentGuide];ui('steps').innerHTML=g.steps.map(([label],i)=>`<button data-step="${i}" ${i>Workshop.step?'disabled':''}>${i+1}. ${label}</button>`).join('');
+  for(const b of document.querySelectorAll('[data-step]'))b.onclick=()=>{const i=+b.dataset.step,[,fn,hint]=g.steps[i];fn();Workshop.step=Math.max(Workshop.step,i+1);drawSteps();ui('stepHelp').textContent=hint;};
+}
+for(const b of document.querySelectorAll('.guide'))b.onclick=()=>chooseGuide(b.dataset.guide);
+Workshop.layerPlan=[];
+function drawLayers(){
+  ui('layers').innerHTML=Workshop.layerPlan.map((_,i)=>`<div class="layer"><h3>Layer ${i+1}: your paper plan</h3><label for="ln${i}">Your name for this layer</label><input id="ln${i}" data-layer="${i}" data-field="name"><label for="lc${i}">What should the player have to work out?</label><textarea id="lc${i}" data-layer="${i}" data-field="challenge"></textarea><label for="lf${i}">What should stay fair if this layer has another layout?</label><textarea id="lf${i}" data-layer="${i}" data-field="fairness"></textarea><button data-remove="${i}">Remove this paper-plan layer</button></div>`).join('');
+  for(const f of document.querySelectorAll('[data-layer]')){f.value=Workshop.layerPlan[+f.dataset.layer][f.dataset.field]||'';f.oninput=()=>Workshop.layerPlan[+f.dataset.layer][f.dataset.field]=f.value;}
+  for(const b of document.querySelectorAll('[data-remove]'))b.onclick=()=>{Workshop.layerPlan.splice(+b.dataset.remove,1);drawLayers();};
+}
+ui('addLayer').onclick=()=>{Workshop.layerPlan.push({name:'',challenge:'',fairness:''});drawLayers();};
+function notesText(){
+  keepThoughts();
+  const choices={attempts:ui('repeatChoice').value,attemptReason:ui('repeatReason').value,fairnessMeaning:ui('fairMeaning').value,fairnessIdea:ui('fairOther').value,favourite:ui('favourite').value,favouriteReason:ui('choiceReason').value};
+  const L=['MY NETHER MAZE DESIGN NOTES','Local design sketches; choices below are the designer’s answers, not an accepted game specification.','Controls: follow the finger + dodge enabled. Chase: .80x setting (slow 3.68, fast 4.30, hero 4.6); 8 monsters total, 4 initially loose, further release every 3 game seconds. Explore mode: no monsters chase.','No final Nether layers, breakable walls, upgrade collection, void or hammer are implemented in this sketch.','', 'MY CHOICES',...Object.entries(choices).map(([k,v])=>k+': '+(v||'[open]')),'','MY THOUGHTS BY MAP'];
+  for(const [k,n]of Object.entries(Workshop.notes)){L.push(labelFor[k],...Object.entries(n).map(([a,b])=>'  '+a+': '+(b||'[blank]')));}
+  L.push('','MY PAPER LAYERS',JSON.stringify(Workshop.layerPlan,null,2),'','PLAY SESSIONS (game seconds, not proof of fairness)');
+  for(const s of Workshop.sessions)L.push(`${labelFor[s.map]} / ${s.mode}: ${s.seconds}s, ${s.catches} catches, flags visited ${s.flags.join(', ')||'none'}.`);
+  if(Workshop.playing)L.push('An unfinished session is still playing; stop it to include its measurements.');
+  L.push('','STRUCTURAL COMPARISON');for(const k of Object.keys(labelFor)){const g=MazeLab.get(k,Workshop.own);L.push(labelFor[k]+': '+JSON.stringify(MazeLab.inspect(g.rows,g.flags)));}
+  L.push('','MY EDITABLE MAZE (20 rows; # wall, . path, H start, M pen, o monster gate)',Workshop.own.join('\n'),'','SESSION DETAILS FOR THE NEXT DESIGN ROUND',JSON.stringify(Workshop.sessions,null,2));
+  return L.join('\n');
+}
+ui('showNotes').onclick=()=>{ui('report').value=notesText();ui('saveStatus').textContent='Your notes are shown below. Copy or download to keep them.';};
+ui('copyNotes').onclick=async()=>{
+  const text=notesText();ui('report').value=text;let success=false;
+  if(navigator.clipboard){try{await navigator.clipboard.writeText(text);success=true;}catch{}}
+  if(!success){ui('report').focus();ui('report').select();try{success=document.execCommand('copy');}catch{}}
+  ui('saveStatus').textContent=success?'Design notes copied. Check that your paste contains them.':'Copy was unavailable. Select the notes below and copy manually, or download them.';
+};
+ui('downloadNotes').onclick=()=>{const blob=new Blob([notesText()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='My Nether Maze Design Notes.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);ui('saveStatus').textContent='Notes download requested. Check your downloads before closing.';};
+ui('printCards').onclick=()=>{keepThoughts();window.print();};
+// Apply preferred controls after original engine boot, then keep the first view paused.
+Workshop.visited=[];loadGrid();drawCards();compareMaps();drawLayers();fit();updateState();
+
+</script></body></html>
