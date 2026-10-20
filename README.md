@@ -3,6 +3,7 @@
 A separate static playtest site for Twenty Nights. This repository hosts design sketches and the existing controls/swarm harness; it does not change the main game.
 
 - `index.html`: playtest home page and mobile QR link.
+- `monsters/index.html`: Nether 1, with clever, delayed-notice and wrong-turn monster candidates. This comparison does not introduce a retry difficulty ramp.
 - `workshop/index.html`: offline, self-contained maze workshop with guided comparisons, editable maze and local note export; the canvas fits narrow grid columns.
 - `controls/index.html`: original control and swarm logic; the toolbar wraps on narrow screens.
 - `assets/`: static maze diagram and locally generated QR code.

@@ -1,0 +1,1065 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nether 1 · Can you fool the monsters?</title>
+<style>:root{color-scheme:dark;--bg:#141922;--panel:#202937;--ink:#f3f5f7;--dim:#c1c9d5;--gold:#f5c56b;--line:#46566d}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:24px 16px 48px}h1{font-size:clamp(28px,5vw,42px);line-height:1.15}h2{font-size:22px;margin:4px 0 12px}.tag{color:var(--gold);font-size:13px;letter-spacing:.1em;text-transform:uppercase}.box{border:1px solid var(--line);border-radius:16px;padding:18px;background:var(--panel);margin:18px 0}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.cards>article{padding:14px;border:1px solid var(--line);border-radius:12px}.play-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.play-grid>*{min-width:0}.actions{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}button,select,textarea{font:inherit}button{padding:10px 12px;min-height:44px;color:var(--ink);background:#33465e;border:1px solid #718298;border-radius:10px;cursor:pointer}button[aria-pressed=true],.primary{background:var(--gold);color:#17202d}button:disabled{opacity:.4}button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #79c6ff;outline-offset:3px}label{display:block;margin:14px 0 5px}textarea,select{width:100%;background:#131c29;color:var(--ink);border:1px solid #718298;border-radius:8px;padding:10px}textarea{min-height:78px;resize:vertical}#stage{position:relative;width:100%;max-width:560px;margin:auto}#cv{display:block;max-width:100%;height:auto!important;border-radius:10px;touch-action:none}#flash{position:absolute;inset:0;pointer-events:none;background:#ff6b6b;opacity:0;border-radius:10px}#flash.on{opacity:.25}#say{position:absolute;left:5px;right:5px;top:7px;text-align:center;background:#111d;color:var(--gold);opacity:0;pointer-events:none}#say.on{opacity:1}.dim{color:var(--dim)}#state{padding-left:12px;border-left:4px solid var(--gold)}#report{min-height:200px}#sessionList{white-space:pre-wrap;font-size:14px}#legacy{display:none}summary{cursor:pointer;min-height:44px;font-weight:600}@media(max-width:760px){.play-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.box{padding:16px}main{padding:16px 12px 36px}}</style></head><body><main>
+<div class="tag">Your Nether 1 · next experiment · test sketches</div><h1>Can you fool these monsters?</h1><p>You made more escape routes in Nether 1. Now try making the bad guys easier to trick. The maze, monster numbers, speed, controls and faces stay the same.</p>
+<section class="box"><h2>Choose their kind of clever</h2><div class="cards">
+<article><h3>Current clever ones</h3><p>They keep checking where you are and change direction quickly.</p><button data-brain="clever">Choose current clever</button></article>
+<article><h3>Notices turns later</h3><p>They remember where they were heading for a moment. Turn a corner and try to fool them.</p><button data-brain="late">Choose notices later</button></article>
+<article><h3>Sometimes a wrong turn</h3><p>At some junctions they choose another path. Look for a chance to slip away.</p><button data-brain="wrong">Choose wrong turns</button></article></div></section>
+<section class="box"><h2>Try a short comparison</h2><div class="actions"><button id="guideLate">Turn and trick</button><button id="guideWrong">Watch their wrong turns</button></div><p id="guideText">Choose one experiment or play freely. You can stop whenever you want.</p><div class="actions" id="guideSteps"></div></section>
+<section class="box"><div class="play-grid"><div><h2>Nether 1</h2><p id="hint">Hold and drag. Dodge is enabled.</p><div id="stage"><canvas id="cv" aria-label="Nether 1 maze, hold and drag to move"></canvas><div id="flash"></div><div id="say" role="status"></div></div><p class="dim">Blue is you. Gold flags are places to reach. The angry eyebrows and faces are the same ones you liked.</p></div><div><h2>Predict, play, notice</h2><p id="state" role="status" aria-live="polite"></p><div class="actions"><button id="explore">Explore without monsters</button><button id="play" class="primary">Try these monsters</button><button id="stop" disabled>Stop and talk</button></div><p>Try saying: <strong>“I think I can trick this one by…”</strong> Then find out.</p><p class="dim">Each comparison lasts up to 45 game seconds. A catch returns you to the start. Flags count across the whole session, including after catches. Catch totals do not choose the most fun version.</p><p id="sessionList"></p><details><summary>Dad’s comparison settings</summary><p>Same Nether 1 grid; 8 monsters total, 4 loose initially, further release every 3 game seconds. Hero 4.6, ordinary 3.68, fast 4.30 tiles/second. Follow-the-finger and dodge on.</p><p>Notices later holds each chase target for 0.8 game seconds, applied at the original AI tick. Player dodge keeps its original update rate. Wrong turns has a one-in-three chance at eligible junctions of choosing another available forward path. These are candidate behaviors, not measured balance or guaranteed survival.</p></details></div></div></section>
+<section class="box"><h2>Which one feels right for your game?</h2><label for="favourite">My choice</label><select id="favourite"><option value="undecided">I want to try more</option value="clever">Current clever ones</option><option value="late">Notices turns later</option><option value="wrong">Sometimes a wrong turn</option><option value="mix">A mixture, or my own idea</option></select><label for="noticed">I noticed…</label><textarea id="noticed" placeholder="Could you fool them? Point, tell Dad, or type."></textarea><label for="nextChange">What I would change next</label><textarea id="nextChange" placeholder="What should the monsters do differently?"></textarea></section>
+<section class="box"><h2>Your next maze idea</h2><p>Your first notes asked for a slightly different maze and a little more difficulty when you die or replay. This monster comparison keeps that change separate so we can tell what the sillier behavior does.</p><label for="retryChoice">For the later maze experiment, when should it get harder?</label><select id="retryChoice"><option value="every-retry">On each death or replay, as in my first idea</option><option value="after-success">After getting around the maze</option><option value="choose-harder">When I choose a harder challenge</option><option value="undecided">I want to think about it more</option></select><label for="retryReason">My explanation</label><textarea id="retryReason" placeholder="What would make you want another try?"></textarea></section>
+<section class="box"><h2>Keep your choices</h2><p>Stop the session, then save your notes before closing. Nothing is sent automatically.</p><div class="actions"><button id="showNotes">Show notes</button><button id="copyNotes">Copy notes</button><button id="downloadNotes">Download notes</button></div><p id="saveStatus" role="status">Notes stay in this tab until saved.</p><textarea id="report" readonly aria-label="Comparison notes to copy"></textarea><p class="dim">Chase experiment only. Final Nether layers, stronger walls, upgrade pickups, three-life attempt rules, void and hammer are still separate from this test.</p></section>
+<div id="legacy" aria-hidden="true"><div id="live"></div><table id="runs"></table><table id="agg"></table><span id="runsub"></span><p id="note"></p><button id="prev"></button><button id="vname"></button><button id="next"></button><button id="tPress"></button><button id="tDodge"></button><button id="tStress"></button><button id="tCopy"></button></div>
+</main>
+<script>
+
+// Pure maze sketches and structural comparison. No DOM or game state.
+const MazeLab = (() => {
+  const layouts = {"reference": ["####################", "#..................#", "#.###.##.##.##.###.#", "#.###.##.##.##.###.#", "#..................#", "#.##.###.##.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.##.#.######.#.##.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.##.#.###", "#......######......#", "#.####.######.####.#", "#........H.........#", "####################"], "remix": ["####################", "#..................#", "#.###.##.##.##.###.#", "#..##.##.##.##.###.#", "#..................#", "#.##.######.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.##.#.######.#.##.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.#..#.###", "#......######..#...#", "#.####.######.####.#", "#........H.........#", "####################"], "changes": [{"x": 2, "y": 3, "to": "floor"}, {"x": 8, "y": 5, "to": "wall"}, {"x": 13, "y": 15, "to": "floor"}, {"x": 15, "y": 16, "to": "wall"}]};
+  const size = 20;
+  const directions = [[1,0],[-1,0],[0,1],[0,-1]];
+  const flags = [[1,1],[9,1],[18,1]];
+  const baseCorners = [[1,1],[18,1],[1,18],[18,18]];
+  const mirrorPoint = ([x,y]) => [size-1-x,y];
+  const mirrorRows = rows => rows.map(row => [...row].reverse().join(''));
+  function get(key, own) {
+    const rows = key === 'mirror' ? mirrorRows(layouts.reference) : key === 'remix' ? layouts.remix : key === 'own' ? own : layouts.reference;
+    return { rows: rows.slice(), flags: key === 'mirror' ? flags.map(mirrorPoint) : flags.map(p=>p.slice()), corners: key === 'mirror' ? baseCorners.map(mirrorPoint) : baseCorners.map(p=>p.slice()) };
+  }
+  function walk(rows, start, pass) {
+    const seen = new Map([[start.join(','),0]]), queue = [start];
+    for(let p=0;p<queue.length;p++) {
+      const [x,y] = queue[p];
+      for(const [dx,dy] of directions) {
+        const nx=x+dx,ny=y+dy,k=nx+','+ny;
+        if(nx<0||ny<0||nx>=size||ny>=size||!pass(rows[ny][nx])||seen.has(k)) continue;
+        seen.set(k,seen.get(x+','+y)+1); queue.push([nx,ny]);
+      }
+    }
+    return seen;
+  }
+  function inspect(rows, landmarks=flags) {
+    let start=null, floor=0,edges=0,deadEnds=0,junctions=0,mobFloor=0;
+    const open = c=>c==='.'||c==='H';
+    rows.forEach((r,y)=>[...r].forEach((c,x)=>{if(c==='H')start=[x,y];if(c!=='#')mobFloor++;}));
+    if(!start) return {valid:false,reason:'Keep one blue starting square.'};
+    const seen=walk(rows,start,open), mobSeen=walk(rows,start,c=>c!=='#');
+    rows.forEach((r,y)=>[...r].forEach((c,x)=>{
+      if(!open(c))return;floor++;let degree=0;
+      for(const [dx,dy] of directions)if(rows[y+dy]?.[x+dx]&&open(rows[y+dy][x+dx]))degree++;
+      if(degree===1)deadEnds++;if(degree>=3)junctions++;
+      if(open(rows[y]?.[x+1]))edges++;if(open(rows[y+1]?.[x]))edges++;
+    }));
+    const distances=landmarks.map(p=>seen.get(p.join(','))??null);
+    const valid=seen.size===floor&&mobSeen.size===mobFloor&&distances.every(d=>d!==null);
+    return {valid, floor, reachable:seen.size, loops:valid?edges-floor+1:null, deadEnds, junctions, distances,
+      reason:valid?'All ordinary paths connect.':`${floor-seen.size} ordinary squares are cut off. Reopen a connecting path.`, start};
+  }
+  function protectedAt(rows,x,y,landmarks=flags) {
+    return x<=0||y<=0||x>=size-1||y>=size-1||'HMo'.includes(rows[y][x])||landmarks.some(p=>p[0]===x&&p[1]===y);
+  }
+  function edit(rows,x,y) {
+    if(protectedAt(rows,x,y))return rows.slice();
+    const next=rows.slice(),row=[...next[y]];row[x]=row[x]==='#'?'.':'#';next[y]=row.join('');return next;
+  }
+  return {layouts,size,flags,get,inspect,edit,protectedAt};
+})();
+
+
+const NETHER_ONE=["####################", "#..................#", "#.###.##.##.##.###.#", "#.###.##.##.##.###.#", "#..................#", "#.##.###.##.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.#..#.######.#..#.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.##.#.###", "#......#....#......#", "#.####.######.####.#", "#........H.........#", "####################"];
+let labSeed=1234567;
+function labRandom(){labSeed=(labSeed*1103515245+12345)&0x7fffffff;return labSeed/0x7fffffff;}
+const Workshop={playing:false,chase:false,elapsed:0,started:false,visited:[],sessions:[]};
+
+</script>
+<script>
+
+
+/* ══════════════ 1 · CONSTANTS LIFTED FROM THE REAL GAME ══════════════
+   Change these and the prototype stops answering the question it was built for. */
+const N = 20, TILE = 32;
+const HERO_SPEED = 4.6;            // tiles/sec, full tummy (index.html: updateHero)
+const CATCH      = .55;            // monster has you (index.html: updateMonsters)
+const DPR        = Math.min(2, window.devicePixelRatio || 1);   // same clamp as the game
+
+/* Twenty Nights' own monster speeds. The Nether needs a chase, and at these
+   numbers there is no chase — the hero is 3.4x a shuffler and walks away
+   whistling. So pressure is a dial, and which setting you test at decides
+   the answer. Default is "chase", because that is what the Nether is for. */
+const PRESS = {
+  game:   {label:"game speeds",  slow:1.35, fast:2.60},   // as shipped
+  chase:  {label:"chase .80x",   slow:3.68, fast:4.30},   // Pac-Man-ish
+  brutal: {label:"brutal .95x",  slow:4.37, fast:4.60},
+};
+const PRESS_ORDER = ["chase","game","brutal"];
+
+const MAZE = [
+  "####################",
+  "#..................#",
+  "#.###.##.##.##.###.#",
+  "#.###.##.##.##.###.#",
+  "#..................#",
+  "#.##.###.##.###.##.#",
+  "#....#........#....#",
+  "#.##.#.##oo##.#.##.#",
+  "#.##.#.#MMMM#.#.##.#",
+  "#....#.#MMMM#.#....#",
+  "#.##.#.######.#.##.#",
+  "#....#........#....#",
+  "#.##.###.##.###.##.#",
+  "#.##.#........#.##.#",
+  "#.....##.##.##.....#",
+  "###.#.##.##.##.#.###",
+  "#......######......#",
+  "#.####.######.####.#",
+  "#........H.........#",
+  "####################",
+];
+
+/* ══════════════ 2 · THE BOARD ══════════════ */
+const WALL = 0, FLOOR = 1, GATE = 2;            // GATE: monsters pass, the hero cannot
+const cell = new Uint8Array(N*N);
+const PEN = [];                                  // where monsters wait to be let out
+let START = {x:9, y:18};
+MAZE.forEach((row, y) => {
+  for (let x = 0; x < N; x++){
+    const ch = row[x];
+    cell[y*N+x] = ch === "#" ? WALL : ch === "o" ? GATE : FLOOR;
+    if (ch === "M") PEN.push({x, y});
+    if (ch === "H") START = {x, y};
+  }
+});
+const idx  = (x,y) => y*N + x;
+const inB  = (x,y) => x >= 0 && y >= 0 && x < N && y < N;
+const openHero = i => cell[i] === FLOOR;
+const openMob  = i => cell[i] !== WALL;
+const DIRS = [[1,0],[-1,0],[0,1],[0,-1]];
+
+/* 4-way BFS, exactly the shape of heroBFSTo in index.html — including the
+   Math.round start, which is where "imprecise" would come from if it does. */
+function bfsPath(sx, sy, tx, ty, costly){
+  if (!inB(tx,ty) || !openHero(idx(tx,ty))) return null;
+  const from = new Int16Array(N*N).fill(-2);
+  const s = idx(sx,sy);
+  if (!costly){                                   // plain queue: the shipped behaviour
+    const q = [s]; from[s] = -1;
+    for (let h = 0; h < q.length; h++){
+      const i = q[h], x = i % N, y = (i - x) / N;
+      if (x === tx && y === ty) return unwind(from, i);
+      for (const [dx,dy] of DIRS){
+        const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+        const j = idx(nx,ny);
+        if (from[j] === -2 && openHero(j)){ from[j] = i; q.push(j); }
+      }
+    }
+    return null;
+  }
+  // bucket queue, so a tile near a monster can simply cost more — the same trick
+  // computeField() already uses for firelight (LIGHT_COST).
+  const dist = new Int16Array(N*N).fill(-1);
+  const buckets = [[s]]; dist[s] = 0; from[s] = -1;
+  for (let c = 0; c < buckets.length; c++){
+    const list = buckets[c]; if (!list) continue;
+    for (const i of list){
+      if (dist[i] !== c) continue;
+      const x = i % N, y = (i - x) / N;
+      if (x === tx && y === ty) return unwind(from, i);
+      for (const [dx,dy] of DIRS){
+        const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+        const j = idx(nx,ny); if (!openHero(j)) continue;
+        const nc = c + 1 + dread[j];
+        if (dist[j] < 0 || nc < dist[j]){
+          dist[j] = nc; from[j] = i; (buckets[nc] = buckets[nc] || []).push(j);
+        }
+      }
+    }
+  }
+  return null;
+}
+function unwind(from, i){
+  const path = []; let c = i;
+  while (from[c] >= 0){ path.unshift(c); c = from[c]; }
+  return path;                                    // [] = already standing there
+}
+// nearest walkable tile to a sloppy finger
+function nearestOpen(x, y){
+  if (inB(x,y) && openHero(idx(x,y))) return {x,y};
+  for (let r = 1; r <= 3; r++)
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++){
+      const nx = x+dx, ny = y+dy;
+      if (inB(nx,ny) && openHero(idx(nx,ny))) return {x:nx, y:ny};
+    }
+  return null;
+}
+// monster flow field: cheapest-first from one target, monsters walk the gradient down
+function flow(out, tx, ty){
+  out.fill(-1);
+  if (!inB(tx,ty)) return out;
+  const s = idx(tx,ty);
+  if (!openMob(s)) return out;
+  const q = [s]; out[s] = 0;
+  for (let h = 0; h < q.length; h++){
+    const i = q[h], x = i % N, y = (i - x) / N, d = out[i];
+    for (const [dx,dy] of DIRS){
+      const nx = x+dx, ny = y+dy; if (!inB(nx,ny)) continue;
+      const j = idx(nx,ny);
+      if (out[j] < 0 && openMob(j)){ out[j] = d + 1; q.push(j); }
+    }
+  }
+  return out;
+}
+const dread = new Int16Array(N*N);                // extra cost near a monster, for "dodge"
+
+
+
+
+/* ══════════════ 3 · SCHEMES, CREW, STATE ══════════════ */
+const VARIANTS = [
+  {key:"A", name:"Tap to path",       how:"tap a square — this is the shipped scheme"},
+  {key:"B", name:"Virtual stick",     how:"drag anywhere, or WASD — free movement"},
+  {key:"C", name:"Swipe to turn",     how:"swipe or arrow keys — he never stops"},
+  {key:"D", name:"Follow the finger", how:"hold and drag — re-paths as you move"},
+];
+/* Four chasers with four different ideas, because four greedy ones are a single
+   blob you outrun, and then "evasion" was never tested at all. */
+const CREW = [
+  {name:"chaser", col:"#d2525f", fast:false, corner:[1,1]},
+  {name:"ambush", col:"#dd86cf", fast:false, corner:[18,1]},
+  {name:"flank",  col:"#57c3d6", fast:false, corner:[1,18]},
+  {name:"rusher", col:"#e8974a", fast:true,  corner:[18,18]},
+];
+const AI_EVERY = .12;            // seconds between flow-field rebuilds
+const RELEASE_EVERY = 3.0;       // "monsters released as you open the maze"
+const HERO_R = .34;              // collision radius in tiles, variant B only
+
+const S = {
+  variant:"D", press:"chase", dodge:true, stress:false,
+  hero:{fx:START.x, fy:START.y, path:[], target:null, dir:[0,0], want:[0,0],
+        lastX:START.x, lastY:START.y, invuln:0, sq:0, face:[0,1]},
+  mobs:[], released:0, relT:RELEASE_EVERY, t:0, deaths:0,
+  runs:[], marks:{},
+  m:{inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0},
+  pending:null, hold:null, repathT:0,
+  fps:[], aiMs:0, drawMs:0, stressT:0, stressN:8,
+};
+const press = () => PRESS[S.press];
+const V = () => VARIANTS.find(v => v.key === S.variant);
+
+/* ══════════════ 4 · MONSTERS ══════════════ */
+const fields = CREW.map(() => new Int16Array(N*N).fill(-1));
+let aiT = 0;
+
+function penMob(n){
+  const slot = PEN[n % PEN.length], c = CREW[n % CREW.length];
+  return {
+    cx:slot.x, cy:slot.y, tx:slot.x, ty:slot.y, fx:slot.x, fy:slot.y, prog:1,
+    crew:n % CREW.length, col:c.col, name:c.name,
+    speed:c.fast ? press().fast : press().slow,
+    seed:(labRandom()*4)|0, bob:labRandom()*6.28, out:false, sq:0,
+  };
+}
+function resetMobs(){
+  S.mobs = PEN.map((_, i) => penMob(i));
+  S.released = 0; S.relT = RELEASE_EVERY;
+  for (let i = 0; i < 4; i++) S.mobs[i].out = true;   // the four start loose
+  S.released = 4;
+}
+function reSpeed(){
+  for (const m of S.mobs) m.speed = CREW[m.crew].fast ? press().fast : press().slow;
+}
+function heroTile(){ return {x:Math.round(S.hero.fx), y:Math.round(S.hero.fy)}; }
+
+function aimFor(k){
+  const h = heroTile(), f = S.hero.face;
+  if (k === 0) return h;
+  if (k === 1){                                     // four tiles past his nose
+    const t = nearestOpen(h.x + f[0]*4, h.y + f[1]*4);
+    return t || h;
+  }
+  if (k === 2){                                     // the far side of him from the chaser
+    const c = S.mobs.find(m => m.crew === 0 && m.out);
+    if (!c) return h;
+    const t = nearestOpen(
+      Math.max(0, Math.min(N-1, Math.round(h.x + (h.x - c.fx)))),
+      Math.max(0, Math.min(N-1, Math.round(h.y + (h.y - c.fy)))));
+    return t || h;
+  }
+  const c = CREW[3].corner;                          // loses its nerve up close
+  const near = Math.abs(h.x - (S.mobs.find(m=>m.crew===3)?.fx ?? 99)) +
+               Math.abs(h.y - (S.mobs.find(m=>m.crew===3)?.fy ?? 99));
+  return near < 6 ? {x:c[0], y:c[1]} : h;
+}
+function rebuildAI(){
+  for (let k = 0; k < 4; k++){
+    const t = aimFor(k);
+    flow(fields[k], t.x, t.y);
+    if (fields[k][idx(Math.round(S.mobs.find(m=>m.crew===k)?.fx ?? 0),
+                      Math.round(S.mobs.find(m=>m.crew===k)?.fy ?? 0))] < 0)
+      flow(fields[k], heroTile().x, heroTile().y);    // unreachable aim: fall back to him
+  }
+  // "dodge": a tile near a monster simply costs more to walk through, the same way
+  // firelight costs monsters extra in computeField(). One line, and the tapped
+  // route stops being drawn straight through a chaser.
+  dread.fill(0);
+  if (S.dodge) for (const m of S.mobs){
+    if (!m.out) continue;
+    const mx = Math.round(m.fx), my = Math.round(m.fy);
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++){
+      const d = Math.abs(dx) + Math.abs(dy);
+      if (d > 2 || !inB(mx+dx, my+dy)) continue;
+      const j = idx(mx+dx, my+dy);
+      dread[j] = Math.max(dread[j], d === 0 ? 14 : d === 1 ? 8 : 3);
+    }
+  }
+}
+function stepDown(m){                                 // scanStep from index.html
+  const f = fields[m.crew];
+  let bd = f[idx(m.cx, m.cy)], best = null;
+  if (bd < 0) bd = 32767;
+  for (let k = 0; k < 4; k++){
+    const [dx,dy] = DIRS[(k + m.seed) % 4];
+    const nx = m.cx+dx, ny = m.cy+dy;
+    if (!inB(nx,ny)) continue;
+    const j = idx(nx,ny), v = f[j];
+    if (v < 0 || v >= bd) continue;
+    if (openMob(j)){ bd = v; best = [nx,ny]; }
+  }
+  if (best) return best;
+  /* Standing on its own target — the ambusher does this constantly, because the
+     tile four ahead of a stationary hero is a tile it can actually reach. A ghost
+     that stops is a free kill and reads as broken, so it keeps going instead:
+     anything but a U-turn, and a U-turn only if there is nothing else. */
+  const back = [m.cx - (m.tx - m.cx), m.cy - (m.ty - m.cy)];
+  let fallback = null;
+  for (let k = 0; k < 4; k++){
+    const [dx,dy] = DIRS[(k + m.seed) % 4];
+    const nx = m.cx+dx, ny = m.cy+dy;
+    if (!inB(nx,ny) || !openMob(idx(nx,ny))) continue;
+    if (nx === back[0] && ny === back[1]){ fallback = fallback || [nx,ny]; continue; }
+    return [nx,ny];
+  }
+  return fallback;
+}
+function updateMobs(dt){
+  for (const m of S.mobs){
+    m.bob += dt*7; m.sq = Math.max(0, m.sq - dt*6);
+    if (!m.out){ continue; }
+    if (m.prog >= 1){
+      m.cx = m.tx; m.cy = m.ty;                        // arrive first, then reconsider
+      const s = stepDown(m);
+      if (s){ m.tx = s[0]; m.ty = s[1]; m.prog = 0; m.sq = .5; }
+    } else m.prog = Math.min(1, m.prog + m.speed*dt);
+    m.fx = m.cx + (m.tx - m.cx)*m.prog;
+    m.fy = m.cy + (m.ty - m.cy)*m.prog;
+    if (S.hero.invuln <= 0 && Math.hypot(m.fx - S.hero.fx, m.fy - S.hero.fy) < CATCH) caught();
+  }
+}
+
+
+
+
+/* ══════════════ 5 · THE HERO, FOUR WAYS ══════════════ */
+
+/* A and D: follow a BFS path exactly as updateHero() does — straight at the next
+   tile centre, snap on arrival, one springy hop per tile. */
+function walkPath(dt){
+  const h = S.hero;
+  if (!h.path.length){
+    /* A tapped route cannot express "move half a tile": BFS starts from
+       Math.round(fx), so tapping the tile you are nearly on returns an empty path
+       and he simply stops, up to half a tile short. Invisible when you are walking
+       over to chop a tree. Very visible when you are being chased. */
+    const t = h.target;
+    if (t && openHero(idx(t.x, t.y))){
+      const dx = t.x - h.fx, dy = t.y - h.fy, d = Math.hypot(dx,dy), step = HERO_SPEED*dt;
+      if (d > .001){
+        if (d <= step){ h.fx = t.x; h.fy = t.y; h.sq = 1; }
+        else { h.fx += dx/d*step; h.fy += dy/d*step; }
+      }
+    }
+    return;
+  }
+  const c = h.path[0], tx = c % N, ty = (c - tx)/N;
+  if (!openHero(c)){ h.path = []; return; }
+  const dx = tx - h.fx, dy = ty - h.fy, d = Math.hypot(dx,dy), step = HERO_SPEED*dt;
+  if (d <= step){
+    h.fx = tx; h.fy = ty; h.path.shift(); h.sq = 1;
+  } else {
+    h.fx += dx/d*step; h.fy += dy/d*step;
+    if (d > .001) h.face = [Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) : 0,
+                            Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0];
+  }
+}
+// B: free movement, axis by axis so he slides along a wall instead of sticking
+function blocked(fx, fy){
+  for (const [ox,oy] of [[-HERO_R,-HERO_R],[HERO_R,-HERO_R],[-HERO_R,HERO_R],[HERO_R,HERO_R]]){
+    const x = Math.round(fx+ox), y = Math.round(fy+oy);
+    if (!inB(x,y) || !openHero(idx(x,y))) return true;
+  }
+  return false;
+}
+function driveFree(dt){
+  const h = S.hero;
+  let [dx,dy] = h.want;
+  const mag = Math.hypot(dx,dy);
+  if (mag < .18) return;                              // stick deadzone
+  dx /= mag; dy /= mag;
+  const step = HERO_SPEED*dt*Math.min(1, mag);
+  if (!blocked(h.fx + dx*step, h.fy)) h.fx += dx*step;
+  if (!blocked(h.fx, h.fy + dy*step)) h.fy += dy*step;
+  h.face = [Math.abs(dx) > Math.abs(dy) ? Math.sign(dx) : 0,
+            Math.abs(dy) >= Math.abs(dx) ? Math.sign(dy) : 0];
+}
+// C: arcade. He always moves. You only choose the turn, and the turn is buffered.
+function driveTurn(dt){
+  const h = S.hero;
+  const [wx,wy] = h.want, [dx,dy] = h.dir;
+  const atX = Math.abs(h.fx - Math.round(h.fx)), atY = Math.abs(h.fy - Math.round(h.fy));
+  const cx = Math.round(h.fx), cy = Math.round(h.fy);
+  const canGo = (ox,oy) => (ox||oy) && inB(cx+ox, cy+oy) && openHero(idx(cx+ox, cy+oy));
+  if ((wx||wy) && wx === dx && wy === dy){
+    h.want = [0,0];                                   // already going that way: nothing to do.
+  } else if (wx === -dx && wy === -dy && (wx||wy)){   // reversal is instant, as in Pac-Man
+    h.dir = [wx,wy]; h.want = [0,0];
+  } else if ((wx||wy) && atX < .22 && atY < .22 && canGo(wx,wy)){
+    h.fx = cx; h.fy = cy;                             // snap to the junction and turn
+    h.dir = [wx,wy]; h.want = [0,0]; h.sq = .7;
+  }
+  let [ax,ay] = h.dir;
+  if (!ax && !ay) return;
+  const step = HERO_SPEED*dt;
+  const nx = h.fx + ax*step, ny = h.fy + ay*step;
+  // stop dead at a wall, exactly where the tile centre is
+  const ahead = [Math.round(nx + ax*.5), Math.round(ny + ay*.5)];
+  if (!inB(ahead[0],ahead[1]) || !openHero(idx(ahead[0],ahead[1]))){
+    const tx = Math.round(h.fx), ty = Math.round(h.fy);
+    if (Math.abs(nx - tx) > Math.abs(h.fx - tx) || Math.abs(ny - ty) > Math.abs(h.fy - ty)){
+      h.fx = tx; h.fy = ty; h.dir = [0,0]; return;
+    }
+  }
+  h.fx = nx; h.fy = ny;
+  h.face = [ax,ay];
+}
+function updateHero(dt){
+  const h = S.hero;
+  h.invuln = Math.max(0, h.invuln - dt); h.sq = Math.max(0, h.sq - dt*6);
+  h.lastX = h.fx; h.lastY = h.fy;
+  if (S.variant === "A") walkPath(dt);
+  else if (S.variant === "D"){
+    S.repathT -= dt;
+    if (S.hold && S.repathT <= 0){                    // re-aim ten times a second
+      S.repathT = .1;
+      const t = nearestOpen(S.hold.x, S.hold.y);
+      if (t){ const p = bfsPath(Math.round(h.fx), Math.round(h.fy), t.x, t.y, S.dodge);
+              if (p){ h.path = p; h.target = t; } }
+    }
+    walkPath(dt);
+  }
+  else if (S.variant === "B") driveFree(dt);
+  else driveTurn(dt);
+  measureResponse(dt);
+  measurePath(dt);
+}
+
+/* ══════════════ 6 · MEASUREMENT ══════════════
+   Feel is ig-b-dynamix's call. These are the parts of "laggy and imprecise" that are
+   numbers, so the written answer does not have to be an opinion. */
+function command(dx, dy){                             // what the player just asked for
+  const d = Math.hypot(dx,dy) || 1;
+  S.pending = {t:performance.now(), dx:dx/d, dy:dy/d, moved:0, away:0, flagged:false};
+  S.m.inputs++;
+}
+function measureResponse(dt){
+  const p = S.pending; if (!p) return;
+  const h = S.hero, mx = h.fx - h.lastX, my = h.fy - h.lastY;
+  const age = performance.now() - p.t;
+  const along = mx*p.dx + my*p.dy;
+  p.moved += Math.abs(mx) + Math.abs(my);
+  if (along < 0) p.away += -along;
+  if (p.moved > .02 && !p.flagged && age > 140){      // did the first beat go backwards?
+    p.flagged = true;
+    if (p.away > p.moved*.4){ S.m.wrong++; }
+  }
+  const mag = Math.hypot(mx,my);
+  if (mag > .001 && along/mag > .7){                  // he is finally going where you pointed
+    S.m.respSum += age; S.m.respN++;
+    S.m.respWorst = Math.max(S.m.respWorst, age);
+    if (!p.flagged && p.away > .04) S.m.wrong++;
+    S.pending = null;
+  } else if (age > 1400) S.pending = null;            // gave up waiting
+}
+/* The one that matters most for A and D: how much of the time you spend walking a
+   committed route does that route run straight through a monster? BFS does not
+   know monsters exist. */
+function measurePath(dt){
+  if (S.variant !== "A" && S.variant !== "D") return;
+  const h = S.hero; if (!h.path.length) return;
+  S.m.pathT += dt;
+  for (const c of h.path){
+    const x = c % N, y = (c - c % N)/N;
+    for (const m of S.mobs){
+      if (!m.out) continue;
+      if (Math.abs(m.fx - x) + Math.abs(m.fy - y) < .9){ S.m.poisonT += dt; return; }
+    }
+  }
+}
+function tapTo(c){                                    // variant A: the shipped scheme
+  const h = S.hero;
+  command(c.x - h.fx, c.y - h.fy);
+  if (!openHero(idx(c.x,c.y))){ S.m.misses++; say("can't walk there!"); S.pending = null; return; }
+  const p = bfsPath(Math.round(h.fx), Math.round(h.fy), c.x, c.y, S.dodge);
+  if (p){ h.path = p; h.target = c; } else { S.m.misses++; say("can't walk there!"); S.pending = null; }
+}
+
+function caught(){
+  if (S.stress) return;                               // the ramp must not be interrupted
+  S.deaths++;
+  logRun();
+  flash();
+  resetRun();
+}
+function logRun(){
+  const m = S.m;
+  S.runs.unshift({
+    v:S.variant, name:V().name, press:S.press, t:S.t,
+    inputs:m.inputs, ips: S.t > .5 ? m.inputs/S.t : 0,
+    misses:m.misses,
+    resp: m.respN ? m.respSum/m.respN : null,
+    worst: m.respWorst || null,
+    wrong: m.inputs ? m.wrong/m.inputs : 0,
+    poison: m.pathT > .2 ? m.poisonT/m.pathT : null,
+  });
+  S.runs = S.runs.slice(0, 40);
+}
+function resetRun(){
+  const h = S.hero;
+  h.fx = START.x; h.fy = START.y; h.path = []; h.target = null;
+  h.dir = [0,0]; h.want = [0,0]; h.invuln = .9; h.face = [0,-1];
+  S.hold = null; S.pending = null; S.t = 0;
+  S.m = {inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0};
+  resetMobs();
+}
+
+
+
+
+/* ══════════════ 7 · INPUT ══════════════ */
+const cv = document.getElementById("cv");
+const ctx = cv.getContext("2d");
+const sayEl = document.getElementById("say");
+let sayT = 0;
+function say(msg){ sayEl.textContent = msg; sayEl.classList.add("on"); sayT = 1.6; }
+function flash(){
+  const f = document.getElementById("flash");
+  f.classList.add("on"); setTimeout(() => f.classList.remove("on"), 30);
+}
+function cellAt(e){                                   // canvasCell() from index.html
+  const r = cv.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left)/r.width * N);
+  const y = Math.floor((e.clientY - r.top)/r.height * N);
+  return inB(x,y) ? {x,y} : null;
+}
+let stick = null, swipeFrom = null;
+
+cv.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  try { cv.setPointerCapture(e.pointerId); } catch(err){}
+  const c = cellAt(e); if (!c) return;
+  if (S.variant === "A") tapTo(c);
+  else if (S.variant === "D"){ S.hold = c; S.repathT = 0; command(c.x - S.hero.fx, c.y - S.hero.fy); }
+  else if (S.variant === "B"){ stick = {ox:e.clientX, oy:e.clientY, x:e.clientX, y:e.clientY}; }
+  else swipeFrom = {x:e.clientX, y:e.clientY};
+}, {passive:false});
+
+cv.addEventListener("pointermove", e => {
+  e.preventDefault();
+  if (S.variant === "D" && S.hold){ const c = cellAt(e); if (c) S.hold = c; }
+  else if (S.variant === "B" && stick){
+    stick.x = e.clientX; stick.y = e.clientY;
+    const R = 46, dx = (stick.x - stick.ox)/R, dy = (stick.y - stick.oy)/R;
+    const was = S.hero.want;
+    S.hero.want = [Math.max(-1,Math.min(1,dx)), Math.max(-1,Math.min(1,dy))];
+    const turned = Math.hypot(dx,dy) > .18 &&
+      (Math.hypot(was[0],was[1]) < .18 ||
+       (was[0]*dx + was[1]*dy) / (Math.hypot(was[0],was[1])*Math.hypot(dx,dy)) < .7);
+    if (turned) command(dx, dy);
+  }
+  else if (S.variant === "C" && swipeFrom){
+    const dx = e.clientX - swipeFrom.x, dy = e.clientY - swipeFrom.y;
+    if (Math.hypot(dx,dy) > 16){
+      const d = Math.abs(dx) > Math.abs(dy) ? [Math.sign(dx),0] : [0,Math.sign(dy)];
+      S.hero.want = d; command(d[0], d[1]);
+      swipeFrom = {x:e.clientX, y:e.clientY};         // keep dragging to keep turning
+    }
+  }
+}, {passive:false});
+
+const letGo = e => {
+  if (S.variant === "B"){ stick = null; S.hero.want = [0,0]; }
+  if (S.variant === "C") swipeFrom = null;
+  if (S.variant === "D") S.hold = null;               // he keeps going to the last square
+};
+cv.addEventListener("pointerup", letGo);
+cv.addEventListener("pointercancel", letGo);
+
+const KEYDIR = {ArrowLeft:[-1,0], ArrowRight:[1,0], ArrowUp:[0,-1], ArrowDown:[0,1],
+                a:[-1,0], d:[1,0], w:[0,-1], s:[0,1]};
+const held = new Set();
+addEventListener("keydown", e => {
+  const t = e.target;
+  if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+  if (e.key === "[") return cycle(-1);
+  if (e.key === "]") return cycle(1);
+  if ("1234".includes(e.key)) return setVariant(VARIANTS[+e.key - 1].key);
+  if (e.key === "r" || e.key === "R") return resetRun();
+  const drive = S.variant === "B" || S.variant === "C";
+  if (!drive && (e.key === "ArrowLeft" || e.key === "ArrowRight"))
+    return cycle(e.key === "ArrowRight" ? 1 : -1);    // free to cycle where arrows do nothing
+  const d = KEYDIR[e.key]; if (!d) return;
+  e.preventDefault(); held.add(e.key);
+  if (S.variant === "C"){ S.hero.want = d; command(d[0], d[1]); }
+  if (S.variant === "B"){ keysToStick(); command(d[0], d[1]); }
+});
+addEventListener("keyup", e => { held.delete(e.key); if (S.variant === "B") keysToStick(); });
+function keysToStick(){
+  let x = 0, y = 0;
+  for (const k of held){ const d = KEYDIR[k]; if (d){ x += d[0]; y += d[1]; } }
+  S.hero.want = [Math.max(-1,Math.min(1,x)), Math.max(-1,Math.min(1,y))];
+}
+
+/* ══════════════ 8 · STRESS: WHERE DOES CANVAS 2D GIVE OUT? ══════════════ */
+const STRESS_STEP = 1.5, STRESS_ADD = 6, STRESS_CAP = 520;
+function stressSpawn(n){
+  const spots = [];
+  for (let i = 0; i < N*N; i++) if (openMob(i)) spots.push(i);
+  while (S.mobs.length < n){
+    const i = spots[(labRandom()*spots.length)|0];
+    const x = i % N, y = (i - x)/N, k = S.mobs.length % 4, c = CREW[k];
+    S.mobs.push({cx:x, cy:y, tx:x, ty:y, fx:x, fy:y, prog:1, crew:k, col:c.col, name:c.name,
+      speed:c.fast ? press().fast : press().slow, seed:(labRandom()*4)|0,
+      bob:labRandom()*6.28, out:true, sq:0});
+  }
+}
+function stressTick(dt){
+  S.stressT += dt;
+  if (S.stressT >= STRESS_STEP){
+    S.stressT = 0;
+    S.stressN = Math.min(STRESS_CAP, S.stressN + STRESS_ADD);
+    stressSpawn(S.stressN);
+  }
+  const f = fpsNow();
+  for (const th of [55,45,30,20]) if (f && f < th && !S.marks[th]) S.marks[th] = S.mobs.length;
+}
+function fpsNow(){
+  if (S.fps.length < 30) return null;
+  const a = S.fps.slice().sort((x,y) => x - y);
+  return 1 / a[a.length >> 1];
+}
+
+/* ══════════════ 9 · DRAW ══════════════ */
+const PAL = {floor:"#0e1016", wall:"#2e3550", wallHi:"#48547e", gate:"#7b86a8",
+             hero:"#79c6ff", heroHi:"#a9dcff", pupil:"#15161c", shine:"#ffffff",
+             path:"#3d6b8a", target:"#ffd166"};
+function rr(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+let clockAll = 0;
+/* the real face() — two eyes, pupils, a catchlight, a blink, whites when scared.
+   Per-monster, because that is what the Swarm finale wants and what costs. */
+function face(cx, cy, ex, r, look, mood, seed){
+  const blink = ((clockAll + seed*1.7) % 3.4) < .11;
+  const scared = mood === 2, rr2 = r * (scared ? 1.45 : 1);
+  let gx = 0, gy = 0;
+  if (look){ const d = Math.hypot(look[0], look[1]) || 1;
+             gx = look[0]/d*r*.6; gy = look[1]/d*r*.5; }
+  if (blink){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 1.6; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy); ctx.lineTo(cx-ex+r, cy);
+    ctx.moveTo(cx+ex-r, cy); ctx.lineTo(cx+ex+r, cy); ctx.stroke();
+    return;
+  }
+  if (scared){
+    ctx.fillStyle = PAL.shine;
+    ctx.beginPath(); ctx.arc(cx-ex, cy, rr2+1.1, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx+ex, cy, rr2+1.1, 0, 7); ctx.fill();
+  }
+  ctx.fillStyle = PAL.pupil;
+  ctx.beginPath(); ctx.arc(cx-ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.shine;
+  ctx.beginPath(); ctx.arc(cx-ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  if (mood === 3){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy-r*1.9); ctx.lineTo(cx-ex+r, cy-r*1.1);
+    ctx.moveTo(cx+ex+r, cy-r*1.9); ctx.lineTo(cx+ex-r, cy-r*1.1); ctx.stroke();
+  }
+}
+let board = null;                                     // the maze never moves: cache it
+function paintBoard(){
+  board = document.createElement("canvas");
+  board.width = N*TILE*DPR; board.height = N*TILE*DPR;
+  const b = board.getContext("2d");
+  b.setTransform(DPR,0,0,DPR,0,0);
+  b.fillStyle = PAL.floor; b.fillRect(0,0,N*TILE,N*TILE);
+  for (let y = 0; y < N; y++) for (let x = 0; x < N; x++){
+    const c = cell[idx(x,y)];
+    if (c === WALL){
+      // fill the whole tile so neighbouring walls merge into one mass — separate
+      // rounded blocks read as scattered confetti, and the corridors disappear
+      b.fillStyle = PAL.wall;
+      b.fillRect(x*TILE, y*TILE, TILE, TILE);
+      b.fillStyle = PAL.wallHi;                     // a lip only where a corridor meets it
+      const up = y > 0 && cell[idx(x,y-1)] !== WALL;
+      if (up) b.fillRect(x*TILE, y*TILE, TILE, 3);
+      b.fillStyle = "rgba(0,0,0,.30)";
+      if (y < N-1 && cell[idx(x,y+1)] !== WALL) b.fillRect(x*TILE, y*TILE+TILE-2, TILE, 2);
+    } else if (c === GATE){
+      b.strokeStyle = PAL.gate; b.lineWidth = 3; b.setLineDash([5,4]);
+      b.beginPath(); b.moveTo(x*TILE+2, y*TILE+TILE-3); b.lineTo(x*TILE+TILE-2, y*TILE+TILE-3);
+      b.stroke(); b.setLineDash([]);
+    }
+  }
+}
+function drawMob(m){
+  const px = m.fx*TILE + TILE/2, py = m.fy*TILE + TILE/2 + Math.sin(m.bob)*1.3;
+  const sz = TILE*.62*(1 + m.sq*.12), near = Math.hypot(m.fx - S.hero.fx, m.fy - S.hero.fy);
+  ctx.fillStyle = "rgba(0,0,0,.22)";
+  ctx.beginPath(); ctx.ellipse(px, py + sz*.46, sz*.40, sz*.15, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = m.out ? m.col : "#4a4d5c";
+  rr(px - sz/2, py - sz/2, sz, sz, sz*.34); ctx.fill();
+  face(px, py - 1, sz*.19, sz*.115, [S.hero.fx - m.fx, S.hero.fy - m.fy],
+       near < 3.2 ? 3 : 1, m.seed);
+}
+function drawHero(){
+  const h = S.hero;
+  if (h.invuln > 0 && ((clockAll*14)|0) % 2) return;
+  const px = h.fx*TILE + TILE/2, py = h.fy*TILE + TILE/2;
+  const sq = h.sq, sz = TILE*.70;
+  const w = sz*(1 + sq*.16), ht = sz*(1 - sq*.14);
+  ctx.fillStyle = "rgba(0,0,0,.26)";
+  ctx.beginPath(); ctx.ellipse(px, py + sz*.46, sz*.42, sz*.16, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.hero;
+  rr(px - w/2, py - ht/2, w, ht, sz*.28); ctx.fill();
+  ctx.fillStyle = PAL.heroHi; ctx.fillRect(px - w/2 + 3, py - ht/2 + 3, w - 6, 3);
+  const scared = S.mobs.some(m => m.out && Math.hypot(m.fx - h.fx, m.fy - h.fy) < 2.4);
+  face(px, py - 1, sz*.20, sz*.12, h.face, scared ? 2 : 1, 0);
+}
+function render(){
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.drawImage(board, 0, 0, N*TILE, N*TILE);
+  if ((S.variant === "A" || S.variant === "D") && S.hero.path.length){
+    const poison = [];
+    ctx.fillStyle = PAL.path;
+    for (const c of S.hero.path){
+      const x = c % N, y = (c - c % N)/N;
+      const hot = S.mobs.some(m => m.out && Math.abs(m.fx-x)+Math.abs(m.fy-y) < .9);
+      if (hot) poison.push([x,y]);
+      ctx.fillStyle = hot ? "#ff6b6b" : PAL.path;
+      ctx.beginPath(); ctx.arc(x*TILE+TILE/2, y*TILE+TILE/2, hot ? 5 : 3, 0, 7); ctx.fill();
+    }
+    if (S.hero.target){
+      ctx.strokeStyle = PAL.target; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(S.hero.target.x*TILE+TILE/2, S.hero.target.y*TILE+TILE/2,
+                               9 + Math.sin(clockAll*6)*1.5, 0, 7); ctx.stroke();
+    }
+  }
+  for (const m of S.mobs) drawMob(m);
+  drawHero();
+  if (S.variant === "B" && stick){                    // show the stick where the thumb is
+    const r = cv.getBoundingClientRect(), k = (N*TILE)/r.width;
+    const ox = (stick.ox - r.left)*k, oy = (stick.oy - r.top)*k;
+    const kx = (stick.x - r.left)*k, ky = (stick.y - r.top)*k;
+    ctx.strokeStyle = "rgba(255,255,255,.22)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(ox, oy, 46*k, 0, 7); ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.34)";
+    const d = Math.hypot(kx-ox, ky-oy), lim = Math.min(1, 46*k/(d||1));
+    ctx.beginPath(); ctx.arc(ox + (kx-ox)*lim, oy + (ky-oy)*lim, 15*k, 0, 7); ctx.fill();
+  }
+  if (S.stress){
+    ctx.fillStyle = "rgba(0,0,0,.55)"; ctx.fillRect(0, 0, N*TILE, 26);
+    ctx.fillStyle = PAL.target; ctx.font = "600 15px ui-monospace,Menlo,monospace";
+    ctx.textAlign = "center";
+    const f = fpsNow();
+    ctx.fillText(S.mobs.length + " monsters · " + (f ? f.toFixed(0) : "–") + " fps", N*TILE/2, 18);
+  }
+}
+
+
+
+
+/* ══════════════ 10 · THE SWITCHER AND THE READOUT ══════════════
+   State lives in memory, not in the URL. ADR-0005: the preview pane strips query
+   strings from file URLs, so a prototype that depends on ?variant= is a prototype
+   that silently tests the wrong thing. The URL is kept in step for sharing only. */
+const $ = id => document.getElementById(id);
+function setVariant(k){
+  if (S.variant === k) return;
+  if (S.m.inputs > 2 && S.t > 2) logRun();            // don't lose what the last one measured
+  S.variant = k;
+  const h = S.hero;                                   // C needs him on the grid
+  h.fx = Math.round(h.fx); h.fy = Math.round(h.fy);
+  h.path = []; h.target = null; h.dir = [0,0]; h.want = [0,0];
+  stick = null; swipeFrom = null; S.hold = null; S.pending = null;
+  S.t = 0; S.m = {inputs:0, misses:0, respSum:0, respN:0, respWorst:0, wrong:0, poisonT:0, pathT:0};
+  syncBar();
+}
+const cycle = d => setVariant(VARIANTS[(VARIANTS.findIndex(v => v.key === S.variant) + d + 4) % 4].key);
+function syncBar(){
+  const v = V();
+  $("vname").textContent = v.key + " · " + v.name;
+  $("hint").textContent = v.how + (S.variant === "B" || S.variant === "C"
+    ? "  ·  [ ] to switch scheme" : "  ·  ← → to switch scheme");
+  $("tPress").textContent = press().label;
+  $("tDodge").classList.toggle("on", S.dodge);
+  $("tStress").classList.toggle("on", S.stress);
+  try {
+    const u = new URL(location.href);
+    u.searchParams.set("variant", S.variant); u.searchParams.set("press", S.press);
+    history.replaceState(null, "", u);
+  } catch(e){}
+}
+$("prev").onclick = () => cycle(-1);
+$("next").onclick = () => cycle(1);
+$("vname").onclick = () => cycle(1);
+$("tPress").onclick = () => {
+  S.press = PRESS_ORDER[(PRESS_ORDER.indexOf(S.press) + 1) % PRESS_ORDER.length];
+  reSpeed(); syncBar(); say(press().label);
+};
+$("tDodge").onclick = () => { S.dodge = !S.dodge; syncBar();
+  say(S.dodge ? "routes now avoid monsters" : "routes ignore monsters (as shipped)"); };
+$("tStress").onclick = () => {
+  S.stress = !S.stress;
+  if (S.stress){ S.marks = {}; S.stressN = 8; S.stressT = 0; S.mobs = []; stressSpawn(8); S.fps = []; }
+  else { resetRun(); S.marks = {}; }
+  syncBar();
+};
+$("tCopy").onclick = () => copyReport();
+
+const row = (k, v) => '<div class="row"><span>' + k + '</span><b>' + v + '</b></div>';
+const ms  = v => v == null ? "–" : v.toFixed(0) + " ms";
+const pc  = v => v == null ? "–" : (v*100).toFixed(0) + "%";
+function refreshPanel(){
+  const h = S.hero, m = S.m, f = fpsNow();
+  const near = S.mobs.filter(x => x.out)
+    .map(x => Math.hypot(x.fx - h.fx, x.fy - h.fy)).sort((a,b) => a-b)[0];
+  $("live").innerHTML =
+    row("scheme", V().key + " · " + V().name) +
+    row("fps", (f ? f.toFixed(0) : "–") + "  (ai " + S.aiMs.toFixed(2) + " · draw " + S.drawMs.toFixed(2) + " ms)") +
+    row("hero tile", Math.round(h.fx) + "," + Math.round(h.fy) +
+        "   (" + h.fx.toFixed(2) + "," + h.fy.toFixed(2) + ")") +
+    row("monsters loose", S.mobs.filter(x => x.out).length + " / " + S.mobs.length) +
+    row("route length", (S.variant === "A" || S.variant === "D") ? h.path.length + " tiles" : "n/a") +
+    row("nearest monster", near == null ? "–" : near.toFixed(2) + " tiles") +
+    row("alive this run", S.t.toFixed(1) + " s") +
+    row("inputs", m.inputs + (S.t > 1 ? "  (" + (m.inputs/S.t).toFixed(1) + "/s)" : "")) +
+    row("taps on a wall", m.misses) +
+    row("time to obey", ms(m.respN ? m.respSum/m.respN : null) + "  worst " + ms(m.respWorst||null)) +
+    row("first beat went wrong way", m.inputs ? pc(m.wrong/m.inputs) : "–") +
+    row("route ran through a monster", m.pathT > .2 ? pc(m.poisonT/m.pathT) : "–") +
+    row("caught", S.deaths + " times") +
+    row("pressure", press().label + " (slow " + press().slow + " · fast " + press().fast +
+        " vs hero " + HERO_SPEED + ")");
+
+  const rs = S.runs.slice(0, 10);
+  $("runsub").textContent = rs.length ? "" : "— get caught once and a row appears";
+  $("runs").innerHTML = rs.length ? "<tr><th>scheme</th><th>speeds</th><th>alive</th><th>inputs/s</th>" +
+    "<th>wall taps</th><th>obey</th><th>wrong way</th><th>route thru mob</th></tr>" +
+    rs.map(r => "<tr><td>" + r.v + " " + r.name + "</td><td>" + r.press + "</td><td>" + r.t.toFixed(1) + "s</td>" +
+      "<td>" + r.ips.toFixed(1) + "</td><td>" + r.misses + "</td><td>" + ms(r.resp) + "</td>" +
+      "<td>" + pc(r.wrong) + "</td><td>" + (r.poison == null ? "–" : pc(r.poison)) + "</td></tr>").join("") : "";
+
+  const by = {};
+  for (const r of S.runs){
+    const k = r.v + "|" + r.press;
+    (by[k] = by[k] || {v:r.v, name:r.name, press:r.press, n:0, t:0, ips:0, resp:0, respN:0,
+                       wrong:0, poison:0, poisonN:0, misses:0});
+    const a = by[k];
+    a.n++; a.t += r.t; a.ips += r.ips; a.wrong += r.wrong; a.misses += r.misses;
+    if (r.resp != null){ a.resp += r.resp; a.respN++; }
+    if (r.poison != null){ a.poison += r.poison; a.poisonN++; }
+  }
+  const list = Object.values(by).sort((a,b) => b.t/b.n - a.t/a.n);
+  $("agg").innerHTML = list.length ? "<tr><th>scheme</th><th>speeds</th><th>runs</th><th>mean alive</th>" +
+    "<th>inputs/s</th><th>obey</th><th>wrong way</th><th>route thru mob</th></tr>" +
+    list.map(a => "<tr><td>" + a.v + " " + a.name + "</td><td>" + a.press + "</td><td>" + a.n + "</td>" +
+      "<td>" + (a.t/a.n).toFixed(1) + "s</td><td>" + (a.ips/a.n).toFixed(1) + "</td>" +
+      "<td>" + ms(a.respN ? a.resp/a.respN : null) + "</td><td>" + pc(a.wrong/a.n) + "</td>" +
+      "<td>" + (a.poisonN ? pc(a.poison/a.poisonN) : "–") + "</td></tr>").join("") : "";
+
+  const marks = [55,45,30,20].filter(t => S.marks[t]);
+  $("note").textContent = (S.stress
+    ? "stress: " + S.mobs.length + " monsters, ramping +" + STRESS_ADD + " every " + STRESS_STEP + "s. " +
+      (marks.length ? marks.map(t => "under " + t + " fps at " + S.marks[t]).join(" · ") : "still smooth.")
+    : "") +
+    "  device: DPR " + DPR + ", canvas " + (N*TILE*DPR) + "px, " + (navigator.hardwareConcurrency || "?") + " cores.";
+}
+function copyReport(){
+  const L = ["TN-C1 chase-control prototype — measurements",
+    "device: DPR " + DPR + " · canvas " + (N*TILE*DPR) + "px · cores " + (navigator.hardwareConcurrency||"?"),
+    "ua: " + navigator.userAgent, ""];
+  const marks = [55,45,30,20].filter(t => S.marks[t]);
+  if (marks.length) L.push("swarm: " + marks.map(t => "<" + t + "fps at " + S.marks[t] + " monsters").join(", "),
+                           "ai " + S.aiMs.toFixed(2) + "ms/frame · draw " + S.drawMs.toFixed(2) + "ms/frame", "");
+  L.push("runs (newest first):");
+  for (const r of S.runs) L.push("  " + r.v + " " + r.name + " / " + r.press + " · " + r.t.toFixed(1) + "s alive · " +
+    r.ips.toFixed(1) + " inputs/s · " + r.misses + " wall taps · obey " + ms(r.resp) +
+    " · wrong way " + pc(r.wrong) + " · route thru mob " + (r.poison == null ? "–" : pc(r.poison)));
+  const txt = L.join("\n");
+  const done = () => say("measurements copied");
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, () => fallback(txt, done));
+  else fallback(txt, done);
+}
+function fallback(txt, done){
+  const ta = document.createElement("textarea");
+  ta.value = txt; document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch(e){ say("copy failed"); }
+  ta.remove();
+}
+
+/* ══════════════ 11 · BOOT ══════════════ */
+function fit(){
+  const chrome = 150;
+  const side = Math.max(220, Math.min(window.innerWidth - 16, window.innerHeight - chrome, 560));
+  cv.style.width = side + "px"; cv.style.height = side + "px";
+  cv.width = N*TILE*DPR; cv.height = N*TILE*DPR;
+}
+addEventListener("resize", fit);
+let last = null, panelT = 0;
+function frame(ts){
+  if (last == null) last = ts;
+  const dt = Math.min(.05, (ts - last)/1000); last = ts;
+  if (!Workshop.playing){ render(); requestAnimationFrame(frame); return; }
+  Workshop.elapsed += dt;
+  if (Workshop.elapsed >= 45){ finishPlay(); render(); requestAnimationFrame(frame); return; }
+  clockAll += dt; S.t += dt;
+  S.fps.push(dt); if (S.fps.length > 90) S.fps.shift();
+
+  const t0 = performance.now();
+  aiT -= dt;
+  if (aiT <= 0){ aiT = AI_EVERY; rebuildAI(); }
+  updateHero(dt);
+  if (Workshop.chase) updateMobs(dt);
+  if (S.stress) stressTick(dt);
+  else if (Workshop.chase) {
+    S.relT -= dt;
+    if (S.relT <= 0 && S.released < S.mobs.length){    // one more let out of the pen
+      S.relT = RELEASE_EVERY; S.mobs[S.released++].out = true;
+      say("another one is loose");
+    }
+  }
+  const t1 = performance.now();
+  render();
+  const t2 = performance.now();
+  S.aiMs   = S.aiMs*.9 + (t1-t0)*.1;
+  S.drawMs = S.drawMs*.9 + (t2-t1)*.1;
+
+  if (sayT > 0){ sayT -= dt; if (sayT <= 0) sayEl.classList.remove("on"); }
+  panelT -= dt; if (panelT <= 0){ panelT = .17; refreshPanel(); }
+  requestAnimationFrame(frame);
+}
+paintBoard(); fit(); resetMobs(); resetRun(); rebuildAI(); syncBar();
+S.hero.invuln = 1.4;
+requestAnimationFrame(frame);
+
+
+</script>
+<script>
+const el=id=>document.getElementById(id);
+const BrainRules={
+ remember(target,cache,now,delay){return cache&&now<cache.until?cache:{target:{x:target.x,y:target.y},until:now+delay};},
+ turn(best,previous,choices,roll,pick){
+  const forward=choices.filter(p=>!previous||p[0]!==previous[0]||p[1]!==previous[1]);
+  const alternatives=forward.filter(p=>!best||p[0]!==best[0]||p[1]!==best[1]);
+  if(!best||forward.length<2||!alternatives.length||roll>=1/3)return {next:best,mistake:false};
+  return {next:alternatives[Math.min(alternatives.length-1,Math.floor(pick*alternatives.length))],mistake:true};
+ }
+};
+const Brain={mode:'late',targets:{},changes:0,waits:0};
+const brainNames={clever:'Current clever monsters',late:'Notices turns later',wrong:'Sometimes takes a wrong turn'};
+const baselineAim=aimFor;
+aimFor=function(k){
+ const actual=baselineAim(k);
+ if(Brain.mode!=='late')return actual;
+ const before=Brain.targets[k];Brain.targets[k]=BrainRules.remember(actual,before,clockAll,.8);
+ if(before===Brain.targets[k])Brain.waits++;
+ return Brain.targets[k].target;
+};
+const baselineStep=stepDown;
+stepDown=function(m){
+ const best=baselineStep(m);let answer={next:best,mistake:false};
+ if(Brain.mode==='wrong'){
+  const choices=DIRS.map(([dx,dy])=>[m.cx+dx,m.cy+dy]).filter(([x,y])=>inB(x,y)&&openMob(idx(x,y)));
+  answer=BrainRules.turn(best,m.labPrevious,choices,labRandom(),labRandom());
+ }
+ m.labPrevious=[m.cx,m.cy];if(answer.mistake)Brain.changes++;
+ return answer.next;
+};
+const baselineResetMobs=resetMobs;
+resetMobs=function(){labSeed=1234567;Brain.targets={};baselineResetMobs();};
+function resetMaze(){
+ PEN.length=0;
+ NETHER_ONE.forEach((r,y)=>[...r].forEach((c,x)=>{cell[idx(x,y)]=c==='#'?WALL:c==='o'?GATE:FLOOR;if(c==='M')PEN.push({x,y});if(c==='H')START={x,y};}));
+ S.variant='D';S.press='chase';S.dodge=true;S.stress=false;S.deaths=0;S.runs=[];S.fps=[];held.clear();stick=null;swipeFrom=null;
+ Brain.targets={};Brain.changes=0;Brain.waits=0;resetRun();rebuildAI();paintBoard();syncBar();
+ if(!Workshop.chase)for(const m of S.mobs)m.out=false;
+}
+function finishPlay(){
+ if(!Workshop.started)return;
+ logRun();Workshop.sessions.push({map:'Nether 1',brain:Brain.mode,brainName:brainNames[Brain.mode],mode:Workshop.chase?'chase':'explore',seconds:+Workshop.elapsed.toFixed(1),catches:S.deaths,flags:Workshop.visited.slice(),changedTurns:Brain.changes,heldTargetUses:Brain.waits,runs:S.runs.map(r=>({...r})),rows:NETHER_ONE.slice()});
+ Workshop.started=false;Workshop.playing=false;S.hold=null;S.hero.path=[];S.hero.target=null;S.pending=null;held.clear();stick=null;updateState();
+}
+function chooseBrain(mode){
+ if(Workshop.started)finishPlay();Brain.mode=mode;Workshop.elapsed=0;Workshop.visited=[];resetMaze();updateState();
+}
+function startPlay(chase){
+ if(Workshop.started)finishPlay();Workshop.chase=chase;Workshop.elapsed=0;Workshop.visited=[];resetMaze();Workshop.started=true;Workshop.playing=true;last=null;updateState();
+}
+function updateState(){
+ const mode=Workshop.playing?(Workshop.chase?'Chasing':'Exploring'):'Ready';
+ const text=`Nether 1 · ${brainNames[Brain.mode]} · ${mode} · ${Math.floor(Workshop.elapsed)}/45 seconds · ${S.deaths} catches · flags ${Workshop.visited.join(', ')||'none yet'}`;
+ if(el('state').textContent!==text)el('state').textContent=text;
+ el('stop').disabled=!Workshop.playing;
+ for(const b of document.querySelectorAll('[data-brain]'))b.setAttribute('aria-pressed',b.dataset.brain===Brain.mode);
+ el('sessionList').textContent=Workshop.sessions.length?Workshop.sessions.map(s=>`${s.brainName}: ${s.mode}, ${s.seconds}s, ${s.catches} catches, flags ${s.flags.join(', ')||'none'}`).join('\n'):'Your comparisons will appear here.';
+}
+const originalRefresh=refreshPanel;refreshPanel=function(){originalRefresh();updateState();};
+const originalRender=render;render=function(){
+ originalRender();
+ for(const [i,[x,y]]of MazeLab.flags.entries()){
+  ctx.strokeStyle='#f5c56b';ctx.lineWidth=2;ctx.strokeRect(x*TILE+7,y*TILE+7,18,18);ctx.fillStyle='#f5c56b';ctx.font='bold 12px system-ui';ctx.fillText(String(i+1),x*TILE+11,y*TILE+21);
+  if(Workshop.playing&&Math.hypot(S.hero.fx-x,S.hero.fy-y)<.5&&!Workshop.visited.includes(i+1))Workshop.visited.push(i+1);
+ }
+};
+fit=function(){const side=Math.max(180,Math.min(560,el('stage').parentElement.clientWidth||window.innerWidth-64));cv.style.width=side+'px';cv.style.height=side+'px';cv.width=N*TILE*DPR;cv.height=N*TILE*DPR;};
+addEventListener('resize',fit);
+cv.addEventListener('pointerdown',e=>{if(!Workshop.playing){e.preventDefault();e.stopImmediatePropagation();}},{capture:true,passive:false});
+addEventListener('keydown',e=>{
+ if(e.target?.matches('input,textarea,select')||e.target?.isContentEditable){e.stopImmediatePropagation();return;}
+ if(e.key==='r'||e.key==='R'){e.preventDefault();e.stopImmediatePropagation();startPlay(Workshop.chase);return;}
+ if('1234[]'.includes(e.key)||e.key.startsWith('Arrow')){e.preventDefault();e.stopImmediatePropagation();}
+},{capture:true});
+for(const b of document.querySelectorAll('[data-brain]'))b.onclick=()=>chooseBrain(b.dataset.brain);
+el('explore').onclick=()=>startPlay(false);el('play').onclick=()=>startPlay(true);el('stop').onclick=finishPlay;
+function guide(mode){
+ chooseBrain(mode);
+ el('guideText').textContent=mode==='late'?'Turn at a junction. Do they keep looking where you were?':'Watch a junction. Can you spot a monster taking another path?';
+ el('guideSteps').innerHTML='<button id="gExplore">1. Explore Nether 1</button><button id="gCandidate">2. Try this sillier version</button><button id="gClever">3. Compare the current clever ones</button>';
+ el('gExplore').onclick=()=>startPlay(false);el('gCandidate').onclick=()=>{chooseBrain(mode);startPlay(true);};el('gClever').onclick=()=>{chooseBrain('clever');startPlay(true);};
+}
+el('guideLate').onclick=()=>guide('late');el('guideWrong').onclick=()=>guide('wrong');
+let retryChanged=false;el('retryChoice').onchange=()=>{retryChanged=true;};
+function designNotes(){
+ const L=['NETHER 1 — MONSTER COMPARISON','Prototype comparison, not final game balance.','Exact designer maze held constant; D + dodge on; hero 4.6, ordinary monster 3.68, fast monster 4.30; 8 total, 4 initially loose, release every 3 game seconds.','Late: aim targets held for 0.8 game seconds, applied at normal AI ticks. Dodge updates remain unchanged.','Wrong turn: one-in-three chance of a non-reversing alternative at eligible junctions. Current clever behavior otherwise.','Faces and angry eyebrows unchanged.','No harder-on-death ramp in this comparison. Catch returns to the start as in the earlier workshop.','', 'Designer prefers: '+(el('favourite').value||'undecided'),'I noticed: '+(el('noticed').value||'[open]'),'My next change: '+(el('nextChange').value||'[open]'),'','Replay idea from first notes: a slightly different maze, a little harder on death or replay. Still to be reconciled with the full Nether attempt/lives rules.','Retry setting: '+(el('retryChoice').value||'undecided')+(retryChanged?' (selected this round)':' (carried from first notes; not a new answer)'),'Replay explanation: '+(el('retryReason').value||'[open]'),'','Sessions (flags accumulate across catches in each session):',...Workshop.sessions.map(s=>`${s.brainName} / ${s.mode}: ${s.seconds}s, ${s.catches} catches, flags ${s.flags.join(', ')||'none'}`),'','NETHER 1 GRID',NETHER_ONE.join('\n'),'','SESSION DETAILS',JSON.stringify(Workshop.sessions,null,2)];
+ if(Workshop.playing)L.push('An unfinished session is playing. Stop it before saving full results.');
+ return L.join('\n');
+}
+el('showNotes').onclick=()=>{el('report').value=designNotes();el('saveStatus').textContent='Notes ready below. Copy or download before closing.';};
+el('copyNotes').onclick=async()=>{const text=designNotes();el('report').value=text;let copied=false;if(navigator.clipboard){try{await navigator.clipboard.writeText(text);copied=true;}catch{}}if(!copied){el('report').focus();el('report').select();try{copied=document.execCommand('copy');}catch{}}el('saveStatus').textContent=copied?'Copied. Verify the pasted notes.':'Select the report and copy manually, or download it.';};
+el('downloadNotes').onclick=()=>{const blob=new Blob([designNotes()],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='Nether 1 monster comparison.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);el('saveStatus').textContent='Download requested. Check your downloads before closing.';};
+resetMaze();fit();updateState();
+
+</script></body></html>
