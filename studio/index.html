@@ -188,7 +188,18 @@ body.focus-mode .status-line{margin-bottom:0}
 @media(max-width:1050px){.lab{padding-left:20px;padding-right:20px}.lab-grid{gap:14px;grid-template-columns:minmax(0,1.35fr) minmax(290px,1fr)}.arena{padding:14px}.hud>div{padding:8px 7px;gap:4px}.tool-actions .button{font-size:9px;gap:3px}.arena-top p{font-size:10px}}
 @media(max-width:850px){.lab{max-width:690px}.lab-grid{grid-template-columns:minmax(0,1fr);gap:16px}.below-game{grid-column:auto;grid-row:auto}.intro-note{display:none}.lab-grid>aside{order:1}.below-game{order:2}.designer-notes{grid-template-columns:1fr;gap:20px}.notes-intro>p:last-child br{display:none}.arena{padding:16px}.tool-actions .button{font-size:11px}.hud>div{padding:8px 11px}.lab-tools{gap:12px}}
 @media(max-width:480px){.lab{padding:13px 12px 24px}.masthead{padding-bottom:12px;gap:10px}.brand{gap:9px;font-size:8px;letter-spacing:.16em}.brand-sub{font-size:7px}.brand-mark{width:30px;height:30px;font-size:21px;border-radius:9px}.brand-mark span{font-size:9px;padding-bottom:5px}.sketch-badge{font-size:7px;letter-spacing:.1em;gap:4px}.intro{padding:14px 1px 15px}.intro .eyebrow{font-size:8px;margin-bottom:4px}h1{font-size:1.8rem}.arena{padding:11px;border-radius:18px}.arena-top{margin-bottom:10px}.arena-top h2{font-size:16px}.arena-top p{font-size:9px;max-width:235px;line-height:1.45}.phase{font-size:9px;padding:4px 8px}.hud{gap:5px;margin-bottom:9px}.hud>div{padding:6px 7px;gap:4px;border-radius:7px}.hud-label{font-size:8px;letter-spacing:.04em}.hud strong{font-size:13px}.relic-symbol{font-size:12px}.catch-symbol{font-size:14px}.time-symbol{font-size:13px}#boardWrap{border-radius:10px;box-shadow:0 0 0 3px #0e151d55}.board-overlay{padding:18px}.overlay-card{padding:18px 15px;max-width:260px;border-radius:16px}.overlay-card .eyebrow{font-size:8px}.overlay-card h2{font-size:1.4rem}.overlay-card>p:not(.eyebrow){font-size:11px;line-height:1.5;margin:9px 0 15px}.portal-art{width:35px;height:35px;margin-bottom:12px}.portal-art:before{inset:5px}.portal-art:after{inset:10px}.play-controls{padding-top:12px}.main-actions{gap:7px}.button{font-size:11px;padding:10px 12px}.tool-actions{gap:5px;margin-top:7px}.tool-actions .button{font-size:10px;gap:4px;padding:5px 3px;min-height:44px;flex-direction:column}.tool-actions .button>span{font-size:13px;line-height:1}.status-line{font-size:12px;margin:10px 1px}.recipe-strip{padding:10px 11px;gap:9px}.recipe-strip strong{font-size:12px}.recipe-strip p{font-size:10px}.mini-label{font-size:7px}.small-note{font-size:10px}.lab-grid{gap:14px}.tool-panel{border-radius:16px}section.tool-panel{padding:16px}.section-heading h2,.section-heading strong{font-size:14px}.section-heading p,.section-heading small{font-size:12px}.preset{padding:10px;min-height:65px;grid-template-columns:38px minmax(0,1fr) 13px}.preset strong{font-size:13px}.preset small{font-size:12px;line-height:1.45}.presets{margin-top:14px}.preset-panel>.small-note{margin-top:10px}summary{padding:15px 16px;min-height:65px}.drawer-content{padding:16px}.field-pair{gap:10px}.field{font-size:12px}input:not([type=checkbox]):not([type=range]),select,textarea{font-size:16px;padding:10px 9px}.field-pair select{font-size:16px}.slider-field label{font-size:11px}.comparison-panel{padding:16px;border-radius:16px}.comparison-actions{gap:6px}.comparison-actions .button{font-size:10px;padding:10px}.designer-notes{margin-top:24px;padding-top:24px;gap:18px}.notes-intro h2{font-size:1.6rem}.notes-intro>p:last-child{font-size:11px;margin-top:7px}.notes-fields>.field-pair:nth-child(2){grid-template-columns:1fr}.notes-fields textarea{font-size:16px;min-height:79px}.save-panel{padding:17px;margin-top:20px;border-radius:16px}.save-heading h2{font-size:17px}.save-heading p{font-size:11px}.save-actions{gap:7px}.save-actions .button{font-size:11px}.save-panel>.save-actions .primary{flex-grow:1}.save-panel .notes-report{font-size:11px}.lab-footer{font-size:9px;gap:12px;padding-top:21px}.lab-footer>div{gap:15px}.lab-footer>p{font-size:9px}.draft-details>summary{font-size:10px}body.focus-mode .lab{padding:6px}body.focus-mode .arena{padding:9px}body.focus-mode #boardWrap{max-width:min(100%,var(--board-max,600px))}}
-@media(max-height:520px) and (orientation:landscape){body.focus-mode .arena{position:relative;max-width:960px;min-height:calc(100dvh - 20px);padding-right:250px}body.focus-mode #boardWrap{max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}body.focus-mode .play-controls{position:absolute;width:220px;right:15px;top:65px}body.focus-mode .main-actions{grid-template-columns:1fr}body.focus-mode .tool-actions{grid-template-columns:1fr 1fr}body.focus-mode .status-line{position:absolute;width:220px;right:15px;top:250px}body.focus-mode .hud{max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}body.focus-mode .arena-top h2{font-size:14px}}
+@media(max-height:520px) and (orientation:landscape){
+  body.focus-mode .arena{display:grid;grid-template-columns:minmax(0,1fr) 220px;column-gap:20px;align-items:start;max-width:960px;min-height:calc(100dvh - 20px);padding:12px}
+  body.focus-mode .arena-top{grid-column:1;grid-row:1}
+  body.focus-mode .hud{grid-column:1;grid-row:2;width:100%;max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}
+  body.focus-mode #boardWrap{grid-column:1;grid-row:3;max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}
+  body.focus-mode .interaction-wrap{grid-column:2;grid-row:1 / span 3;align-self:start;width:220px;margin-top:53px;min-width:0}
+  body.focus-mode .play-controls{position:static;width:100%;padding-top:0}
+  body.focus-mode .main-actions{grid-template-columns:1fr}
+  body.focus-mode .tool-actions{grid-template-columns:1fr 1fr}
+  body.focus-mode .status-line{position:static;width:100%;margin:12px 0 0}
+  body.focus-mode .arena-top h2{font-size:14px}
+}
 @media(max-height:520px) and (orientation:landscape){.board-overlay{padding:10px}.overlay-card{padding:12px;max-width:265px}.overlay-card>.portal-art,.overlay-card>.eyebrow{display:none}.overlay-card h2{font-size:18px;line-height:1.2}.overlay-card>p:not(.eyebrow){font-size:11px;line-height:1.4;margin:7px 0 11px}.overlay-card .button{min-height:40px}}
 @media(max-width:850px){
   .button,.tool-actions .button,.comparison-actions .button,.save-actions .button,.draft-content .button{font-size:12px}
@@ -243,16 +254,18 @@ body.focus-mode .status-line{margin-bottom:0}
             </div>
           </div>
         </div>
-        <div class="play-controls">
-          <div class="main-actions"><button id="play" class="button primary"><span aria-hidden="true">▶</span> Play this round</button><button id="explore" class="button secondary">Explore safely</button></div>
-          <div class="tool-actions">
-            <button id="pause" class="button quiet" disabled><span aria-hidden="true">Ⅱ</span> Pause</button>
-            <button id="restart" class="button quiet"><span aria-hidden="true">↻</span> New round</button>
-            <button id="focusMode" class="button quiet" aria-pressed="false"><span aria-hidden="true">⛶</span> Bigger maze</button>
-            <button id="sound" class="button quiet" aria-pressed="false"><span aria-hidden="true">♪</span> Sound off</button>
+        <div class="interaction-wrap">
+          <div class="play-controls">
+            <div class="main-actions"><button id="play" class="button primary"><span aria-hidden="true">▶</span> Play this round</button><button id="explore" class="button secondary">Explore safely</button></div>
+            <div class="tool-actions">
+              <button id="pause" class="button quiet" disabled><span aria-hidden="true">Ⅱ</span> Pause</button>
+              <button id="restart" class="button quiet"><span aria-hidden="true">↻</span> New round</button>
+              <button id="focusMode" class="button quiet" aria-pressed="false"><span aria-hidden="true">⛶</span> Bigger maze</button>
+              <button id="sound" class="button quiet" aria-pressed="false"><span aria-hidden="true">♪</span> Sound off</button>
+            </div>
           </div>
+          <p id="statusText" class="status-line" role="status">Hold and drag to move. Dodge is on. You can pause whenever you like.</p>
         </div>
-        <p id="statusText" class="status-line" role="status">Hold and drag to move. Dodge is on. You can pause whenever you like.</p>
         <p id="keyboardHint" class="visually-hidden">Use arrow keys or WASD to move. Press Escape to pause. Press Tab to leave the maze and reach the controls.</p>
         <div class="recipe-strip"><span class="recipe-dot" aria-hidden="true"></span><div><span class="mini-label">YOUR CURRENT IDEA</span><strong id="recipeName">Corner tricksters</strong><p id="recipeSummary">Turn a corner. Give them the slip.</p></div></div>
         <p id="liveSettingsNote" class="small-note">Choose an idea below, then play to see how it feels.</p>
@@ -883,6 +896,8 @@ function face(cx, cy, ex, r, look, mood, seed){
   });
   addEventListener('blur',()=>pause('Paused while you were away. Resume when you are ready.'));
   document.addEventListener('visibilitychange',()=>{if(document.hidden)pause('Paused while you were away. Resume when you are ready.');});
+  document.addEventListener('focusin',e=>{if(e.target.closest('input,select,textarea'))pause('Paused while you design. Resume when you are ready.');});
+  document.addEventListener('toggle',e=>{if(e.target.tagName==='DETAILS'&&e.target.open)pause('Paused while you explore your choices. Resume when you are ready.');},true);
   $('play').onclick=()=>launch();
   $('explore').onclick=()=>launch('explore');
   $('restart').onclick=()=>launch(game.state.settings.mode);
@@ -894,7 +909,7 @@ function face(cx, cy, ex, r, look, mood, seed){
   });
   for(const id of Object.values(IDS))$(id).addEventListener('input',()=>{chosenPreset='custom';updateSettings();});
   for(const id of ['mapPolicy','ramp'])$(id).addEventListener('change',updateSettings);
-  $('pinA').onclick=()=>{anchorA=clone(recipe);anchorA.mode='chase';compare();announce('A saved: the rules currently on the board. Change one thing for B.');};
+  $('pinA').onclick=()=>{pause('Paused for your comparison.');anchorA=clone(recipe);anchorA.mode='chase';compare();announce('A saved: the rules currently on the board. Change one thing for B.');};
   $('playA').onclick=()=>{if(anchorA)launch('chase',anchorA,'A');};
   $('playB').onclick=()=>{if(anchorA)launch('chase',prepare('chase',true),'B');};
   $('focusMode').onclick=()=>{const on=document.body.classList.toggle('focus-mode');$('focusMode').setAttribute('aria-pressed',String(on));setText('focusMode',on?'Show design tools':'Focus on play');fitBoard();};
