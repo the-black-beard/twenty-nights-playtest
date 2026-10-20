@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111820">
+  <title>Nether 1 · Your game lab</title>
+  <style>:root{color-scheme:dark;--bg:#111820;--panel:#19232d;--panel-high:#202d38;--line:#354552;--ink:#f7f4e8;--muted:#afbec6;--mint:#a6e5cb;--gold:#f2c568;--coral:#efa88e;--lilac:#bcaceb;--blue:#7cc6ee;--radius:20px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-synthesis:none}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;color:var(--ink);background:radial-gradient(ellipse at 12% 0,rgba(55,97,89,.2),transparent 36rem),radial-gradient(ellipse at 94% 20%,rgba(85,67,108,.13),transparent 30rem),var(--bg);line-height:1.45}
+button,input,select,textarea{font:inherit}
+button,a,input,select,textarea,summary{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer}
+button:disabled{cursor:default;opacity:.4}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:4px}
+button:active:not(:disabled){transform:translateY(1px)}
+[hidden]{display:none!important}
+.visually-hidden{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(1.8rem,3.6vw,3rem);line-height:1.05;letter-spacing:-.055em;font-weight:780}
+h2{font-size:1.2rem;letter-spacing:-.025em;line-height:1.25;font-weight:720}
+a{color:var(--mint);text-decoration-thickness:1px;text-underline-offset:4px}
+button{transition:background .15s,border-color .15s,box-shadow .15s}
+.lab{max-width:1180px;margin:0 auto;padding:24px 28px 30px}
+.masthead{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;font-size:10px;font-weight:800;letter-spacing:.18em;line-height:1.5}
+.brand-sub{display:block;color:var(--muted);font-size:9px;font-weight:650;letter-spacing:.21em}
+.brand-mark{display:flex;align-items:center;justify-content:center;position:relative;width:35px;height:35px;background:var(--mint);color:#1a3029;border-radius:10px;font-size:24px;line-height:1;letter-spacing:-.1em;font-weight:900;box-shadow:inset 0 -3px rgba(0,0,0,.15)}
+.brand-mark span{font-size:11px;align-self:flex-end;padding-bottom:6px}
+.sketch-badge{font-size:9px;font-weight:700;letter-spacing:.16em;color:var(--muted);display:flex;gap:7px;align-items:center}
+.sketch-badge>span{width:5px;height:5px;border-radius:50%;background:var(--mint)}
+.intro{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;padding:23px 0}
+.eyebrow{font-size:9px;letter-spacing:.2em;line-height:1.6;font-weight:800;color:var(--mint);margin-bottom:6px}
+.intro-note{font-size:12px;color:var(--muted);line-height:1.65}
+.lab-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);gap:20px;align-items:start}
+.arena{background:linear-gradient(145deg,#202c37,#18232c);border:1px solid #3b4b55;border-radius:24px;padding:19px;box-shadow:0 16px 45px #0002;min-width:0}
+.arena-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:13px}
+.arena-top h2{font-size:1.3rem}
+.arena-top p{font-size:11px;color:var(--muted);margin-top:4px}
+.arena-top p strong{font-weight:600;color:#d2dde0}
+.phase{white-space:nowrap;padding:5px 10px;border:1px solid #4b635d;border-radius:100px;font-size:10px;color:var(--mint);background:#a6e5cb08}
+.hud{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:11px}
+.hud>div{display:flex;gap:6px;align-items:center;background:#101a22;border:1px solid #30404b;border-radius:9px;padding:8px 10px}
+.hud strong{margin-left:auto;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hud-label{font-size:8px;color:var(--muted);letter-spacing:.11em;font-weight:700}
+.relic-symbol{font-size:14px;color:var(--gold)}
+.catch-symbol{font-size:17px;color:var(--coral);line-height:1}
+.time-symbol{font-size:15px;color:var(--blue);line-height:1}
+#boardWrap{position:relative;width:100%;max-width:min(600px,var(--board-max,600px));margin:auto;border:1px solid #405466;border-radius:14px;overflow:hidden;background:#0e151d;line-height:0;box-shadow:0 0 0 5px #0e151d55}
+#game{display:block;width:100%;height:auto;aspect-ratio:1;max-width:100%;touch-action:none;user-select:none;-webkit-user-select:none}
+#game:focus-visible{outline:3px solid var(--blue);outline-offset:-4px}
+#boardWrap:has(#game:focus-visible){border-color:var(--blue);box-shadow:0 0 0 3px #7cc6ee33}
+.board-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;line-height:1.4;background:linear-gradient(0deg,#0b141bd6,#0b141b9e);backdrop-filter:blur(2px)}
+.overlay-card{padding:24px 20px;text-align:center;max-width:320px;border:1px solid #56706c99;border-radius:20px;background:#15242cf5;box-shadow:0 8px 60px #0006}
+.overlay-card h2{font-size:clamp(1.35rem,3.8vw,1.85rem);letter-spacing:-.045em}
+.overlay-card>p:not(.eyebrow){font-size:12px;color:#c5d2d7;margin:11px 0 18px;line-height:1.6}
+.overlay-card .button{min-width:165px}
+.portal-art{position:relative;display:block;width:46px;height:46px;margin:0 auto 15px;border:2px solid var(--blue);border-radius:50%;box-shadow:0 0 0 5px #7cc6ee12,0 0 20px #7cc6ee20}
+.portal-art:before,.portal-art:after{content:"";position:absolute;inset:7px;border:1px solid #7cc6ee88;border-radius:50%}
+.portal-art:after{inset:14px;border-color:#7cc6ee55;background:#7cc6ee22}
+.portal-art i{position:absolute;width:8px;height:8px;background:var(--gold);transform:rotate(45deg);right:-6px;top:1px;border:2px solid #15242c}
+.play-controls{padding-top:16px}
+.main-actions{display:grid;grid-template-columns:1.4fr 1fr;gap:8px}
+.button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 15px;border:1px solid transparent;border-radius:10px;font-size:12px;font-weight:700;text-decoration:none;line-height:1.2;letter-spacing:-.01em}
+.primary{background:var(--mint);color:#152c26;border-color:var(--mint);box-shadow:0 2px 0 #639e86}
+.primary:hover:not(:disabled){background:#bff1db;border-color:#bff1db}
+.secondary{color:var(--ink);background:#2a3945;border-color:#4e626f}
+.secondary:hover:not(:disabled){background:#344854}
+.quiet{color:var(--muted);border-color:#364955;background:transparent}
+.quiet:hover:not(:disabled),.quiet[aria-pressed=true]{background:#293d47;color:var(--ink);border-color:#68888f}
+.tool-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+.tool-actions .button{padding:7px 4px;min-height:44px;font-size:10px;gap:5px}
+.tool-actions .button>span{font-size:14px}
+.status-line{font-size:11px;line-height:1.5;color:#d4e1e4;margin:13px 0 12px;min-height:17px}
+.recipe-strip{display:flex;align-items:flex-start;gap:10px;padding:12px 13px;border:1px solid #394c56;border-radius:12px;background:#111d25}
+.recipe-dot{width:8px;height:8px;border-radius:3px;background:var(--mint);flex-shrink:0;margin-top:5px;box-shadow:0 0 0 4px #a6e5cb0c}
+.recipe-strip strong{display:block;font-size:13px;margin:2px 0}
+.recipe-strip p{font-size:11px;color:var(--muted)}
+.mini-label{font-size:8px;letter-spacing:.15em;font-weight:700;color:#8ca2ad}
+.small-note{color:var(--muted);font-size:11px;line-height:1.6;margin-top:12px}
+.arena>.small-note{margin:9px 2px 0}
+.lab-tools{display:flex;flex-direction:column;gap:12px;min-width:0}
+.tool-panel{background:#19242ddd;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+section.tool-panel{padding:18px}
+.section-heading{display:flex;align-items:center;gap:11px;min-width:0}
+.section-heading h2,.section-heading strong{font-size:14px;font-weight:720;letter-spacing:-.02em;line-height:1.25}
+.section-heading p,.section-heading small{display:block;font-size:11px;color:var(--muted);font-weight:400;line-height:1.5;margin-top:4px}
+.step-number{display:inline-flex;width:29px;height:29px;flex-shrink:0;align-items:center;justify-content:center;border:1px solid #3d5658;border-radius:9px;background:#203330;color:var(--mint);font:700 10px ui-monospace,SFMono-Regular,Menlo,monospace}
+.presets{display:grid;gap:8px;margin-top:16px}
+.preset{display:grid;grid-template-columns:40px minmax(0,1fr) 12px;align-items:center;gap:10px;text-align:left;width:100%;padding:11px;color:var(--ink);border:1px solid #3b4d58;background:#202e39;border-radius:12px;min-height:66px}
+.preset:hover{border-color:#88ae9e;background:#273b42}
+.preset[aria-pressed=true]{border-color:var(--mint);box-shadow:inset 3px 0 var(--mint);background:#223b37}
+.preset strong{display:block;font-size:12px;font-weight:700}
+.preset small{display:block;font-size:10px;line-height:1.5;color:var(--muted);margin-top:3px}
+.preset-arrow{font-size:18px;color:#79968c}
+.preset[aria-pressed=true] .preset-arrow{color:var(--mint)}
+.monster-token{display:block;width:36px;height:36px;position:relative;border-radius:12px 12px 10px 10px;background:var(--mint);box-shadow:inset 0 -5px #0002,0 4px 0 #0002}
+.monster-token:before,.monster-token:after{content:"";position:absolute;top:13px;width:5px;height:7px;background:#20302f;border-radius:50%}
+.monster-token:before{left:9px}
+.monster-token:after{right:9px}
+.monster-token i:before,.monster-token i:after{content:"";position:absolute;top:8px;width:9px;height:3px;background:#263331;border-radius:4px}
+.monster-token i:before{left:6px;transform:rotate(18deg)}
+.monster-token i:after{right:6px;transform:rotate(-18deg)}
+.monster-token b{position:absolute;left:14px;bottom:7px;width:8px;height:3px;border-bottom:2px solid #263331;border-radius:0 0 5px 5px}
+.monster-token.peach{background:var(--coral);transform:rotate(-5deg)}
+.monster-token.peach:after{height:4px;top:15px}
+.monster-token.peach b{left:13px;width:11px;height:5px}
+.monster-token.lilac{background:var(--lilac)}
+.monster-token.lilac i:before{transform:rotate(27deg)}
+.monster-token.lilac i:after{transform:rotate(-27deg)}
+summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;min-height:70px;padding:17px 18px}
+summary::-webkit-details-marker{display:none}
+.chevron{display:inline-flex;align-items:center;justify-content:center;color:var(--mint);width:22px;height:22px;flex-shrink:0;font-size:20px;font-weight:300}
+details[open]>summary .chevron{transform:rotate(45deg)}
+details[open]>summary{border-bottom:1px solid var(--line)}
+.drawer-content{padding:17px 18px 20px}
+.field{display:flex;flex-direction:column;gap:7px;font-size:11px;color:#dce5e7;font-weight:600;min-width:0}
+.field+.field{margin-top:14px}
+input:not([type=checkbox]):not([type=range]),select,textarea{width:100%;min-width:0;min-height:44px;border:1px solid #4d626e;border-radius:8px;background:#101b24;color:var(--ink);padding:10px 11px;font-size:12px;font-weight:450}
+textarea{resize:vertical;line-height:1.55}
+textarea::placeholder{color:#849aa5}
+select{cursor:pointer;padding-right:22px}
+.field-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field-pair>.field{margin:0}
+.drawer-content>.field-pair{margin-top:19px}
+.slider-field{margin-top:20px}
+.slider-field:has(input:disabled){opacity:.48}
+.slider-field label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;font-weight:600;color:#dce5e7}
+output{font-size:11px;color:var(--mint);font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;margin:7px 0 1px;height:24px;accent-color:var(--mint);cursor:pointer}
+.range-ends{display:flex;justify-content:space-between;gap:15px;color:#9cb1bc;font-size:9px;line-height:1.4}
+.check-field{display:flex;align-items:center;gap:10px;min-height:48px;margin:17px 0}
+input[type=checkbox]{accent-color:var(--mint);width:20px;height:20px;flex-shrink:0;cursor:pointer}
+.check-field strong{display:block;font-size:12px;font-weight:600}
+.check-field small{display:block;color:var(--muted);font-size:10px;margin-top:2px}
+.full-width{width:100%}
+.callout{font-size:11px;line-height:1.65;color:#cfddd9;border-left:2px solid #6eab90;background:#a6e5cb08;padding:11px 13px;margin-top:14px;border-radius:0 8px 8px 0;overflow-wrap:anywhere}
+.help-copy p{font-size:12px;color:#b8c9d0;line-height:1.65;margin-bottom:13px}
+.help-copy p:last-child{margin-bottom:0}
+.help-copy strong{color:var(--ink);font-weight:600}
+.clue{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:18px;border-radius:5px;background:#30404b;font-weight:800;color:var(--gold)}
+.below-game{grid-column:1;grid-row:2}
+.comparison-panel{background:#19262d;border:1px solid var(--line);border-radius:var(--radius);padding:19px}
+.comparison-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.comparison-actions .button{font-size:11px;padding-left:13px;padding-right:13px}
+.round-list{margin-top:14px;font-size:11px;color:var(--muted);line-height:1.6}
+.round-list>article,.round-card,.round-item{padding:12px;border:1px solid var(--line);border-radius:10px;margin-top:8px;background:#111c24}
+.round-list strong{color:var(--ink)}
+.round-list ol{padding-left:23px;margin:0}
+.round-list li{padding:9px 0 9px 4px;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+.round-list li:last-child{border-bottom:0}
+.round-list li::marker{color:var(--mint);font-weight:700;font-variant-numeric:tabular-nums}
+.round-list table{border-collapse:collapse;width:100%;font-size:10px;text-align:left}
+.round-list th,.round-list td{padding:8px 6px;border-bottom:1px solid var(--line)}
+.round-list th{font-weight:600;color:var(--ink)}
+.designer-notes{display:grid;grid-template-columns:1fr 2fr;gap:32px;border-top:1px solid var(--line);padding-top:30px;margin-top:30px}
+.notes-intro h2{font-size:1.8rem;letter-spacing:-.045em}
+.notes-intro>p:last-child{font-size:12px;color:var(--muted);line-height:1.7;margin-top:10px}
+.notes-fields{display:flex;flex-direction:column;gap:16px}
+.notes-fields textarea{min-height:86px}
+.save-panel{display:block;border:1px solid #3a4f55;border-radius:var(--radius);background:#1a2b2e;padding:21px;margin-top:24px}
+.save-heading{display:flex;gap:12px;align-items:center}
+.save-heading h2{font-size:1.2rem}
+.save-heading p{font-size:12px;color:var(--muted);margin-top:4px}
+.save-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex-shrink:0;border:1px solid #4d7568;border-radius:10px;color:var(--mint);font-size:25px;background:#203b34}
+.save-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:17px}
+.notes-report{margin-top:17px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;white-space:pre-wrap}
+.draft-details{margin-top:16px;border-top:1px solid #3c5156}
+.draft-details>summary{font-size:11px;color:var(--muted);padding:14px 0 0;min-height:44px;display:list-item;list-style:disclosure-closed;margin-left:15px}
+.draft-details[open]>summary{list-style:disclosure-open;border:0}
+.draft-content{padding-top:10px;font-size:11px;color:var(--muted)}
+.draft-content .save-actions{margin-top:10px}
+.draft-content .button{font-size:11px}
+.lab-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;padding:25px 0 0;font-size:10px;color:#8da4ae}
+.lab-footer>div{display:flex;flex-wrap:wrap;gap:20px}
+.lab-footer>p{width:100%;font-size:10px;color:#8096a0;line-height:1.65}
+.lab-footer a{color:#a4bdc5}
+body.focus-mode .masthead,body.focus-mode .intro,body.focus-mode .lab-tools,body.focus-mode .below-game,body.focus-mode .lab-footer{display:none}
+body.focus-mode .lab{padding:10px}
+body.focus-mode .lab-grid{display:block}
+body.focus-mode .arena{max-width:690px;margin:auto;padding:12px}
+body.focus-mode #boardWrap{max-width:min(100%,var(--board-max,600px))}
+body.focus-mode .arena-top{margin-bottom:7px}
+body.focus-mode .arena-top p,body.focus-mode .recipe-strip,body.focus-mode .arena>.small-note{display:none}
+body.focus-mode .status-line{margin-bottom:0}
+@media(min-width:851px){.lab-grid>aside{grid-column:2;grid-row:1 / span 2}}
+@media(max-width:1050px){.lab{padding-left:20px;padding-right:20px}.lab-grid{gap:14px;grid-template-columns:minmax(0,1.35fr) minmax(290px,1fr)}.arena{padding:14px}.hud>div{padding:8px 7px;gap:4px}.tool-actions .button{font-size:9px;gap:3px}.arena-top p{font-size:10px}}
+@media(max-width:850px){.lab{max-width:690px}.lab-grid{grid-template-columns:minmax(0,1fr);gap:16px}.below-game{grid-column:auto;grid-row:auto}.intro-note{display:none}.lab-grid>aside{order:1}.below-game{order:2}.designer-notes{grid-template-columns:1fr;gap:20px}.notes-intro>p:last-child br{display:none}.arena{padding:16px}.tool-actions .button{font-size:11px}.hud>div{padding:8px 11px}.lab-tools{gap:12px}}
+@media(max-width:480px){.lab{padding:13px 12px 24px}.masthead{padding-bottom:12px;gap:10px}.brand{gap:9px;font-size:8px;letter-spacing:.16em}.brand-sub{font-size:7px}.brand-mark{width:30px;height:30px;font-size:21px;border-radius:9px}.brand-mark span{font-size:9px;padding-bottom:5px}.sketch-badge{font-size:7px;letter-spacing:.1em;gap:4px}.intro{padding:14px 1px 15px}.intro .eyebrow{font-size:8px;margin-bottom:4px}h1{font-size:1.8rem}.arena{padding:11px;border-radius:18px}.arena-top{margin-bottom:10px}.arena-top h2{font-size:16px}.arena-top p{font-size:9px;max-width:235px;line-height:1.45}.phase{font-size:9px;padding:4px 8px}.hud{gap:5px;margin-bottom:9px}.hud>div{padding:6px 7px;gap:4px;border-radius:7px}.hud-label{font-size:8px;letter-spacing:.04em}.hud strong{font-size:13px}.relic-symbol{font-size:12px}.catch-symbol{font-size:14px}.time-symbol{font-size:13px}#boardWrap{border-radius:10px;box-shadow:0 0 0 3px #0e151d55}.board-overlay{padding:18px}.overlay-card{padding:18px 15px;max-width:260px;border-radius:16px}.overlay-card .eyebrow{font-size:8px}.overlay-card h2{font-size:1.4rem}.overlay-card>p:not(.eyebrow){font-size:11px;line-height:1.5;margin:9px 0 15px}.portal-art{width:35px;height:35px;margin-bottom:12px}.portal-art:before{inset:5px}.portal-art:after{inset:10px}.play-controls{padding-top:12px}.main-actions{gap:7px}.button{font-size:11px;padding:10px 12px}.tool-actions{gap:5px;margin-top:7px}.tool-actions .button{font-size:10px;gap:4px;padding:5px 3px;min-height:44px;flex-direction:column}.tool-actions .button>span{font-size:13px;line-height:1}.status-line{font-size:12px;margin:10px 1px}.recipe-strip{padding:10px 11px;gap:9px}.recipe-strip strong{font-size:12px}.recipe-strip p{font-size:10px}.mini-label{font-size:7px}.small-note{font-size:10px}.lab-grid{gap:14px}.tool-panel{border-radius:16px}section.tool-panel{padding:16px}.section-heading h2,.section-heading strong{font-size:14px}.section-heading p,.section-heading small{font-size:12px}.preset{padding:10px;min-height:65px;grid-template-columns:38px minmax(0,1fr) 13px}.preset strong{font-size:13px}.preset small{font-size:12px;line-height:1.45}.presets{margin-top:14px}.preset-panel>.small-note{margin-top:10px}summary{padding:15px 16px;min-height:65px}.drawer-content{padding:16px}.field-pair{gap:10px}.field{font-size:12px}input:not([type=checkbox]):not([type=range]),select,textarea{font-size:16px;padding:10px 9px}.field-pair select{font-size:16px}.slider-field label{font-size:11px}.comparison-panel{padding:16px;border-radius:16px}.comparison-actions{gap:6px}.comparison-actions .button{font-size:10px;padding:10px}.designer-notes{margin-top:24px;padding-top:24px;gap:18px}.notes-intro h2{font-size:1.6rem}.notes-intro>p:last-child{font-size:11px;margin-top:7px}.notes-fields>.field-pair:nth-child(2){grid-template-columns:1fr}.notes-fields textarea{font-size:16px;min-height:79px}.save-panel{padding:17px;margin-top:20px;border-radius:16px}.save-heading h2{font-size:17px}.save-heading p{font-size:11px}.save-actions{gap:7px}.save-actions .button{font-size:11px}.save-panel>.save-actions .primary{flex-grow:1}.save-panel .notes-report{font-size:11px}.lab-footer{font-size:9px;gap:12px;padding-top:21px}.lab-footer>div{gap:15px}.lab-footer>p{font-size:9px}.draft-details>summary{font-size:10px}body.focus-mode .lab{padding:6px}body.focus-mode .arena{padding:9px}body.focus-mode #boardWrap{max-width:min(100%,var(--board-max,600px))}}
+@media(max-height:520px) and (orientation:landscape){body.focus-mode .arena{position:relative;max-width:960px;min-height:calc(100dvh - 20px);padding-right:250px}body.focus-mode #boardWrap{max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}body.focus-mode .play-controls{position:absolute;width:220px;right:15px;top:65px}body.focus-mode .main-actions{grid-template-columns:1fr}body.focus-mode .tool-actions{grid-template-columns:1fr 1fr}body.focus-mode .status-line{position:absolute;width:220px;right:15px;top:250px}body.focus-mode .hud{max-width:var(--board-max,calc(100dvh - 125px));margin-left:auto;margin-right:auto}body.focus-mode .arena-top h2{font-size:14px}}
+@media(max-height:520px) and (orientation:landscape){.board-overlay{padding:10px}.overlay-card{padding:12px;max-width:265px}.overlay-card>.portal-art,.overlay-card>.eyebrow{display:none}.overlay-card h2{font-size:18px;line-height:1.2}.overlay-card>p:not(.eyebrow){font-size:11px;line-height:1.4;margin:7px 0 11px}.overlay-card .button{min-height:40px}}
+@media(max-width:850px){
+  .button,.tool-actions .button,.comparison-actions .button,.save-actions .button,.draft-content .button{font-size:12px}
+  .arena-top p,.status-line{font-size:13px;line-height:1.55}
+  .small-note,.callout,.recipe-strip p,.section-heading p,.section-heading small,.preset small,.save-heading p,.draft-content,.draft-details>summary,.lab-footer,.lab-footer>p{font-size:12px;line-height:1.6}
+  .field,.slider-field label,.check-field strong{font-size:13px}
+  .range-ends,.check-field small,output,.mini-label{font-size:12px}
+  .notes-intro>p:last-child{font-size:13px}
+  .hud>div{flex-direction:column;justify-content:center;gap:2px;padding:7px 5px}
+  .hud>div>span:first-child{display:none}
+  .hud-label{font-size:12px;letter-spacing:.04em}
+  .hud strong{margin-left:0;font-size:16px}
+  .recipe-strip strong{font-size:14px}
+  .arena-top p{max-width:none}
+  .tool-actions .button{min-height:48px;padding:7px 5px}
+  .overlay-card>p:not(.eyebrow){font-size:13px}
+}
+@media(max-width:420px){.field-pair{grid-template-columns:minmax(0,1fr);gap:14px}.field-pair select{font-size:16px}.comparison-actions{display:grid;grid-template-columns:1fr 1fr}.comparison-actions .button:first-child{grid-column:1 / -1}.arena-top{align-items:center}}
+@media(max-height:520px) and (orientation:landscape){body.focus-mode .hud>div{flex-direction:row;padding:5px;gap:4px}body.focus-mode .hud-label{font-size:10px}body.focus-mode .hud strong{font-size:13px;margin-left:auto}.overlay-card>p:not(.eyebrow){font-size:12px;margin:6px 0 9px}.overlay-card .button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+  <main class="lab">
+    <header class="masthead">
+      <a class="brand" href="../" aria-label="Twenty Nights playtest home"><span class="brand-mark" aria-hidden="true">N<span>1</span></span><span>TWENTY NIGHTS<span class="brand-sub">THE DESIGN LAB</span></span></a>
+      <span class="sketch-badge"><span aria-hidden="true"></span> PLAYABLE SKETCH</span>
+    </header>
+
+    <div class="intro">
+      <div><p class="eyebrow">YOU'RE THE DESIGNER</p><h1>Your game. Your rules.</h1></div>
+      <p class="intro-note">Try an idea. Make one change.<br>Decide what belongs in your game.</p>
+    </div>
+
+    <div class="lab-grid">
+      <section class="arena" aria-label="Play Nether 1">
+        <div class="arena-top"><div><h2>Nether 1</h2><p>Collect <strong>3 gold relics</strong>. Return to the <strong>blue portal</strong>.</p></div><span id="phase" class="phase">Ready</span></div>
+        <div class="hud" aria-label="Round progress">
+          <div><span class="relic-symbol" aria-hidden="true">◆</span><span class="hud-label">RELICS</span><strong id="relicHud">0 / 3</strong></div>
+          <div><span class="catch-symbol" aria-hidden="true">↻</span><span id="catchLabel" class="hud-label">CATCHES</span><strong id="catchHud">0</strong></div>
+          <div><span class="time-symbol" aria-hidden="true">◷</span><span class="hud-label">TIME</span><strong id="timerHud">0:00</strong></div>
+        </div>
+        <div id="boardWrap">
+          <canvas id="game" tabindex="0" aria-label="Nether 1 maze" aria-describedby="keyboardHint"></canvas>
+          <div id="overlay" class="board-overlay">
+            <div class="overlay-card">
+              <span class="portal-art" aria-hidden="true"><i></i></span>
+              <p class="eyebrow">A MAZE OF YOUR OWN</p>
+              <h2 id="overlayTitle">Ready to trick them?</h2>
+              <p id="overlayText">Hold and drag to move. Gold relics first, then back to the blue portal.</p>
+              <button id="overlayAction" class="button primary">Let's play <span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="play-controls">
+          <div class="main-actions"><button id="play" class="button primary"><span aria-hidden="true">▶</span> Play this round</button><button id="explore" class="button secondary">Explore safely</button></div>
+          <div class="tool-actions">
+            <button id="pause" class="button quiet" disabled><span aria-hidden="true">Ⅱ</span> Pause</button>
+            <button id="restart" class="button quiet"><span aria-hidden="true">↻</span> New round</button>
+            <button id="focusMode" class="button quiet" aria-pressed="false"><span aria-hidden="true">⛶</span> Bigger maze</button>
+            <button id="sound" class="button quiet" aria-pressed="false"><span aria-hidden="true">♪</span> Sound off</button>
+          </div>
+        </div>
+        <p id="statusText" class="status-line" role="status">Hold and drag to move. Dodge is on. You can pause whenever you like.</p>
+        <p id="keyboardHint" class="visually-hidden">Use arrow keys or WASD to move. Press Escape to pause. Press Tab to leave the maze and reach the controls.</p>
+        <div class="recipe-strip"><span class="recipe-dot" aria-hidden="true"></span><div><span class="mini-label">YOUR CURRENT IDEA</span><strong id="recipeName">Corner tricksters</strong><p id="recipeSummary">Turn a corner. Give them the slip.</p></div></div>
+        <p id="liveSettingsNote" class="small-note">Choose an idea below, then play to see how it feels.</p>
+      </section>
+
+      <aside class="lab-tools" aria-label="Design your next round">
+        <section class="tool-panel preset-panel">
+          <div class="section-heading"><span class="step-number">01</span><div><h2>Pick an idea to try</h2><p>Which monsters belong in your maze?</p></div></div>
+          <div class="presets">
+            <button class="preset" data-preset="forgetful" aria-pressed="true"><span class="monster-token mint" aria-hidden="true"><i></i><b></b></span><span><strong>Corner tricksters</strong><small>Lose their trail around a corner.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
+            <button class="preset" data-preset="goofy" aria-pressed="false"><span class="monster-token peach" aria-hidden="true"><i></i><b></b></span><span><strong>Wrong-way wanderers</strong><small>Some turns go hilariously wrong.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
+            <button class="preset" data-preset="clever" aria-pressed="false"><span class="monster-token lilac" aria-hidden="true"><i></i><b></b></span><span><strong>Sharp trackers</strong><small>Know where you are, even behind walls.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
+          </div>
+          <p class="small-note">Starting ideas, ready for your changes.</p>
+        </section>
+
+        <details class="tool-panel settings-panel">
+          <summary><span class="section-heading"><span class="step-number">02</span><span><strong>Make my own</strong><small>Turn the dials. Invent your chase.</small></span></span><span class="chevron" aria-hidden="true">+</span></summary>
+          <div class="drawer-content">
+            <label class="field">Name my design<input id="designName" maxlength="48" value="Nether 1" autocomplete="off"></label>
+            <label class="field">Monster thinking<select id="brain"><option value="forgetful">Corner tricksters</option><option value="goofy">Wrong-way wanderers</option><option value="clever">Sharp trackers</option><option value="mixed">A mixture</option></select></label>
+            <p class="small-note">Dimmed dials are unused by this kind of monster.</p>
+            <div class="slider-field"><label for="noticeDelay">How soon they notice <output id="noticeDelayValue" for="noticeDelay">0.6 s</output></label><input id="noticeDelay" type="range" min="0.2" max="1.4" step="0.2" value="0.6"><div class="range-ends"><span>Quick to react</span><span>Time to escape</span></div></div>
+            <div class="slider-field"><label for="memorySeconds">How long they remember <output id="memorySecondsValue" for="memorySeconds">2 s</output></label><input id="memorySeconds" type="range" min="0.5" max="4" step="0.5" value="2"><div class="range-ends"><span>Forget sooner</span><span>Keep looking</span></div></div>
+            <div class="slider-field"><label for="wrongTurnChance">Chance of a wrong turn <output id="wrongTurnChanceValue" for="wrongTurnChance">30%</output></label><input id="wrongTurnChance" type="range" min="0" max="0.6" step="0.1" value="0.3"><div class="range-ends"><span>No silly turns</span><span>More surprises</span></div></div>
+            <div class="slider-field"><label for="pace">Monster pace <output id="paceValue" for="pace">100%</output></label><input id="pace" type="range" min="0.75" max="1.1" step="0.05" value="1"><div class="range-ends"><span>Room to breathe</span><span>Hot on your heels</span></div></div>
+            <div class="field-pair">
+              <label class="field">Monsters<select id="monsterCount"><option value="4">4 monsters</option><option value="6">6 monsters</option><option value="8" selected>8 monsters</option><option value="10">10 monsters</option><option value="12">12 monsters</option></select></label>
+              <label class="field">Round rules<select id="lives"><option value="0">Practice · keep trying</option><option value="3">Three-life trial</option></select></label>
+            </div>
+            <label class="check-field"><input id="dodge" type="checkbox" checked><span><strong>Help me dodge</strong><small>Steer around nearby monsters.</small></span></label>
+            <button id="applySettings" class="button primary full-width">Try my settings <span aria-hidden="true">→</span></button>
+          </div>
+        </details>
+
+        <details class="tool-panel">
+          <summary><span class="section-heading"><span class="step-number">↻</span><span><strong>What happens next time?</strong><small>Try your replay idea.</small></span></span><span class="chevron" aria-hidden="true">+</span></summary>
+          <div class="drawer-content">
+            <label class="field">Next round's maze<select id="mapPolicy"><option value="fixed">Keep my original maze</option><option value="reflected">Alternate original and flipped</option></select></label>
+            <label class="field">Next round's challenge<select id="ramp"><option value="off">Keep the same challenge</option><option value="gentle">A little faster each round · 3 steps max</option></select></label>
+            <p id="replaySummary" class="callout">Your original maze and the same pace each round.</p>
+            <p class="small-note">Replay changes happen when you start a new round. A catch keeps the current maze. Flipping the view keeps its paths; how it feels is yours to test.</p>
+          </div>
+        </details>
+
+        <details class="tool-panel help-panel">
+          <summary><span class="section-heading"><span class="step-number">?</span><span><strong>A few helpful things</strong><small>Controls, clues and round rules.</small></span></span><span class="chevron" aria-hidden="true">+</span></summary>
+          <div class="drawer-content help-copy">
+            <p><strong>Move:</strong> hold and drag on the maze. A keyboard works too: arrow keys or WASD.</p>
+            <p><strong>Your mission:</strong> collect all three gold relics, then return to the blue portal.</p>
+            <p><strong>Read the monsters:</strong> <span class="clue">!</span> means chasing; <span class="clue">?</span> means searching.</p>
+            <p><strong>Sharp trackers:</strong> they always know where you are, even through walls. Try the other ideas if you want hiding around corners to help.</p>
+            <p><strong>Caught?</strong> Your relics stay collected. Practice lets you keep trying. The three-life trial ends the attempt after three catches.</p>
+            <p><strong>Take a breath:</strong> pause whenever you like. Switching away from this page pauses the round.</p>
+            <p><strong>Explore safely:</strong> learn your routes without a chase.</p>
+            <p class="small-note">These are test rules you can change. A low catch count alone cannot tell you which game is the most fun.</p>
+          </div>
+        </details>
+      </aside>
+
+      <section class="comparison-panel below-game" aria-labelledby="compareTitle">
+        <div class="section-heading"><span class="step-number">03</span><div><h2 id="compareTitle">Change one thing. See what happens.</h2><p>Keep an idea as A. Make one change for B.</p></div></div>
+        <div class="comparison-actions"><button id="pinA" class="button secondary">Keep this as A</button><button id="playA" class="button quiet" disabled>Play A again</button><button id="playB" class="button secondary">Try B <span aria-hidden="true">→</span></button></div>
+        <p id="comparisonText" class="callout">Your first idea can be A. You decide what to change for B.</p>
+        <div id="roundList" class="round-list"><p class="small-note">Your rounds will appear here. The numbers help you notice things; you choose the winner.</p></div>
+      </section>
+    </div>
+
+    <section class="designer-notes lab-tools" aria-labelledby="verdictTitle">
+      <div class="notes-intro"><p class="eyebrow">YOUR MAZE. YOUR CALL.</p><h2 id="verdictTitle">What felt right?</h2><p>Point, tell Dad, or write it down.<br>You can mix ideas or stay undecided.</p></div>
+      <div class="notes-fields">
+        <div class="field-pair">
+          <label class="field">How did the chase feel?<select id="verdict"><option value="undecided">I'm still deciding</option><option value="too-easy">Too easy to escape</option><option value="good-chase">A good chase</option><option value="too-hard">Too hard to get away</option><option value="my-idea">I have my own idea</option></select></label>
+          <label class="field">My favourite so far<select id="favourite"><option value="undecided">I want to try more</option><option value="forgetful">Corner tricksters</option><option value="goofy">Wrong-way wanderers</option><option value="clever">Sharp trackers</option><option value="mixed">A mixture</option><option value="custom">My own settings</option></select></label>
+        </div>
+        <div class="field-pair">
+          <label class="field">I noticed…<textarea id="noticed" rows="3" placeholder="When I turned a corner…"></textarea></label>
+          <label class="field">My next idea…<textarea id="nextIdea" rows="3" placeholder="What if the monsters…"></textarea></label>
+        </div>
+      </div>
+    </section>
+
+    <section class="save-panel lab-tools" aria-label="Save your design">
+      <div class="save-heading"><span class="save-icon" aria-hidden="true">↧</span><div><h2>Keep your design</h2><p>Take your settings, thoughts and rounds with you.</p></div></div>
+      <div class="save-actions"><button id="downloadNotes" class="button primary">Download my notes</button><button id="copyNotes" class="button secondary">Copy notes</button><button id="showNotes" class="button quiet">Show notes</button></div>
+      <p id="saveStatus" class="small-note" role="status">Your notes stay in this tab until you save them. Nothing is sent automatically.</p>
+      <textarea id="report" class="notes-report" rows="10" readonly hidden aria-label="Your design notes"></textarea>
+      <details class="draft-details"><summary>Keep a draft on this device</summary><div class="draft-content"><p>Saves only on this device. Download to keep a copy.</p><div class="save-actions"><button id="saveDraft" class="button secondary">Save this draft</button><button id="loadDraft" class="button quiet" disabled>Load saved draft</button></div><p id="draftStatus" class="small-note" role="status">Saving a draft is your choice.</p></div></details>
+    </section>
+
+    <footer class="lab-footer"><span>Nether 1 · A playable design sketch</span><div><a href="../monsters/">Earlier monster comparison</a><a href="../workshop/">Maze workshop</a></div><p>The full Nether layers, stronger walls, upgrades, void and hammer are separate from this lab.</p></footer>
+  </main>
+  <script>
+const STUDIO_ROWS=["####################", "#..................#", "#.###.##.##.##.###.#", "#.###.##.##.##.###.#", "#..................#", "#.##.###.##.###.##.#", "#....#........#....#", "#.##.#.##oo##.#.##.#", "#.##.#.#MMMM#.#.##.#", "#....#.#MMMM#.#....#", "#.#..#.######.#..#.#", "#....#........#....#", "#.##.###.##.###.##.#", "#.##.#........#.##.#", "#.....##.##.##.....#", "###.#.##.##.##.#.###", "#......#....#......#", "#.####.######.####.#", "#........H.........#", "####################"];
+</script>
+<script>
+/* Nether Design Studio prototype engine. Pure simulation: no DOM, clock or renderer. */
+(function (host) {
+  'use strict';
+  const DIRS = [[1,0],[0,1],[-1,0],[0,-1]];
+  const COLORS = ['#f56e7e','#b893ff','#62d4d5','#ffb969'];
+  const EPS = 1e-8, FIXED = 1/120;
+  const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+  const finite = (v, fallback) => Number.isFinite(Number(v)) ? Number(v) : fallback;
+  const same = (a,b) => a && b && a.x === b.x && a.y === b.y;
+  const point = (x,y) => ({x,y});
+  const key = p => p.y*1000+p.x;
+  const distance = (a,b) => Math.hypot(a.x-b.x,a.y-b.y);
+  const copy = x => JSON.parse(JSON.stringify(x));
+  function grid(rows) {
+    if (!Array.isArray(rows) || rows.length < 3 || !rows.every(r=>typeof r==='string' && r.length===rows[0].length && /^[#.HMo]+$/.test(r))) throw new Error('Maze rows must be equal-width strings containing # . H M o.');
+    const w=rows[0].length,h=rows.length,start=[],pen=[],gates=[],floors=[];
+    const inside=(x,y)=>Number.isInteger(x)&&Number.isInteger(y)&&x>=0&&y>=0&&x<w&&y<h;
+    const walk=(x,y,mob=false)=>inside(x,y)&&(mob?rows[y][x]!=='#':'.H'.includes(rows[y][x]));
+    for(let y=0;y<h;y++)for(let x=0;x<w;x++){const c=rows[y][x];if(c==='H')start.push(point(x,y));if(c==='M')pen.push(point(x,y));if(c==='o')gates.push(point(x,y));if('.H'.includes(c))floors.push(point(x,y));}
+    if(start.length!==1)throw new Error('Maze needs exactly one hero start.');
+    const neighbors=(p,mob=false)=>DIRS.map(([dx,dy])=>point(p.x+dx,p.y+dy)).filter(p=>walk(p.x,p.y,mob));
+    return {rows:rows.slice(),w,h,start:start[0],pen,gates,floors,walk,neighbors};
+  }
+  function shortest(g,from,to,mob=false,cost=null) {
+    if(!g.walk(from.x,from.y,mob)||!g.walk(to.x,to.y,mob))return null;
+    const n=g.w*g.h, index=p=>p.y*g.w+p.x, s=index(from), t=index(to), dist=new Float64Array(n).fill(Infinity), prev=new Int32Array(n).fill(-1), closed=new Uint8Array(n);
+    dist[s]=0;
+    // Tiny 20x20 maps: a straightforward Dijkstra avoids hidden dependencies.
+    for(let count=0;count<n;count++){
+      let cur=-1,best=Infinity;for(let i=0;i<n;i++)if(!closed[i]&&dist[i]<best){best=dist[i];cur=i;}
+      if(cur<0)break;if(cur===t){const path=[];for(let i=t;i!==s;i=prev[i])path.unshift(point(i%g.w,Math.floor(i/g.w)));return path;}
+      closed[cur]=1;const p=point(cur%g.w,Math.floor(cur/g.w));
+      for(const q of g.neighbors(p,mob)){const j=index(q), d=best+1+(cost?cost(q):0);if(d<dist[j]){dist[j]=d;prev[j]=cur;}}
+    }
+    return null;
+  }
+  function analyse(rows, relicPositions=[[1,1],[9,1],[18,1]]) {
+    try {
+      const g=grid(rows), seen=new Set([key(g.start)]),q=[g.start];let edges=0,deadEnds=0,junctions=0;
+      for(let i=0;i<q.length;i++)for(const p of g.neighbors(q[i]))if(!seen.has(key(p))){seen.add(key(p));q.push(p);}
+      for(const p of g.floors){const count=g.neighbors(p).length;edges+=count;if(count===1)deadEnds++;if(count>=3)junctions++;}
+      const mobSeen=new Set([key(g.start)]),mobQ=[g.start];for(let i=0;i<mobQ.length;i++)for(const p of g.neighbors(mobQ[i],true))if(!mobSeen.has(key(p))){mobSeen.add(key(p));mobQ.push(p);}
+      const mobFloor=g.rows.reduce((sum,row)=>sum+[...row].filter(c=>c!=='#').length,0);
+      const landmarks=relicPositions,distances=landmarks.map(([x,y])=>shortest(g,g.start,point(x,y))?.length??null);
+      return {valid:seen.size===g.floors.length&&mobSeen.size===mobFloor&&distances.every(d=>d!==null),monsterReachable:mobSeen.size,monsterFloor:mobFloor,floor:g.floors.length,reachable:seen.size,loops:edges/2-g.floors.length+1,deadEnds,junctions,distances,start:copy(g.start)};
+    }catch(e){return {valid:false,reason:e.message};}
+  }
+  function create(opts={}) {
+    const g=grid(opts.rows), initialSeed=(finite(opts.seed,1234567)>>>0)||1234567;
+    const relicPositions=copy(opts.relicPositions||[[1,1],[9,1],[18,1]]);
+    if(relicPositions.length!==3||!relicPositions.every(p=>Array.isArray(p)&&p.length===2&&g.walk(p[0],p[1]))||new Set(relicPositions.map(p=>p.join(','))).size!==3)throw new Error('Choose three distinct reachable relic squares.');
+    if(relicPositions.some(([x,y])=>!shortest(g,g.start,point(x,y))))throw new Error('A relic is cut off from the start.');
+    let rng=initialSeed, accumulator=0, eventSeq=0, direction=null, pointerHeld=false, pausedFrom='playing';
+    const settings={brain:['forgetful','goofy','clever','mixed'].includes(opts.brain)?opts.brain:'forgetful',monsterCount:clamp(Math.round(finite(opts.monsterCount,8)),0,24),initialLoose:clamp(Math.round(finite(opts.initialLoose,4)),0,24),releaseEvery:clamp(finite(opts.releaseEvery,3),.5,30),dodge:opts.dodge!==false,seed:initialSeed,speedScale:clamp(finite(opts.speedScale,1),.25,1.5),mode:opts.mode==='explore'?'explore':'chase',lives:opts.lives===3?3:0,noticeDelay:clamp(finite(opts.noticeDelay,.65),0,3),memorySeconds:clamp(finite(opts.memorySeconds,2),0,8),wrongTurnChance:clamp(finite(opts.wrongTurnChance,.33),0,1),heroSpeed:4.6,slowSpeed:3.68,fastSpeed:4.30,relicPositions};
+    settings.initialLoose=Math.min(settings.initialLoose,settings.monsterCount);
+    const random=()=>{rng^=rng<<13;rng^=rng>>>17;rng^=rng<<5;return (rng>>>0)/4294967296;};
+    const actor=(p)=>({x:p.x,y:p.y,dir:[0,-1],_from:copy(p),_to:null,_progress:0});
+    const hero=Object.assign(actor(g.start),{target:null,path:[],grace:2});
+    const state={start:copy(g.start),rows:g.rows.slice(),settings,hero,monsters:[],relics:relicPositions.map(([x,y],i)=>({id:i+1,x,y,collected:false})),status:'ready',waitingForMove:true,elapsed:0,catches:0,livesLeft:settings.lives||null,seed:initialSeed,events:[],tricks:0,recovery:0,releaseIn:settings.releaseEvery,travel:0,inputs:0};
+    let nextRelease=settings.releaseEvery, repathAt=0;
+    function emit(type,details={}) {const e={seq:++eventSeq,type,time:+state.elapsed.toFixed(3),...details};state.events.push(e);if(state.events.length>160)state.events.shift();return e;}
+    function nearest(x,y) {let best=null,d=Infinity;for(const p of g.floors){const dd=(p.x-x)**2+(p.y-y)**2;if(dd<d){d=dd;best=p;}}return best?copy(best):null;}
+    function center(a) {return a._to&&a._progress>=.5?copy(a._to):copy(a._from);}
+    function resetActor(a,p) {a.x=p.x;a.y=p.y;a._from=copy(p);a._to=null;a._progress=0;a.dir=[0,-1];}
+    function brainFor(id) {return settings.brain==='mixed'?['forgetful','goofy','forgetful','clever'][id%4]:settings.brain;}
+    for(let i=0;i<settings.monsterCount;i++){
+      const p=g.pen[i%g.pen.length]||g.floors.filter(p=>distance(p,g.start)>8)[i%Math.max(1,g.floors.length-1)]||g.start;
+      const active=settings.mode==='chase'&&i<settings.initialLoose;
+      state.monsters.push(Object.assign(actor(p),{id:i,x:p.x,y:p.y,color:COLORS[i%4],fast:i%4===3,active,brain:brainFor(i),state:active?'wander':'pen',indicator:active?'?':'…',target:null,_lastSeen:null,_seenUntil:0,_nextNotice:0,_lostAt:null,_trickDone:false,_confusedUntil:0,_wanderTarget:null,_wanderUntil:0,_tie:random(),_previous:null}));
+    }
+    function sight(m) {
+      // A monster can see along a corridor, but never through a wall or around a corner.
+      const a=center(m),h=center(hero),dx=h.x-a.x,dy=h.y-a.y;
+      if(dx&&dy||Math.abs(dx)+Math.abs(dy)>7)return false;
+      const sx=Math.sign(dx),sy=Math.sign(dy),n=Math.abs(dx)+Math.abs(dy);
+      for(let i=1;i<=n;i++)if(!g.walk(a.x+sx*i,a.y+sy*i,true))return false;
+      return true;
+    }
+    function dread(p) {
+      if(!settings.dodge)return 0;let cost=0;
+      for(const m of state.monsters)if(m.active){const d=Math.abs(p.x-m.x)+Math.abs(p.y-m.y);cost=Math.max(cost,d<.8?12:d<1.8?6:d<2.8?2:0);}
+      return cost;
+    }
+    function planHero() {
+      if(!hero.target||direction)return;
+      const origin=hero._to||hero._from;
+      hero.path=shortest(g,origin,hero.target,false,dread)||[];
+      repathAt=state.elapsed+.16;
+    }
+    function reverseIfUseful() {
+      if(!hero._to||!hero.target||direction)return;
+      // Pick either endpoint of the current legal edge. Never connect a fractional
+      // position straight to a different corridor (the old corner-cut defect).
+      const onward=shortest(g,hero._to,hero.target,false,dread),back=shortest(g,hero._from,hero.target,false,dread);
+      const score=p=>p?p.reduce((n,q)=>n+1+dread(q),0):Infinity;
+      if(hero._progress+score(back)+.15 < 1-hero._progress+score(onward)){
+        const temp=hero._from;hero._from=hero._to;hero._to=temp;hero._progress=1-hero._progress;hero.dir=[hero._to.x-hero._from.x,hero._to.y-hero._from.y];
+      }
+    }
+    function start(){if(state.status==='ready'){state.status='playing';emit('start');}return state;}
+    function aim(x,y) {
+      if(!Number.isFinite(x)||!Number.isFinite(y)||!['ready','playing'].includes(state.status))return false;
+      const p=nearest(clamp(x,0,g.w-1),clamp(y,0,g.h-1));if(!p)return false;
+      direction=null;pointerHeld=true;hero.target=p;state.inputs++;reverseIfUseful();planHero();
+      if(state.status==='playing')state.waitingForMove=false;
+      return true;
+    }
+    function setDirection(dx,dy){
+      if(!['ready','playing'].includes(state.status))return;
+      if(!Number.isFinite(dx)||!Number.isFinite(dy))return;
+      if(Math.abs(dx)+Math.abs(dy)<.1)return clearDirection();
+      direction=Math.abs(dx)>=Math.abs(dy)?[Math.sign(dx),0]:[0,Math.sign(dy)];pointerHeld=false;hero.target=null;hero.path=[];state.inputs++;
+      if(hero._to&&direction[0]===-hero.dir[0]&&direction[1]===-hero.dir[1]){const temp=hero._from;hero._from=hero._to;hero._to=temp;hero._progress=1-hero._progress;hero.dir=direction.slice();}
+      if(state.status==='playing')state.waitingForMove=false;
+    }
+    function clearDirection(){direction=null;hero.target=null;hero.path=[];}
+    function releasePointer(){pointerHeld=false;}
+    function heroNext(a){
+      if(direction){const wanted=point(a._from.x+direction[0],a._from.y+direction[1]);if(g.walk(wanted.x,wanted.y))return wanted;
+        const forward=point(a._from.x+a.dir[0],a._from.y+a.dir[1]);return g.walk(forward.x,forward.y)?forward:null;}
+      if(!hero.target)return null;
+      if(state.elapsed>=repathAt||!hero.path.length)planHero();
+      const next=hero.path.shift();return next&&g.walk(next.x,next.y)&&Math.abs(next.x-a._from.x)+Math.abs(next.y-a._from.y)===1?next:null;
+    }
+    function seeMonsters(){
+      for(const m of state.monsters){
+        if(!m.active)continue;
+        if(m.brain==='clever'){m.target=center(hero);m.state='chase';m.indicator='!';continue;}
+        const sees=sight(m);
+        if(sees){
+          if(state.elapsed>=m._nextNotice){m._lastSeen=center(hero);m._seenUntil=state.elapsed+settings.memorySeconds;m._nextNotice=state.elapsed+settings.noticeDelay;}
+          m._lostAt=null;m._trickDone=false;m.target=m._lastSeen;m.state='chase';m.indicator='!';
+        }else if(m._lastSeen&&state.elapsed<m._seenUntil){
+          if(m._lostAt===null)m._lostAt=state.elapsed;m.target=m._lastSeen;m.state='search';m.indicator='?';
+        }else{
+          if(m._lastSeen&&m._lostAt===null)m._lostAt=state.elapsed;
+          if(m._lastSeen&&!m._trickDone&&m._lostAt!==null&&state.elapsed-m._lostAt>=Math.max(.6,settings.memorySeconds)&&distance(m,hero)>3){m._trickDone=true;state.tricks++;emit('tricked',{monsterId:m.id});}
+          m.target=null;m.state='wander';m.indicator='·';
+        }
+        if(m._confusedUntil>state.elapsed){m.state='confused';m.indicator='?!';}
+      }
+    }
+    function monsterNext(m) {
+      let choices=g.neighbors(m._from,true);if(!choices.length)return null;
+      const forward=choices.filter(p=>!same(p,m._previous));if(forward.length)choices=forward;
+      const target=m.target;
+      let best=null;
+      if(target){const path=shortest(g,m._from,target,true);best=path&&path[0];}
+      if(!best||!choices.some(p=>same(p,best))){
+        // Keep moving if the remembered square is reached, and leave the pen.
+        if(!m._wanderTarget||same(m._from,m._wanderTarget)||state.elapsed>=m._wanderUntil){
+          const spots=g.floors.filter(p=>distance(p,m._from)>4);m._wanderTarget=copy(spots[Math.floor(random()*spots.length)]||g.start);m._wanderUntil=state.elapsed+5;
+        }
+        const path=shortest(g,m._from,m._wanderTarget,true),p=path&&path[0];
+        best=choices.find(q=>same(q,p))||choices[Math.floor(random()*choices.length)];
+      }
+      if(m.brain==='goofy'&&target&&forward.length>=2&&random()<settings.wrongTurnChance){
+        const others=choices.filter(p=>!same(p,best));if(others.length){best=others[Math.floor(random()*others.length)];m._confusedUntil=state.elapsed+.8;m.state='confused';m.indicator='?!';}}
+      m._previous=copy(m._from);return best;
+    }
+    function move(a,amount,choose){
+      let traveled=0,guard=0;
+      while(amount>EPS&&guard++<20){
+        if(!a._to){const next=choose(a);if(!next)break;a._to=copy(next);a._progress=0;a.dir=[next.x-a._from.x,next.y-a._from.y];}
+        const used=Math.min(amount,1-a._progress);a._progress+=used;amount-=used;traveled+=used;
+        a.x=a._from.x+(a._to.x-a._from.x)*a._progress;a.y=a._from.y+(a._to.y-a._from.y)*a._progress;
+        if(a._progress>=1-EPS){a._from=a._to;a._to=null;a._progress=0;a.x=a._from.x;a.y=a._from.y;}
+      }return traveled;
+    }
+    function collect(){
+      for(const r of state.relics)if(!r.collected&&distance(hero,r)<.25){r.collected=true;emit('collect',{relicId:r.id});}
+      if(state.relics.every(r=>r.collected)&&distance(hero,g.start)<.25){state.status='won';emit('win',{catches:state.catches});}
+    }
+    function caught(m){
+      state.catches++;if(settings.lives)state.livesLeft--;emit('caught',{monsterId:m.id,livesLeft:state.livesLeft});
+      if(settings.lives&&state.livesLeft<=0){state.status='gameover';emit('gameover');return;}
+      resetActor(hero,g.start);hero.grace=2;hero.path=[];state.recovery=.55;repathAt=0;
+      // Keep the destination, held direction, relics, release clock and the chase.
+      // Nearby monsters return to their own pen slot so home is genuinely safe.
+      for(const mob of state.monsters)if(mob.active&&distance(mob,g.start)<5){const p=g.pen[mob.id%g.pen.length]||g.floors.find(p=>distance(p,g.start)>8)||g.start;resetActor(mob,p);mob._previous=null;mob.target=null;mob._lastSeen=null;mob._seenUntil=0;mob._lostAt=null;}
+      planHero();
+    }
+    function tick(dt){
+      state.elapsed+=dt;
+      if(settings.mode==='chase'){
+        while(state.elapsed+EPS>=nextRelease){const m=state.monsters.find(m=>!m.active);if(!m)break;m.active=true;m.state='wander';m.indicator='·';emit('release',{monsterId:m.id});nextRelease+=settings.releaseEvery;}
+        state.releaseIn=state.monsters.some(m=>!m.active)?Math.max(0,nextRelease-state.elapsed):null;
+      }
+      if(state.recovery>0){state.recovery=Math.max(0,state.recovery-dt);return;}
+      hero.grace=Math.max(0,hero.grace-dt);
+      seeMonsters();
+      state.travel+=move(hero,settings.heroSpeed*dt,heroNext);
+      collect();if(state.status!=='playing')return;
+      for(const m of state.monsters)if(m.active){
+        move(m,(m.fast?settings.fastSpeed:settings.slowSpeed)*settings.speedScale*dt,monsterNext);
+        if(hero.grace<=0&&distance(hero,m)<.55){caught(m);break;}
+      }
+    }
+    function step(dt){
+      if(state.status!=='playing'||state.waitingForMove)return state;
+      // No hidden-tab catch-up: at most 250ms is accepted in one frame. Fixed
+      // substeps retain tile speed and prevent crossing misses at normal frame rates.
+      accumulator+=clamp(finite(dt,0),0,.25);
+      while(accumulator+EPS>=FIXED&&state.status==='playing'){accumulator-=FIXED;tick(FIXED);}
+      return state;
+    }
+    function pause(){if(state.status==='playing'){pausedFrom=state.status;state.status='paused';emit('pause');}return state;}
+    function resume(){if(state.status==='paused'){state.status=pausedFrom;state.waitingForMove=true;emit('resume');}return state;}
+    function stop(){if(['ready','playing','paused'].includes(state.status)){state.status='stopped';emit('stop');}return state;}
+    function snapshot(){return {version:3,prototype:'Nether 1 Design Studio',rows:state.rows.slice(),settings:copy(settings),seed:initialSeed,outcome:state.status,seconds:+state.elapsed.toFixed(3),catches:state.catches,livesLeft:state.livesLeft,relics:state.relics.filter(r=>r.collected).map(r=>r.id),returnedHome:state.status==='won',tricks:state.tricks,travelTiles:+state.travel.toFixed(3),inputs:state.inputs,events:copy(state.events),hero:{x:hero.x,y:hero.y},monsters:state.monsters.map(m=>({id:m.id,x:m.x,y:m.y,brain:m.brain,state:m.state,active:m.active})),waitingForMove:state.waitingForMove};}
+    return {state,start,step,aim,releasePointer,setDirection,clearDirection,pause,resume,stop,snapshot};
+  }
+  const api={create,analyse};host.NetherEngine=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
+})(typeof globalThis!=='undefined'?globalThis:this);
+
+</script>
+<script>
+function makeNetherRenderer(canvas) {
+  const ctx=canvas.getContext('2d');
+  const N=20, TILE=32, SIZE=N*TILE;
+  const PAL={pupil:'#15161c',shine:'#fff'};
+  let clockAll=0, board=null, boardKey='', reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function face(cx, cy, ex, r, look, mood, seed){
+  const blink = !reduced && ((clockAll + seed*1.7) % 3.4) < .11;
+  const scared = mood === 2, rr2 = r * (scared ? 1.45 : 1);
+  let gx = 0, gy = 0;
+  if (look){ const d = Math.hypot(look[0], look[1]) || 1;
+             gx = look[0]/d*r*.6; gy = look[1]/d*r*.5; }
+  if (blink){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 1.6; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy); ctx.lineTo(cx-ex+r, cy);
+    ctx.moveTo(cx+ex-r, cy); ctx.lineTo(cx+ex+r, cy); ctx.stroke();
+    return;
+  }
+  if (scared){
+    ctx.fillStyle = PAL.shine;
+    ctx.beginPath(); ctx.arc(cx-ex, cy, rr2+1.1, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx+ex, cy, rr2+1.1, 0, 7); ctx.fill();
+  }
+  ctx.fillStyle = PAL.pupil;
+  ctx.beginPath(); ctx.arc(cx-ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx, cy+gy, rr2, 0, 7); ctx.fill();
+  ctx.fillStyle = PAL.shine;
+  ctx.beginPath(); ctx.arc(cx-ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.arc(cx+ex+gx-rr2*.32, cy+gy-rr2*.36, rr2*.30, 0, 7); ctx.fill();
+  if (mood === 3){
+    ctx.strokeStyle = PAL.pupil; ctx.lineWidth = 2; ctx.beginPath();
+    ctx.moveTo(cx-ex-r, cy-r*1.9); ctx.lineTo(cx-ex+r, cy-r*1.1);
+    ctx.moveTo(cx+ex+r, cy-r*1.9); ctx.lineTo(cx+ex-r, cy-r*1.1); ctx.stroke();
+  }
+}
+  function paint(rows){
+    const key=rows.join('\n');if(boardKey===key)return;boardKey=key;
+    board=document.createElement('canvas');board.width=board.height=SIZE;
+    const b=board.getContext('2d');b.fillStyle='#101423';b.fillRect(0,0,SIZE,SIZE);
+    for(let y=0;y<N;y++)for(let x=0;x<N;x++){
+      const c=rows[y][x],px=x*TILE,py=y*TILE;
+      if(c==='#'){
+        b.fillStyle='#343450';b.fillRect(px,py,TILE,TILE);
+        if(y>0&&rows[y-1][x]!=='#'){b.fillStyle='#676083';b.fillRect(px,py,TILE,3);}
+        if(x>0&&rows[y][x-1]!=='#'){b.fillStyle='#4d4568';b.fillRect(px,py,2,TILE);}
+        if(y<N-1&&rows[y+1][x]!=='#'){b.fillStyle='#221f34';b.fillRect(px,py+TILE-3,TILE,3);}
+      }else{
+        b.fillStyle=c==='M'?'#202039':((x+y)%2?'#111625':'#131827');
+        b.fillRect(px,py,TILE,TILE);
+        if(c==='.'&&((x*7+y*13)%9===0)){b.fillStyle='#2b2c40';b.fillRect(px+17,py+20,2,2);}
+        if(c==='o'){b.strokeStyle='#e8a070';b.lineWidth=3;b.setLineDash([4,4]);b.beginPath();b.moveTo(px+2,py+TILE-4);b.lineTo(px+TILE-2,py+TILE-4);b.stroke();b.setLineDash([]);}
+      }
+    }
+  }
+  function diamond(x,y,r,color){
+    ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r*.72,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r*.72,y);ctx.closePath();ctx.fill();
+    ctx.strokeStyle='#fff5ca';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(x-r*.5,y);ctx.lineTo(x,y-r*.7);ctx.stroke();
+  }
+  function draw(s){
+    const dpr=Math.min(2,devicePixelRatio||1);
+    if(canvas.width!==SIZE*dpr){canvas.width=canvas.height=SIZE*dpr;}
+    ctx.setTransform(dpr,0,0,dpr,0,0);clockAll=reduced?0:s.elapsed;paint(s.rows);
+    ctx.clearRect(0,0,SIZE,SIZE);ctx.drawImage(board,0,0);
+    const h=s.hero, homeX=(s.start.x+.5)*TILE,homeY=(s.start.y+.5)*TILE,all=s.relics.every(r=>r.collected);
+    ctx.save();ctx.translate(homeX,homeY);ctx.rotate(reduced?0:clockAll*.5);
+    ctx.strokeStyle=all?'#93f5c5':'#5dc4ef';ctx.lineWidth=all?4:2;ctx.setLineDash([7,4]);ctx.beginPath();ctx.arc(0,0,12,0,7);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+    if(all){ctx.fillStyle='#93f5c5';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText('HOME',homeX,homeY-18);}
+    if(h.path.length){
+      ctx.strokeStyle='#63d8ee66';ctx.lineWidth=3;ctx.setLineDash([3,7]);ctx.lineCap='round';ctx.beginPath();ctx.moveTo((h.x+.5)*TILE,(h.y+.5)*TILE);
+      if(h._to)ctx.lineTo((h._to.x+.5)*TILE,(h._to.y+.5)*TILE);
+      for(const p of h.path)ctx.lineTo((p.x+.5)*TILE,(p.y+.5)*TILE);
+      ctx.stroke();ctx.setLineDash([]);
+    }
+    if(h.target&&s.status==='playing'){ctx.strokeStyle='#9be5f6';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc((h.target.x+.5)*TILE,(h.target.y+.5)*TILE,7,0,7);ctx.stroke();}
+    for(const r of s.relics){
+      const x=(r.x+.5)*TILE,y=(r.y+.5)*TILE;
+      if(r.collected){ctx.strokeStyle='#93f5c5';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x-5,y);ctx.lineTo(x-1,y+4);ctx.lineTo(x+6,y-5);ctx.stroke();}
+      else{
+        const pulse=reduced?1:1+Math.sin(clockAll*3+r.id)*.08;
+        ctx.shadowColor='#ffc66d';ctx.shadowBlur=12;diamond(x,y,10*pulse,'#f8bd61');ctx.shadowBlur=0;
+        ctx.fillStyle='#111625';ctx.font='bold 9px system-ui';ctx.textAlign='center';ctx.fillText(String(r.id),x,y+3);
+      }
+    }
+    const groups=new Map();
+    for(const m of s.monsters){
+      if(s.settings.mode==='explore')continue;
+      const x=(m.x+.5)*TILE,y=(m.y+.5)*TILE+(reduced?0:Math.sin(clockAll*7+m.id)*.8),size=TILE*.66;
+      const look=m.state==='chase'&&m.target?[m.target.x-m.x,m.target.y-m.y]:m.dir;
+      ctx.globalAlpha=m.active?1:.45;ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(x,y+size*.48,size*.44,3,0,0,7);ctx.fill();
+      ctx.fillStyle=m.active?m.color:'#6a6686';rr(x-size/2,y-size/2,size,size,size*.34);ctx.fill();
+      ctx.strokeStyle=m.active?'#ffffff55':'#aaa4c033';ctx.lineWidth=1;ctx.stroke();
+      face(x,y-1,size*.19,size*.115,look,3,m.id);
+      ctx.globalAlpha=1;
+      if(m.active&&m.state!=='wander'){
+        ctx.fillStyle=m.state==='chase'?'#fff3d6':'#e8d0ff';ctx.font='bold 13px system-ui';ctx.textAlign='center';ctx.strokeStyle='#141324';ctx.lineWidth=3;
+        ctx.strokeText(m.indicator||'?',x,y-size*.75);ctx.fillText(m.indicator||'?',x,y-size*.75);
+      }
+      if(m.active){const k=Math.round(m.x)+','+Math.round(m.y);const v=groups.get(k)||{x,y,n:0};v.n++;groups.set(k,v);}
+    }
+    for(const p of groups.values())if(p.n>1){
+      ctx.fillStyle='#151526';rr(p.x+7,p.y+5,15,13,5);ctx.fill();ctx.fillStyle='#fff';ctx.font='bold 10px system-ui';ctx.textAlign='center';ctx.fillText(String(p.n),p.x+14.5,p.y+15);
+    }
+    const hx=(h.x+.5)*TILE,hy=(h.y+.5)*TILE,sz=TILE*.73;
+    if(h.grace>0){ctx.strokeStyle='#9ae4ffbb';ctx.lineWidth=2;ctx.beginPath();ctx.arc(hx,hy,sz*.72,0,7);ctx.stroke();}
+    ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(hx,hy+sz*.5,sz*.45,3,0,0,7);ctx.fill();
+    ctx.fillStyle='#79c6ff';rr(hx-sz/2,hy-sz/2,sz,sz,sz*.29);ctx.fill();ctx.fillStyle='#c3efff';ctx.fillRect(hx-sz/2+3,hy-sz/2+3,sz-6,3);
+    const near=s.monsters.some(m=>m.active&&Math.hypot(m.x-h.x,m.y-h.y)<2.3);
+    face(hx,hy-1,sz*.2,sz*.12,h.dir,near&&h.grace<=0?2:1,0);
+    for(const e of s.events.slice(-12)){
+      const age=s.elapsed-e.time;if(age<0||age>1||reduced)continue;
+      if(e.type==='collect'){
+        const r=s.relics.find(r=>r.id===e.relicId);if(!r)continue;
+        ctx.globalAlpha=1-age;ctx.strokeStyle='#ffe1a0';ctx.lineWidth=2;ctx.beginPath();ctx.arc((r.x+.5)*TILE,(r.y+.5)*TILE,10+age*30,0,7);ctx.stroke();ctx.globalAlpha=1;
+      }
+    }
+    if(s.status==='won'){
+      ctx.fillStyle='#0c1727bb';ctx.fillRect(0,0,SIZE,SIZE);
+      ctx.fillStyle='#94f1c4';ctx.textAlign='center';ctx.font='bold 34px system-ui';ctx.fillText('MAZE ESCAPED!',SIZE/2,SIZE/2-12);
+      ctx.fillStyle='#fff0d8';ctx.font='18px system-ui';ctx.fillText('Three relics. One clever designer.',SIZE/2,SIZE/2+24);
+    }
+  }
+  return {draw};
+}
+
+</script>
+<script>
+/* Browser shell for the Nether lab. Every round keeps an immutable recipe. */
+(() => {
+  'use strict';
+  const $=id=>document.getElementById(id), clone=v=>JSON.parse(JSON.stringify(v));
+  const NAMES={forgetful:'Corner tricksters',goofy:'Wrong-way wanderers',clever:'Sharp trackers',mixed:'Mixed crew'};
+  const BASE={brain:'forgetful',noticeDelay:.6,memorySeconds:2,wrongTurnChance:.3,speedScale:1,monsterCount:8,dodge:true,lives:0,initialLoose:4,releaseEvery:3};
+  const PRESETS={
+    forgetful:{...BASE,brain:'forgetful'},
+    goofy:{...BASE,brain:'goofy'},
+    clever:{...BASE,brain:'clever'}
+  };
+  const LABELS={brain:'Monster thinking',noticeDelay:'Noticing turns',memorySeconds:'Remembering you',wrongTurnChance:'Wrong-turn chance',speedScale:'Monster pace',monsterCount:'Monster count',dodge:'Dodge help',lives:'Practice / lives'};
+  const IDS={brain:'brain',noticeDelay:'noticeDelay',memorySeconds:'memorySeconds',wrongTurnChance:'wrongTurnChance',speedScale:'pace',monsterCount:'monsterCount',dodge:'dodge',lives:'lives'};
+  const DRAFT_KEY='twenty-nights-studio-draft-v1';
+  let game,recipe,rounds=[],savedUnfinished=[],anchorA=null,chaseRound=0,recorded=false,chosenPreset='forgetful';
+  let activePointer=null,keys=[],lastFrame=null,lastEvent=0,lastHud=0,message='',messageUntil=0;
+  let soundOn=false,audio=null;
+  const canvas=$('game'),renderer=makeNetherRenderer(canvas);
+  const cleanText=(s,max=2000)=>String(s||'').slice(0,max);
+  function setText(id,text){if($(id).textContent!==text)$(id).textContent=text;}
+  function valueLabel(k,v){
+    if(k==='brain')return NAMES[v]||v;
+    if(k==='dodge')return v?'on':'off';
+    if(k==='lives')return v===3?'3 lives':'practice';
+    if(k==='speedScale')return Math.round(v*100)+'%';
+    if(k==='wrongTurnChance')return Math.round(v*100)+'%';
+    if(k==='noticeDelay'||k==='memorySeconds')return v+' seconds';
+    return String(v);
+  }
+  function readSettings(){
+    return {brain:$('brain').value,noticeDelay:+$('noticeDelay').value,memorySeconds:+$('memorySeconds').value,wrongTurnChance:+$('wrongTurnChance').value,speedScale:+$('pace').value,monsterCount:+$('monsterCount').value,dodge:$('dodge').checked,lives:+$('lives').value,initialLoose:Math.min(4,+$('monsterCount').value),releaseEvery:3};
+  }
+  function putSettings(s){
+    for(const [key,id] of Object.entries(IDS)){
+      if(key==='dodge')$(id).checked=s[key]!==false;
+      else if(s[key]!==undefined)$(id).value=String(s[key]);
+    }
+  }
+  function recipeName(s){return chosenPreset==='custom'?'My monster recipe':NAMES[s.brain];}
+  function stageSettings(s,step){return {...s,speedScale:+Math.min(1.25,s.speedScale+step*.05).toFixed(2)};}
+  function prepare(mode='chase',paired=false){
+    const s=readSettings();
+    if(paired&&anchorA)return {...clone(anchorA),settings:stageSettings(s,anchorA.rampStep||0),name:recipeName(s),mode:'chase',comparison:'B',rampStep:anchorA.rampStep||0};
+    const step=$('ramp').value==='gentle'&&mode==='chase'?Math.min(3,chaseRound):0;
+    const mirrored=$('mapPolicy').value==='reflected'&&chaseRound%2===1;
+    const rows=mirrored?STUDIO_ROWS.map(r=>[...r].reverse().join('')):STUDIO_ROWS.slice();
+    const relicPositions=mirrored?[[18,1],[10,1],[1,1]]:[[1,1],[9,1],[18,1]];
+    return {name:recipeName(s),settings:stageSettings(s,step),rows,relicPositions,seed:1234567,mode,map:mirrored?'Reflected Nether 1':'Nether 1',rampStep:step,comparison:null};
+  }
+  function compare(){
+    $('playA').disabled=!anchorA;$('playB').disabled=!anchorA;
+    if(!anchorA){setText('comparisonText','Keep the rules on the board as A. Change one setting, then try B on the same maze and seed.');return;}
+    const b=stageSettings(readSettings(),anchorA.rampStep||0),changes=Object.keys(IDS).filter(k=>anchorA.settings[k]!==b[k]);
+    const parts=changes.map(k=>`${LABELS[k]}: ${valueLabel(k,anchorA.settings[k])} → ${valueLabel(k,b[k])}`);
+    setText('comparisonText',`A: ${anchorA.name}. ${changes.length?parts.join(' · '):'B currently has the same settings.'} A/B reuse A’s exact maze, goal positions and seed. ${changes.length>1?'Several settings differ; compare the whole recipe.':changes.length===1?'One setting differs. What do you notice?':'Change a setting to make a new comparison.'}`);
+  }
+  function updateSettings(){
+    const s=readSettings();
+    for(const [k,id] of Object.entries(IDS))if($(id+'Value'))setText(id+'Value',valueLabel(k,s[k]));
+    $('noticeDelay').disabled=s.brain==='clever';
+    $('memorySeconds').disabled=s.brain==='clever';
+    $('wrongTurnChance').disabled=!['goofy','mixed'].includes(s.brain);
+    const map=$('mapPolicy').value==='reflected'?'Alternate your map and its reflected view.':'Keep your exact map.';
+    setText('replaySummary',`${map} ${$('ramp').value==='gentle'?'New chase rounds add 5 percentage points of monster pace, up to 3 steps and 125% maximum.':'Monster pace stays the same.'} Catches do not change the map or increase difficulty. A/B comparisons keep A’s stage.`);
+    const different=recipe&&Object.keys(IDS).some(k=>recipe.settings[k]!==s[k]);
+    setText('liveSettingsNote',different?'Your changes are ready for the next round. The current board keeps its recorded rules.':'The controls below describe your next round. Your chosen rules are saved with every result.');
+    document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.preset===chosenPreset)));
+    compare();
+  }
+  function clearInput(){
+    if(activePointer!==null){try{canvas.releasePointerCapture(activePointer);}catch{}}
+    activePointer=null;keys=[];game.releasePointer();game.clearDirection();
+  }
+  function record(){
+    if(recorded||!game||game.state.elapsed===0)return;
+    const result=game.snapshot();
+    rounds.push({...result,recipe:clone(recipe),recordedAt:new Date().toISOString()});
+    if(rounds.length>30)rounds=rounds.slice(-30);
+    recorded=true;renderRounds();
+  }
+  function finishCurrent(){
+    if(!game)return;
+    if(['playing','paused'].includes(game.state.status))game.stop();
+    record();clearInput();
+  }
+  function launch(mode='chase',exact=null,tag=null){
+    finishCurrent();recipe=exact?clone(exact):prepare(mode);
+    if(tag)recipe.comparison=tag;
+    if(!exact&&mode==='chase')chaseRound++;
+    game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:recipe.mode});
+    recorded=false;lastEvent=0;lastFrame=null;message='';game.start();
+    setText('recipeName',recipe.name+(recipe.comparison?' · '+recipe.comparison:''));
+    setText('recipeSummary',`${recipe.map} · ${recipe.settings.monsterCount} monsters · ${Math.round(recipe.settings.speedScale*100)}% pace · ${recipe.settings.dodge?'dodge on':'dodge off'} · ${recipe.settings.lives===3?'3-life trial':'practice'}`);
+    updateSettings();hud(true);canvas.focus({preventScroll:true});
+    if(innerWidth<760)$('boardWrap').scrollIntoView({block:'nearest',behavior:'instant'});
+  }
+  function pause(reason='Paused. Your maze will wait.'){
+    if(game.state.status!=='playing')return;
+    clearInput();game.pause();message=reason;messageUntil=Infinity;hud(true);
+  }
+  function resume(){game.resume();message='';lastFrame=null;hud(true);canvas.focus({preventScroll:true});}
+  function renderRounds(){
+    $('roundList').replaceChildren();
+    if(!rounds.length){setText('roundList','Your first round will appear here. Your opinion matters more than the numbers.');return;}
+    const list=document.createElement('ol');
+    for(const r of rounds.slice(-6).reverse()){
+      const li=document.createElement('li');
+      li.textContent=`${r.recipe.comparison?r.recipe.comparison+' · ':''}${r.recipe.name} · ${r.settings.mode==='explore'?'explore':r.returnedHome?'escaped':r.outcome==='gameover'?'3 lives used':'stopped'} · ${r.relics.length}/3 relics · ${r.catches} catches · ${Math.round(r.seconds)}s`;
+      list.appendChild(li);
+    }
+    $('roundList').appendChild(list);
+  }
+  function announce(text,seconds=3){message=text;messageUntil=game.state.elapsed+seconds;setText('statusText',text);}
+  function tone(kind){
+    if(!soundOn||!audio)return;
+    const notes=kind==='win'?[523,659,784]:kind==='collect'?[659,880]:kind==='caught'?[220,174]:[440];
+    try{notes.forEach((freq,i)=>{const o=audio.createOscillator(),gain=audio.createGain(),t=audio.currentTime+i*.09;o.type='sine';o.frequency.value=freq;gain.gain.setValueAtTime(0,t);gain.gain.linearRampToValueAtTime(.045,t+.01);gain.gain.exponentialRampToValueAtTime(.001,t+.15);o.connect(gain);gain.connect(audio.destination);o.start(t);o.stop(t+.17);});}catch{}
+  }
+  function events(){
+    for(const e of game.state.events){
+      if(e.seq<=lastEvent)continue;lastEvent=e.seq;
+      if(e.type==='collect'){
+        const all=game.state.relics.every(r=>r.collected);
+        announce(all?'All three! Return to your blue home portal.':`Relic ${e.relicId} collected. Keep exploring!`);tone('collect');
+      }else if(e.type==='caught'){announce('Caught! Relics kept. Your blue shield gives you a fresh start.');tone('caught');}
+      else if(e.type==='tricked')announce('A monster lost your trail. You found a chance to escape!',2);
+      else if(e.type==='release')announce('Another monster has left the pen.',1.5);
+      else if(e.type==='win'){announce('You escaped with all three relics. What would you change?',Infinity);tone('win');record();}
+      else if(e.type==='gameover'){announce('Three lives used. Your design notes are ready.',Infinity);record();}
+    }
+  }
+  function hud(force=false){
+    const s=game.state;
+    if(!force&&s.elapsed-lastHud<.1&&s.status==='playing')return;lastHud=s.elapsed;
+    const count=s.relics.filter(r=>r.collected).length;
+    const phase=s.status==='playing'?(s.waitingForMove?'Ready to move':s.settings.mode==='explore'?'Exploring':s.recovery>0?'Fresh start':'Playing'):{ready:'Ready',paused:'Paused',won:'Escaped!',gameover:'Round complete',stopped:'Stopped'}[s.status]||s.status;
+    setText('phase',phase);setText('relicHud',count+' / 3');setText('catchLabel',s.settings.lives===3?'LIVES':'CATCHES');setText('catchHud',String(s.settings.lives===3?s.livesLeft:s.catches));
+    setText('timerHud',Math.floor(s.elapsed/60)+':'+String(Math.floor(s.elapsed%60)).padStart(2,'0'));
+    const prompt=s.waitingForMove?'Hold or drag on a path to begin. The monsters wait for your first input.':count===3?'Return to the blue home portal to escape.':'Collect the three gold relics, then return to the blue portal.';
+    setText('statusText',message&&s.elapsed<messageUntil?message:prompt);
+    $('pause').disabled=!['playing','paused'].includes(s.status);
+    setText('pause',s.status==='paused'?'Resume':'Pause');
+    $('play').disabled=s.status==='playing';setText('play',s.status==='ready'?'Play my maze':'Play a new round');
+    const overlay=['ready','paused','won','gameover','stopped'].includes(s.status);
+    $('overlay').hidden=!overlay;
+    if(overlay){
+      const text={
+        ready:['Ready, designer?','Collect three gold relics. Bring them back to your blue portal.','Play my maze'],
+        paused:['Take your time','Everything is paused. Resume, then steer when you are ready.','Resume'],
+        won:['You found your way home!','Three relics collected. Did these rules make a good chase?','Play again'],
+        gameover:['Your next idea starts here','Try the same rules again, or change one thing.','Try again'],
+        stopped:['Round saved','Your observations can shape the next version.','Play again']
+      }[s.status];
+      setText('overlayTitle',text[0]);setText('overlayText',text[1]);setText('overlayAction',text[2]);
+    }
+  }
+  function atPointer(e){
+    const r=canvas.getBoundingClientRect();
+    return {x:Math.max(0,Math.min(19,Math.floor((e.clientX-r.left)/r.width*20))),y:Math.max(0,Math.min(19,Math.floor((e.clientY-r.top)/r.height*20)))};
+  }
+  canvas.addEventListener('pointerdown',e=>{
+    if(game.state.status!=='playing'||activePointer!==null||e.button>0)return;
+    e.preventDefault();activePointer=e.pointerId;keys=[];try{canvas.setPointerCapture(e.pointerId);}catch{}
+    const p=atPointer(e);game.aim(p.x,p.y);hud(true);
+  },{passive:false});
+  canvas.addEventListener('pointermove',e=>{
+    if(e.pointerId!==activePointer||game.state.status!=='playing')return;
+    e.preventDefault();const p=atPointer(e);game.aim(p.x,p.y);
+  },{passive:false});
+  function endPointer(e){if(e.pointerId!==activePointer)return;activePointer=null;game.releasePointer();}
+  canvas.addEventListener('pointerup',endPointer);canvas.addEventListener('pointercancel',endPointer);canvas.addEventListener('lostpointercapture',endPointer);
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+  const DIRECTIONS={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0],w:[0,-1],s:[0,1],a:[-1,0],d:[1,0]};
+  function editing(e){return e.target.closest('input,textarea,select,button,a,summary');}
+  addEventListener('keydown',e=>{
+    if(editing(e)||e.metaKey||e.ctrlKey||e.altKey)return;
+    if(e.key==='Escape'){if(document.body.classList.contains('focus-mode')){document.body.classList.remove('focus-mode');$('focusMode').setAttribute('aria-pressed','false');setText('focusMode','Focus on play');fitBoard();}pause();return;}
+    if(e.code==='Space'){e.preventDefault();if(game.state.status==='paused')resume();else pause();return;}
+    const key=e.key.length===1?e.key.toLowerCase():e.key,dir=DIRECTIONS[key];
+    if(!dir||game.state.status!=='playing')return;
+    e.preventDefault();if(e.repeat)return;
+    if(activePointer!==null){try{canvas.releasePointerCapture(activePointer);}catch{}activePointer=null;game.releasePointer();}
+    keys=keys.filter(k=>k!==key);keys.push(key);game.setDirection(...dir);hud(true);
+  });
+  addEventListener('keyup',e=>{
+    const key=e.key.length===1?e.key.toLowerCase():e.key;
+    if(!DIRECTIONS[key])return;keys=keys.filter(k=>k!==key);
+    if(keys.length)game.setDirection(...DIRECTIONS[keys[keys.length-1]]);else if(activePointer===null)game.clearDirection();
+  });
+  addEventListener('blur',()=>pause('Paused while you were away. Resume when you are ready.'));
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)pause('Paused while you were away. Resume when you are ready.');});
+  $('play').onclick=()=>launch();
+  $('explore').onclick=()=>launch('explore');
+  $('restart').onclick=()=>launch(game.state.settings.mode);
+  $('pause').onclick=()=>game.state.status==='paused'?resume():pause();
+  $('overlayAction').onclick=()=>game.state.status==='paused'?resume():launch();
+  $('applySettings').onclick=()=>launch();
+  document.querySelectorAll('[data-preset]').forEach(button=>button.onclick=()=>{
+    chosenPreset=button.dataset.preset;putSettings(PRESETS[chosenPreset]);updateSettings();launch();
+  });
+  for(const id of Object.values(IDS))$(id).addEventListener('input',()=>{chosenPreset='custom';updateSettings();});
+  for(const id of ['mapPolicy','ramp'])$(id).addEventListener('change',updateSettings);
+  $('pinA').onclick=()=>{anchorA=clone(recipe);anchorA.mode='chase';compare();announce('A saved: the rules currently on the board. Change one thing for B.');};
+  $('playA').onclick=()=>{if(anchorA)launch('chase',anchorA,'A');};
+  $('playB').onclick=()=>{if(anchorA)launch('chase',prepare('chase',true),'B');};
+  $('focusMode').onclick=()=>{const on=document.body.classList.toggle('focus-mode');$('focusMode').setAttribute('aria-pressed',String(on));setText('focusMode',on?'Show design tools':'Focus on play');fitBoard();};
+  $('sound').onclick=()=>{
+    soundOn=!soundOn;
+    if(soundOn){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();audio.resume();tone('collect');}catch{soundOn=false;}}
+    $('sound').setAttribute('aria-pressed',String(soundOn));setText('sound',soundOn?'Sound on':'Sound off');
+  };
+  function notesData(){
+    return {version:3,title:cleanText($('designName').value,60)||'Nether 1',provenance:'Playable proposals for the designer to choose; not final Nether game rules.',choice:{$:'designer answers',favourite:$('favourite').value,verdict:$('verdict').value,noticed:cleanText($('noticed').value,4000),nextIdea:cleanText($('nextIdea').value,4000)},nextSettings:readSettings(),replay:{mapPolicy:$('mapPolicy').value,ramp:$('ramp').value,chaseRoundsStarted:chaseRound},anchorA:anchorA?clone(anchorA):null,rounds:clone(rounds),savedUnfinished:clone(savedUnfinished),current:game.state.status==='playing'||game.state.status==='paused'?{...game.snapshot(),recipe:clone(recipe),unfinished:true}:null};
+  }
+  function notesText(){
+    const n=notesData(),c=n.choice;
+    return [n.title+' — MY GAME LAB NOTES',n.provenance,'','MY DECISIONS','Favourite: '+c.favourite,'How it felt: '+c.verdict,'I noticed: '+(c.noticed||'[open]'),'My next idea: '+(c.nextIdea||'[open]'),'','ROUND RULES','Collect three relics and return home. Relics stay collected after catches. A win can include catches; it is not proof of an uncaught run.','Practice has unlimited retries; the optional three-life trial is a proposal. A/B uses the same maze, goals, seed and stage, with any changed settings listed in the recipe.','The new movement engine and mission differ from the earlier 45-second sketch; results are not directly comparable.','No final Nether layers, wall upgrades, void or hammer are implemented.','',n.current?'CURRENT ROUND IS UNFINISHED. It is kept separately from completed or stopped rounds.':'Completed or stopped rounds are listed below.',n.savedUnfinished.length?`${n.savedUnfinished.length} unfinished snapshot(s) recovered from saved drafts are included separately below.`:'','',...rounds.map(r=>`${r.recipe.comparison||'Round'} / ${r.recipe.name}: ${r.settings.mode}; ${r.seconds}s; ${r.catches} catches; ${r.relics.length}/3 relics; returned home ${r.returnedHome?'yes':'no'}.`),'','FULL DESIGN AND ROUND DETAILS',JSON.stringify(n,null,2)].join('\n');
+  }
+  function showNotes(){if(game.state.status==='playing')pause('Paused so you can keep your design notes.');$('report').value=notesText();$('report').hidden=false;setText('saveStatus','Your notes are below. Download to keep a copy.');}
+  $('showNotes').onclick=showNotes;
+  $('copyNotes').onclick=async()=>{
+    showNotes();const text=$('report').value;let copied=false;
+    try{if(navigator.clipboard){await navigator.clipboard.writeText(text);copied=true;}}catch{}
+    if(!copied){$('report').focus();$('report').select();try{copied=document.execCommand('copy');}catch{}}
+    setText('saveStatus',copied?'Copied. Paste your notes somewhere to check them.':'Select the notes and copy them, or use Download notes.');
+  };
+  $('downloadNotes').onclick=()=>{
+    showNotes();const blob=new Blob([$('report').value],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='Nether 1 game lab notes.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);setText('saveStatus','Download requested. Check your Downloads before closing.');
+  };
+  function draftAvailability(){try{$('loadDraft').disabled=!localStorage.getItem(DRAFT_KEY);}catch{$('loadDraft').disabled=true;}}
+  $('saveDraft').onclick=()=>{
+    try{const d=notesData();localStorage.setItem(DRAFT_KEY,JSON.stringify(d));setText('draftStatus','Draft saved on this device. It includes your settings, answers and recorded rounds.');draftAvailability();}
+    catch{setText('draftStatus','This browser could not save a draft. Download your notes instead.');}
+  };
+  function validRecipe(r){
+    if(!r||!r.settings||!Array.isArray(r.rows)||!Array.isArray(r.relicPositions)||!Number.isFinite(r.seed))return false;
+    const normal=JSON.stringify(STUDIO_ROWS),reflected=JSON.stringify(STUDIO_ROWS.map(row=>[...row].reverse().join('')));
+    if(![normal,reflected].includes(JSON.stringify(r.rows)))return false;
+    return NetherEngine.analyse(r.rows,r.relicPositions).valid&&Number.isInteger(r.rampStep)&&r.rampStep>=0&&r.rampStep<=3;
+  }
+  function validRound(r){
+    return r&&validRecipe(r.recipe)&&r.settings&&Array.isArray(r.relics)&&Number.isFinite(r.seconds)&&r.seconds>=0&&Number.isInteger(r.catches)&&r.catches>=0;
+  }
+  function validateDraft(d){
+    if(!d||d.version!==3||!d.nextSettings||!Array.isArray(d.rounds)||d.rounds.length>30||!d.rounds.every(validRound))throw Error('unsupported draft');
+    const s=d.nextSettings;
+    if(!NAMES[s.brain]||![4,6,8,10,12].includes(s.monsterCount)||![0,3].includes(s.lives)||typeof s.dodge!=='boolean')throw Error('unsupported settings');
+    for(const [k,min,max] of [['noticeDelay',.2,1.4],['memorySeconds',.5,4],['wrongTurnChance',0,.6],['speedScale',.75,1.1]]){
+      if(!Number.isFinite(s[k])||s[k]<min||s[k]>max)throw Error('unsupported setting');
+    }
+    if(d.anchorA&&!validRecipe(d.anchorA))throw Error('unsupported comparison');
+    if(d.current&&!validRound(d.current))throw Error('unsupported unfinished round');
+    if(d.savedUnfinished&&(!Array.isArray(d.savedUnfinished)||d.savedUnfinished.length>30||!d.savedUnfinished.every(validRound)))throw Error('unsupported unfinished history');
+  }
+  $('loadDraft').onclick=()=>{
+    try{
+      const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
+      validateDraft(d);
+      finishCurrent();putSettings({...BASE,...d.nextSettings});chosenPreset='custom';
+      $('designName').value=cleanText(d.title,60);$('favourite').value=d.choice?.favourite||'undecided';$('verdict').value=d.choice?.verdict||'undecided';
+      $('noticed').value=cleanText(d.choice?.noticed,4000);$('nextIdea').value=cleanText(d.choice?.nextIdea,4000);
+      $('mapPolicy').value=['fixed','reflected'].includes(d.replay?.mapPolicy)?d.replay.mapPolicy:'fixed';
+      $('ramp').value=d.replay?.ramp==='gentle'?'gentle':'off';
+      chaseRound=Math.max(0,Math.min(1000,Number(d.replay?.chaseRoundsStarted)||0));
+      rounds=clone(d.rounds);
+      const unfinished=[...(d.savedUnfinished||[]),...(d.current&&d.current.seconds>0?[d.current]:[])];
+      savedUnfinished=[...new Map(unfinished.map(r=>[JSON.stringify(r),r])).values()].slice(-30).map(r=>({...clone(r),unfinished:true}));
+      anchorA=d.anchorA?clone(d.anchorA):null;
+      recipe=prepare('chase');game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});recorded=false;lastEvent=0;
+      setText('recipeName',recipe.name);setText('recipeSummary','Restored settings. Start a fresh round when you are ready.');
+      updateSettings();renderRounds();hud(true);setText('draftStatus','Draft restored. A saved unfinished round stays in the download; play starts fresh.');
+    }catch{setText('draftStatus','This draft could not be restored. Your current page and downloaded notes are still available.');}
+  };
+  function fitBoard(){
+    const height=window.visualViewport?.height||innerHeight;
+    const landscape=innerWidth>height&&height<600;
+    document.documentElement.style.setProperty('--board-max',Math.max(200,Math.min(640,height-(landscape?125:220)))+'px');
+  }
+  addEventListener('resize',fitBoard);window.visualViewport?.addEventListener('resize',fitBoard);
+  function frame(now){
+    const dt=lastFrame===null?0:Math.min(.1,(now-lastFrame)/1000);lastFrame=now;
+    game.step(dt);events();hud();renderer.draw(game.state);requestAnimationFrame(frame);
+  }
+  putSettings(BASE);recipe=prepare('chase');game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});
+  setText('recipeName',recipe.name);setText('recipeSummary','Your exact Nether 1 · 8 monsters · 100% pace · dodge on · practice');
+  updateSettings();renderRounds();draftAvailability();fitBoard();hud(true);requestAnimationFrame(frame);
+})();
+
+</script>
+</body>
+</html>
