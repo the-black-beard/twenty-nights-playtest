@@ -14,3 +14,5 @@ Serve the root on GitHub Pages from `main` with `.nojekyll`. Individual test HTM
 The sketches are candidates for play and discussion. Matching structural measures and headless checks do not establish equal difficulty, touch quality or human acceptance. Final Nether layer design and monster counts remain open.
 
 The studio uses a new movement engine and a return-home objective. Its results are not directly comparable with the earlier 45-second sketches. Relics persist through catches; winning does not mean an uncaught run. A/B preserves the recorded maze, goals, seed and ramp stage. Presets and three-life rules remain choices for the designer, not accepted game specifications.
+
+22 October colour experiment: the starting recipe uses goofy monsters (10 total, 110% pace, 1s noticing, 2.5s memory, 30% wrong turns), with dodge and practice. Original/gold/lime changes only the blue-green monster slot; the hero and simulation are unchanged. New version 4 results distinguish walking home from being rescued after a catch. Legacy results are retained, not relabelled as verified escapes. Palette choices and any mid-round changes are recorded locally.

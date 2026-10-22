@@ -95,6 +95,38 @@ section.tool-panel{padding:18px}
 .preset small{display:block;font-size:10px;line-height:1.5;color:var(--muted);margin-top:3px}
 .preset-arrow{font-size:18px;color:#79968c}
 .preset[aria-pressed=true] .preset-arrow{color:var(--mint)}
+.preset-panel #startingRecipe{margin-top:12px}
+.colour-lab h2{font-size:20px;line-height:1.25;letter-spacing:-.035em}
+.colour-intro{font-size:13px;color:var(--muted);line-height:1.6;margin:10px 0 16px}
+.colour-lab>.field{font-size:13px}
+.colour-legend{display:flex;justify-content:space-between;gap:16px;padding:16px 12px;margin:15px 0;border:1px solid #3d505b;border-radius:12px;background:#111d25}
+.legend-group{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0;text-align:center}
+.legend-label{font-size:10px;font-weight:750;letter-spacing:.09em;color:#cfdee0;white-space:nowrap}
+.legend-caption{font-size:11px;line-height:1.45;color:var(--muted);max-width:160px}
+.crew-legend{flex:1}
+.crew-swatches{display:flex;align-items:center;justify-content:center;gap:7px;min-height:30px}
+.colour-legend .monster-token{width:28px;height:28px;flex-shrink:0;border-radius:10px 10px 8px 8px;background:var(--swatch,#f56e7e)}
+.colour-legend .monster-token:before,.colour-legend .monster-token:after{top:10px;width:4px;height:6px}
+.colour-legend .monster-token:before{left:7px}
+.colour-legend .monster-token:after{right:7px}
+.colour-legend .monster-token i:before,.colour-legend .monster-token i:after{top:5px;width:8px;height:3px}
+.colour-legend .monster-token i:before{left:4px}
+.colour-legend .monster-token i:after{right:4px}
+.colour-legend .monster-token b{left:11px;bottom:5px;width:7px}
+.hero-token{position:relative;display:block;width:28px;height:28px;border-radius:8px;background:var(--swatch,#79c6ff);box-shadow:inset 0 -4px #0002,0 4px 0 #0002;flex-shrink:0}
+.hero-token:before,.hero-token:after{content:"";position:absolute;top:12px;width:4px;height:5px;border-radius:50%;background:#15161c}
+.hero-token:before{left:7px}
+.hero-token:after{right:7px}
+.hero-token i{position:absolute;top:4px;left:4px;right:4px;height:3px;background:#c3efff;border-radius:2px}
+.colour-steps{margin:0;padding-left:19px;font-size:13px;color:#d1dfdf;line-height:1.6}
+.colour-steps li+li{margin-top:5px}
+.colour-steps li::marker{font-weight:750;color:var(--mint)}
+.colour-guide{margin-top:12px;border-top:1px solid var(--line)}
+.colour-guide>summary{display:list-item;list-style:disclosure-closed;font-size:12px;color:var(--muted);padding:12px 0 0;margin-left:15px;min-height:44px}
+.colour-guide[open]>summary{list-style:disclosure-open;border:0}
+.colour-guide>p{font-size:12px;line-height:1.6;color:var(--muted);margin-top:7px}
+.colour-verdict{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;padding:16px;border:1px solid #485a52;border-radius:12px;background:#1b302b}
+.colour-verdict>.field{margin:0}
 .monster-token{display:block;width:36px;height:36px;position:relative;border-radius:12px 12px 10px 10px;background:var(--mint);box-shadow:inset 0 -5px #0002,0 4px 0 #0002}
 .monster-token:before,.monster-token:after{content:"";position:absolute;top:13px;width:5px;height:7px;background:#20302f;border-radius:50%}
 .monster-token:before{left:9px}
@@ -202,6 +234,7 @@ body.focus-mode .status-line{margin-bottom:0}
 }
 @media(max-height:520px) and (orientation:landscape){.board-overlay{padding:10px}.overlay-card{padding:12px;max-width:265px}.overlay-card>.portal-art,.overlay-card>.eyebrow{display:none}.overlay-card h2{font-size:18px;line-height:1.2}.overlay-card>p:not(.eyebrow){font-size:11px;line-height:1.4;margin:7px 0 11px}.overlay-card .button{min-height:40px}}
 @media(max-width:850px){
+  .legend-label,.legend-caption{font-size:12px}
   .button,.tool-actions .button,.comparison-actions .button,.save-actions .button,.draft-content .button{font-size:12px}
   .arena-top p,.status-line{font-size:13px;line-height:1.55}
   .small-note,.callout,.recipe-strip p,.section-heading p,.section-heading small,.preset small,.save-heading p,.draft-content,.draft-details>summary,.lab-footer,.lab-footer>p{font-size:12px;line-height:1.6}
@@ -217,6 +250,7 @@ body.focus-mode .status-line{margin-bottom:0}
   .tool-actions .button{min-height:48px;padding:7px 5px}
   .overlay-card>p:not(.eyebrow){font-size:13px}
 }
+@media(max-width:600px){.colour-verdict{grid-template-columns:minmax(0,1fr);gap:14px;padding:14px}.colour-legend{padding:14px 10px;gap:12px}.crew-swatches{gap:6px}.legend-caption{max-width:150px}}
 @media(max-width:420px){.field-pair{grid-template-columns:minmax(0,1fr);gap:14px}.field-pair select{font-size:16px}.comparison-actions{display:grid;grid-template-columns:1fr 1fr}.comparison-actions .button:first-child{grid-column:1 / -1}.arena-top{align-items:center}}
 @media(max-height:520px) and (orientation:landscape){body.focus-mode .hud>div{flex-direction:row;padding:5px;gap:4px}body.focus-mode .hud-label{font-size:10px}body.focus-mode .hud strong{font-size:13px;margin-left:auto}.overlay-card>p:not(.eyebrow){font-size:12px;margin:6px 0 9px}.overlay-card .button{font-size:12px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
@@ -267,19 +301,33 @@ body.focus-mode .status-line{margin-bottom:0}
           <p id="statusText" class="status-line" role="status">Hold and drag to move. Dodge is on. You can pause whenever you like.</p>
         </div>
         <p id="keyboardHint" class="visually-hidden">Use arrow keys or WASD to move. Press Escape to pause. Press Tab to leave the maze and reach the controls.</p>
-        <div class="recipe-strip"><span class="recipe-dot" aria-hidden="true"></span><div><span class="mini-label">YOUR CURRENT IDEA</span><strong id="recipeName">Corner tricksters</strong><p id="recipeSummary">Turn a corner. Give them the slip.</p></div></div>
+        <div class="recipe-strip"><span class="recipe-dot" aria-hidden="true"></span><div><span class="mini-label">YOUR CURRENT IDEA</span><strong id="recipeName">My starting recipe</strong><p id="recipeSummary">Wrong-way wanderers · 10 monsters · 110% pace · dodge on</p></div></div>
         <p id="liveSettingsNote" class="small-note">Choose an idea below, then play to see how it feels.</p>
       </section>
 
       <aside class="lab-tools" aria-label="Design your next round">
+        <section class="tool-panel colour-lab" aria-labelledby="colourQuestion">
+          <p class="eyebrow">A COLOUR EXPERIMENT</p>
+          <h2 id="colourQuestion">Which makes your hero easiest to spot?</h2>
+          <p class="colour-intro">Your hero stays blue. Try a different colour for the blue-green monsters.</p>
+          <label class="field" for="colourPalette">Try a colour<select id="colourPalette"><option value="original">Original blue-green</option><option value="gold" selected>Gold instead of blue-green</option><option value="lime">Lime instead of blue-green</option></select></label>
+          <div id="colourLegend" class="colour-legend">
+            <div class="legend-group"><span class="legend-label">YOU</span><span id="colourHeroSwatch" class="hero-token" aria-hidden="true"><i></i></span><span class="legend-caption">Always blue</span></div>
+            <div class="legend-group crew-legend"><span class="legend-label">MONSTER CREW</span><span class="crew-swatches" aria-hidden="true"><span id="colourMonster0" class="monster-token" style="--swatch:#f56e7e"><i></i><b></b></span><span id="colourMonster1" class="monster-token" style="--swatch:#b893ff"><i></i><b></b></span><span id="colourMonster2" class="monster-token" style="--swatch:#e8d45e"><i></i><b></b></span><span id="colourMonster3" class="monster-token" style="--swatch:#ffb969"><i></i><b></b></span></span><span class="legend-caption">Same crew. One colour changes.</span></div>
+          </div>
+          <ol class="colour-steps"><li>Choose a colour. The maze pauses so you can look.</li><li>Play or resume to see it move.</li></ol>
+          <p id="colourStatus" class="small-note" role="status">Gold is the first idea to try. Your choice is still open.</p>
+          <details class="colour-guide"><summary>One thing to look for</summary><p>Gold monsters and gold relics have different shapes: monsters have angry faces; relics are diamonds. Does that make them easy to tell apart?</p></details>
+        </section>
         <section class="tool-panel preset-panel">
-          <div class="section-heading"><span class="step-number">01</span><div><h2>Pick an idea to try</h2><p>Which monsters belong in your maze?</p></div></div>
+          <div class="section-heading"><span class="step-number">01</span><div><h2>Try an earlier recipe</h2><p>Compare with your earlier monster ideas.</p></div></div>
           <div class="presets">
             <button class="preset" data-preset="forgetful" aria-pressed="true"><span class="monster-token mint" aria-hidden="true"><i></i><b></b></span><span><strong>Corner tricksters</strong><small>Lose their trail around a corner.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
             <button class="preset" data-preset="goofy" aria-pressed="false"><span class="monster-token peach" aria-hidden="true"><i></i><b></b></span><span><strong>Wrong-way wanderers</strong><small>Some turns go hilariously wrong.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
             <button class="preset" data-preset="clever" aria-pressed="false"><span class="monster-token lilac" aria-hidden="true"><i></i><b></b></span><span><strong>Sharp trackers</strong><small>Know where you are, even behind walls.</small></span><span class="preset-arrow" aria-hidden="true">↗</span></button>
           </div>
-          <p class="small-note">Starting ideas, ready for your changes.</p>
+          <button id="startingRecipe" class="button secondary full-width">Play my starting recipe</button>
+          <p class="small-note">Earlier recipes restore 8 monsters, 100% pace and quicker reactions. Your starting recipe restores 10 goofy monsters and your latest tuning.</p>
         </section>
 
         <details class="tool-panel settings-panel">
@@ -318,7 +366,8 @@ body.focus-mode .status-line{margin-bottom:0}
             <p><strong>Your mission:</strong> collect all three gold relics, then return to the blue portal.</p>
             <p><strong>Read the monsters:</strong> <span class="clue">!</span> means chasing; <span class="clue">?</span> means searching.</p>
             <p><strong>Sharp trackers:</strong> they always know where you are, even through walls. Try the other ideas if you want hiding around corners to help.</p>
-            <p><strong>Caught?</strong> Your relics stay collected. Practice lets you keep trying. The three-life trial ends the attempt after three catches.</p>
+            <p><strong>Caught?</strong> Your relics stay collected. A catch that brings all three relics home counts as <strong>rescued</strong>. Escaping means walking home yourself.</p>
+            <p><strong>Round rules:</strong> practice lets you keep trying. In the three-life trial, your third catch ends the attempt, even if all three relics are collected.</p>
             <p><strong>Take a breath:</strong> pause whenever you like. Switching away from this page pauses the round.</p>
             <p><strong>Explore safely:</strong> learn your routes without a chase.</p>
             <p class="small-note">These are test rules you can change. A low catch count alone cannot tell you which game is the most fun.</p>
@@ -337,6 +386,10 @@ body.focus-mode .status-line{margin-bottom:0}
     <section class="designer-notes lab-tools" aria-labelledby="verdictTitle">
       <div class="notes-intro"><p class="eyebrow">YOUR MAZE. YOUR CALL.</p><h2 id="verdictTitle">What felt right?</h2><p>Point, tell Dad, or write it down.<br>You can mix ideas or stay undecided.</p></div>
       <div class="notes-fields">
+        <div class="colour-verdict">
+          <label class="field" for="colourChoice">Which colour helps me spot my hero?<select id="colourChoice"><option value="undecided">I'm still deciding</option><option value="original">Original blue-green</option><option value="gold">Gold instead of blue-green</option><option value="lime">Lime instead of blue-green</option><option value="my-idea">I have a different colour idea</option></select></label>
+          <label class="field" for="colourReason">What helped me see?<textarea id="colourReason" rows="2" placeholder="I could spot my hero because…"></textarea></label>
+        </div>
         <div class="field-pair">
           <label class="field">How did the chase feel?<select id="verdict"><option value="undecided">I'm still deciding</option><option value="too-easy">Too easy to escape</option><option value="good-chase">A good chase</option><option value="too-hard">Too hard to get away</option><option value="my-idea">I have my own idea</option></select></label>
           <label class="field">My favourite so far<select id="favourite"><option value="undecided">I want to try more</option><option value="forgetful">Corner tricksters</option><option value="goofy">Wrong-way wanderers</option><option value="clever">Sharp trackers</option><option value="mixed">A mixture</option><option value="custom">My own settings</option></select></label>
@@ -420,7 +473,7 @@ const STUDIO_ROWS=["####################", "#..................#", "#.###.##.##.
     const random=()=>{rng^=rng<<13;rng^=rng>>>17;rng^=rng<<5;return (rng>>>0)/4294967296;};
     const actor=(p)=>({x:p.x,y:p.y,dir:[0,-1],_from:copy(p),_to:null,_progress:0});
     const hero=Object.assign(actor(g.start),{target:null,path:[],grace:2});
-    const state={start:copy(g.start),rows:g.rows.slice(),settings,hero,monsters:[],relics:relicPositions.map(([x,y],i)=>({id:i+1,x,y,collected:false})),status:'ready',waitingForMove:true,elapsed:0,catches:0,livesLeft:settings.lives||null,seed:initialSeed,events:[],tricks:0,recovery:0,releaseIn:settings.releaseEvery,travel:0,inputs:0};
+    const state={start:copy(g.start),rows:g.rows.slice(),settings,hero,monsters:[],relics:relicPositions.map(([x,y],i)=>({id:i+1,x,y,collected:false})),status:'ready',completionKind:null,ruleVersion:'walked-return-v2',waitingForMove:true,elapsed:0,catches:0,livesLeft:settings.lives||null,seed:initialSeed,events:[],tricks:0,recovery:0,releaseIn:settings.releaseEvery,travel:0,inputs:0};
     let nextRelease=settings.releaseEvery, repathAt=0;
     function emit(type,details={}) {const e={seq:++eventSeq,type,time:+state.elapsed.toFixed(3),...details};state.events.push(e);if(state.events.length>160)state.events.shift();return e;}
     function nearest(x,y) {let best=null,d=Infinity;for(const p of g.floors){const dd=(p.x-x)**2+(p.y-y)**2;if(dd<d){d=dd;best=p;}}return best?copy(best):null;}
@@ -533,7 +586,7 @@ const STUDIO_ROWS=["####################", "#..................#", "#.###.##.##.
     }
     function collect(){
       for(const r of state.relics)if(!r.collected&&distance(hero,r)<.25){r.collected=true;emit('collect',{relicId:r.id});}
-      if(state.relics.every(r=>r.collected)&&distance(hero,g.start)<.25){state.status='won';emit('win',{catches:state.catches});}
+      if(state.relics.every(r=>r.collected)&&distance(hero,g.start)<.25){state.status='won';state.completionKind='walked';emit('win',{catches:state.catches});}
     }
     function caught(m){
       state.catches++;if(settings.lives)state.livesLeft--;emit('caught',{monsterId:m.id,livesLeft:state.livesLeft});
@@ -542,7 +595,12 @@ const STUDIO_ROWS=["####################", "#..................#", "#.###.##.##.
       // Keep the destination, held direction, relics, release clock and the chase.
       // Nearby monsters return to their own pen slot so home is genuinely safe.
       for(const mob of state.monsters)if(mob.active&&distance(mob,g.start)<5){const p=g.pen[mob.id%g.pen.length]||g.floors.find(p=>distance(p,g.start)>8)||g.start;resetActor(mob,p);mob._previous=null;mob.target=null;mob._lastSeen=null;mob._seenUntil=0;mob._lostAt=null;}
-      planHero();
+      // A rescue keeps the treasures but cannot prove the player walked home.
+      // Finish it explicitly instead of turning the respawn into a false win.
+      if(state.relics.every(r=>r.collected)){
+        state.status='rescued';state.completionKind='rescued';state.recovery=0;
+        emit('rescued',{catches:state.catches,relics:state.relics.map(r=>r.id)});
+      }else planHero();
     }
     function tick(dt){
       state.elapsed+=dt;
@@ -571,7 +629,7 @@ const STUDIO_ROWS=["####################", "#..................#", "#.###.##.##.
     function pause(){if(state.status==='playing'){pausedFrom=state.status;state.status='paused';emit('pause');}return state;}
     function resume(){if(state.status==='paused'){state.status=pausedFrom;state.waitingForMove=true;emit('resume');}return state;}
     function stop(){if(['ready','playing','paused'].includes(state.status)){state.status='stopped';emit('stop');}return state;}
-    function snapshot(){return {version:3,prototype:'Nether 1 Design Studio',rows:state.rows.slice(),settings:copy(settings),seed:initialSeed,outcome:state.status,seconds:+state.elapsed.toFixed(3),catches:state.catches,livesLeft:state.livesLeft,relics:state.relics.filter(r=>r.collected).map(r=>r.id),returnedHome:state.status==='won',tricks:state.tricks,travelTiles:+state.travel.toFixed(3),inputs:state.inputs,events:copy(state.events),hero:{x:hero.x,y:hero.y},monsters:state.monsters.map(m=>({id:m.id,x:m.x,y:m.y,brain:m.brain,state:m.state,active:m.active})),waitingForMove:state.waitingForMove};}
+    function snapshot(){return {version:4,ruleVersion:state.ruleVersion,prototype:'Nether 1 Design Studio',rows:state.rows.slice(),settings:copy(settings),seed:initialSeed,outcome:state.status,completionKind:state.completionKind,seconds:+state.elapsed.toFixed(3),catches:state.catches,livesLeft:state.livesLeft,relics:state.relics.filter(r=>r.collected).map(r=>r.id),returnedHome:state.completionKind==='walked',tricks:state.tricks,travelTiles:+state.travel.toFixed(3),inputs:state.inputs,events:copy(state.events),hero:{x:hero.x,y:hero.y},monsters:state.monsters.map(m=>({id:m.id,x:m.x,y:m.y,brain:m.brain,state:m.state,active:m.active})),waitingForMove:state.waitingForMove};}
     return {state,start,step,aim,releasePointer,setDirection,clearDirection,pause,resume,stop,snapshot};
   }
   const api={create,analyse};host.NetherEngine=api;if(typeof module!=='undefined'&&module.exports)module.exports=api;
@@ -583,10 +641,25 @@ function makeNetherRenderer(canvas) {
   const ctx=canvas.getContext('2d');
   const N=20, TILE=32, SIZE=N*TILE;
   const PAL={pupil:'#15161c',shine:'#fff'};
+  // Cosmetic alternatives: only the blue-green crew slot changes colour.
+  // Actor state, movement, faces, hero and every other crew colour stay intact.
+  const PALETTES={
+    original:{label:'Original blue-green',monsters:['#f56e7e','#b893ff','#62d4d5','#ffb969']},
+    gold:{label:'Gold instead of blue-green',monsters:['#f56e7e','#b893ff','#e8d45e','#ffb969']},
+    lime:{label:'Lime instead of blue-green',monsters:['#f56e7e','#b893ff','#b8db5b','#ffb969']}
+  };
+  let paletteKey='gold';
+  function paletteOrOriginal(key){return Object.prototype.hasOwnProperty.call(PALETTES,key)?key:'original';}
+  function getAppearance(){return {palette:paletteKey};}
+  function setAppearance(options={}){paletteKey=paletteOrOriginal(options?.palette);return getAppearance();}
+  function getPalette(key=paletteKey){
+    key=paletteOrOriginal(key);
+    return {key,label:PALETTES[key].label,hero:'#79c6ff',monsters:PALETTES[key].monsters.slice()};
+  }
   let clockAll=0, board=null, boardKey='', reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function face(cx, cy, ex, r, look, mood, seed){
-  const blink = !reduced && ((clockAll + seed*1.7) % 3.4) < .11;
+  const blink = !reduced && clockAll>0 && ((clockAll + seed*1.7) % 3.4) < .11;
   const scared = mood === 2, rr2 = r * (scared ? 1.45 : 1);
   let gx = 0, gy = 0;
   if (look){ const d = Math.hypot(look[0], look[1]) || 1;
@@ -668,7 +741,7 @@ function face(cx, cy, ex, r, look, mood, seed){
       const x=(m.x+.5)*TILE,y=(m.y+.5)*TILE+(reduced?0:Math.sin(clockAll*7+m.id)*.8),size=TILE*.66;
       const look=m.state==='chase'&&m.target?[m.target.x-m.x,m.target.y-m.y]:m.dir;
       ctx.globalAlpha=m.active?1:.45;ctx.fillStyle='#0005';ctx.beginPath();ctx.ellipse(x,y+size*.48,size*.44,3,0,0,7);ctx.fill();
-      ctx.fillStyle=m.active?m.color:'#6a6686';rr(x-size/2,y-size/2,size,size,size*.34);ctx.fill();
+      ctx.fillStyle=m.active?PALETTES[paletteKey].monsters[m.id%4]:'#6a6686';rr(x-size/2,y-size/2,size,size,size*.34);ctx.fill();
       ctx.strokeStyle=m.active?'#ffffff55':'#aaa4c033';ctx.lineWidth=1;ctx.stroke();
       face(x,y-1,size*.19,size*.115,look,3,m.id);
       ctx.globalAlpha=1;
@@ -700,7 +773,7 @@ function face(cx, cy, ex, r, look, mood, seed){
       ctx.fillStyle='#fff0d8';ctx.font='18px system-ui';ctx.fillText('Three relics. One clever designer.',SIZE/2,SIZE/2+24);
     }
   }
-  return {draw};
+  return {draw,setAppearance,getAppearance,getPalette};
 }
 
 </script>
@@ -711,6 +784,9 @@ function face(cx, cy, ex, r, look, mood, seed){
   const $=id=>document.getElementById(id), clone=v=>JSON.parse(JSON.stringify(v));
   const NAMES={forgetful:'Corner tricksters',goofy:'Wrong-way wanderers',clever:'Sharp trackers',mixed:'Mixed crew'};
   const BASE={brain:'forgetful',noticeDelay:.6,memorySeconds:2,wrongTurnChance:.3,speedScale:1,monsterCount:8,dodge:true,lives:0,initialLoose:4,releaseEvery:3};
+  const STARTING={...BASE,brain:'goofy',noticeDelay:1,memorySeconds:2.5,speedScale:1.1,monsterCount:10};
+  const PALETTES=['original','gold','lime'];
+  const RULE_VERSION='walked-return-v2';
   const PRESETS={
     forgetful:{...BASE,brain:'forgetful'},
     goofy:{...BASE,brain:'goofy'},
@@ -719,12 +795,22 @@ function face(cx, cy, ex, r, look, mood, seed){
   const LABELS={brain:'Monster thinking',noticeDelay:'Noticing turns',memorySeconds:'Remembering you',wrongTurnChance:'Wrong-turn chance',speedScale:'Monster pace',monsterCount:'Monster count',dodge:'Dodge help',lives:'Practice / lives'};
   const IDS={brain:'brain',noticeDelay:'noticeDelay',memorySeconds:'memorySeconds',wrongTurnChance:'wrongTurnChance',speedScale:'pace',monsterCount:'monsterCount',dodge:'dodge',lives:'lives'};
   const DRAFT_KEY='twenty-nights-studio-draft-v1';
-  let game,recipe,rounds=[],savedUnfinished=[],anchorA=null,chaseRound=0,recorded=false,chosenPreset='forgetful';
+  let game,recipe,rounds=[],savedUnfinished=[],anchorA=null,chaseRound=0,recorded=false,chosenPreset='starting',appearanceHistory=[];
   let activePointer=null,keys=[],lastFrame=null,lastEvent=0,lastHud=0,message='',messageUntil=0;
   let soundOn=false,audio=null;
   const canvas=$('game'),renderer=makeNetherRenderer(canvas);
   const cleanText=(s,max=2000)=>String(s||'').slice(0,max);
   function setText(id,text){if($(id).textContent!==text)$(id).textContent=text;}
+  function readAppearance(){return {palette:PALETTES.includes($('colourPalette').value)?$('colourPalette').value:'original'};}
+  function putAppearance(value){
+    const palette=PALETTES.includes(value?.palette)?value.palette:'original';
+    $('colourPalette').value=palette;renderer.setAppearance({palette});
+    const info=renderer.getPalette();
+    $('colourHeroSwatch').style.setProperty('--swatch',info.hero);
+    info.monsters.forEach((colour,i)=>$('colourMonster'+i).style.setProperty('--swatch',colour));
+    setText('colourStatus',`${info.label}. Your blue hero, the other three monster colours and all chase rules stay the same.`);
+  }
+  function colourLabel(value){return renderer.getPalette(value?.palette||'original').label;}
   function valueLabel(k,v){
     if(k==='brain')return NAMES[v]||v;
     if(k==='dodge')return v?'on':'off';
@@ -743,22 +829,23 @@ function face(cx, cy, ex, r, look, mood, seed){
       else if(s[key]!==undefined)$(id).value=String(s[key]);
     }
   }
-  function recipeName(s){return chosenPreset==='custom'?'My monster recipe':NAMES[s.brain];}
+  function recipeName(s){return chosenPreset==='starting'?'My starting recipe':chosenPreset==='custom'?'My monster recipe':NAMES[s.brain];}
   function stageSettings(s,step){return {...s,speedScale:+Math.min(1.25,s.speedScale+step*.05).toFixed(2)};}
   function prepare(mode='chase',paired=false){
     const s=readSettings();
-    if(paired&&anchorA)return {...clone(anchorA),settings:stageSettings(s,anchorA.rampStep||0),name:recipeName(s),mode:'chase',comparison:'B',rampStep:anchorA.rampStep||0};
+    if(paired&&anchorA)return {...clone(anchorA),settings:stageSettings(s,anchorA.rampStep||0),appearance:readAppearance(),ruleVersion:RULE_VERSION,name:recipeName(s),mode:'chase',comparison:'B',rampStep:anchorA.rampStep||0};
     const step=$('ramp').value==='gentle'&&mode==='chase'?Math.min(3,chaseRound):0;
     const mirrored=$('mapPolicy').value==='reflected'&&chaseRound%2===1;
     const rows=mirrored?STUDIO_ROWS.map(r=>[...r].reverse().join('')):STUDIO_ROWS.slice();
     const relicPositions=mirrored?[[18,1],[10,1],[1,1]]:[[1,1],[9,1],[18,1]];
-    return {name:recipeName(s),settings:stageSettings(s,step),rows,relicPositions,seed:1234567,mode,map:mirrored?'Reflected Nether 1':'Nether 1',rampStep:step,comparison:null};
+    return {name:recipeName(s),settings:stageSettings(s,step),appearance:readAppearance(),ruleVersion:RULE_VERSION,rows,relicPositions,seed:1234567,mode,map:mirrored?'Reflected Nether 1':'Nether 1',rampStep:step,comparison:null};
   }
   function compare(){
     $('playA').disabled=!anchorA;$('playB').disabled=!anchorA;
     if(!anchorA){setText('comparisonText','Keep the rules on the board as A. Change one setting, then try B on the same maze and seed.');return;}
     const b=stageSettings(readSettings(),anchorA.rampStep||0),changes=Object.keys(IDS).filter(k=>anchorA.settings[k]!==b[k]);
     const parts=changes.map(k=>`${LABELS[k]}: ${valueLabel(k,anchorA.settings[k])} → ${valueLabel(k,b[k])}`);
+    if((anchorA.appearance?.palette||'original')!==readAppearance().palette){changes.push('appearance');parts.push(`Monster colour: ${colourLabel(anchorA.appearance)} → ${colourLabel(readAppearance())}`);}
     setText('comparisonText',`A: ${anchorA.name}. ${changes.length?parts.join(' · '):'B currently has the same settings.'} A/B reuse A’s exact maze, goal positions and seed. ${changes.length>1?'Several settings differ; compare the whole recipe.':changes.length===1?'One setting differs. What do you notice?':'Change a setting to make a new comparison.'}`);
   }
   function updateSettings(){
@@ -781,7 +868,7 @@ function face(cx, cy, ex, r, look, mood, seed){
   function record(){
     if(recorded||!game||game.state.elapsed===0)return;
     const result=game.snapshot();
-    rounds.push({...result,recipe:clone(recipe),recordedAt:new Date().toISOString()});
+    rounds.push({...result,recipe:clone(recipe),appearanceHistory:clone(appearanceHistory),recordedAt:new Date().toISOString()});
     if(rounds.length>30)rounds=rounds.slice(-30);
     recorded=true;renderRounds();
   }
@@ -792,6 +879,8 @@ function face(cx, cy, ex, r, look, mood, seed){
   }
   function launch(mode='chase',exact=null,tag=null){
     finishCurrent();recipe=exact?clone(exact):prepare(mode);
+    recipe.ruleVersion=RULE_VERSION;recipe.appearance=recipe.appearance||{palette:'original'};
+    putAppearance(recipe.appearance);appearanceHistory=[{seconds:0,...clone(recipe.appearance)}];
     if(tag)recipe.comparison=tag;
     if(!exact&&mode==='chase')chaseRound++;
     game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:recipe.mode});
@@ -812,10 +901,16 @@ function face(cx, cy, ex, r, look, mood, seed){
     const list=document.createElement('ol');
     for(const r of rounds.slice(-6).reverse()){
       const li=document.createElement('li');
-      li.textContent=`${r.recipe.comparison?r.recipe.comparison+' · ':''}${r.recipe.name} · ${r.settings.mode==='explore'?'explore':r.returnedHome?'escaped':r.outcome==='gameover'?'3 lives used':'stopped'} · ${r.relics.length}/3 relics · ${r.catches} catches · ${Math.round(r.seconds)}s`;
+      li.textContent=`${r.recipe.comparison?r.recipe.comparison+' · ':''}${r.recipe.name} · ${resultLabel(r)} · ${r.relics.length}/3 relics · ${r.catches} catches · ${Math.round(r.seconds)}s`;
       list.appendChild(li);
     }
     $('roundList').appendChild(list);
+  }
+  function resultLabel(r){
+    if(r.version<4&&r.returnedHome)return 'earlier completion — return unverified';
+    if(r.completionKind==='rescued')return 'relics rescued';
+    if(r.completionKind==='walked')return r.settings.mode==='explore'?'explored and walked home':'escaped on foot';
+    return r.outcome==='gameover'?'3 lives used':r.settings.mode==='explore'?'explore stopped':'stopped';
   }
   function announce(text,seconds=3){message=text;messageUntil=game.state.elapsed+seconds;setText('statusText',text);}
   function tone(kind){
@@ -833,6 +928,7 @@ function face(cx, cy, ex, r, look, mood, seed){
       else if(e.type==='tricked')announce('A monster lost your trail. You found a chance to escape!',2);
       else if(e.type==='release')announce('Another monster has left the pen.',1.5);
       else if(e.type==='win'){announce('You escaped with all three relics. What would you change?',Infinity);tone('win');record();}
+      else if(e.type==='rescued'){announce('Three relics saved! You were rescued home. Walking home is the escape challenge.',Infinity);record();}
       else if(e.type==='gameover'){announce('Three lives used. Your design notes are ready.',Infinity);record();}
     }
   }
@@ -840,7 +936,7 @@ function face(cx, cy, ex, r, look, mood, seed){
     const s=game.state;
     if(!force&&s.elapsed-lastHud<.1&&s.status==='playing')return;lastHud=s.elapsed;
     const count=s.relics.filter(r=>r.collected).length;
-    const phase=s.status==='playing'?(s.waitingForMove?'Ready to move':s.settings.mode==='explore'?'Exploring':s.recovery>0?'Fresh start':'Playing'):{ready:'Ready',paused:'Paused',won:'Escaped!',gameover:'Round complete',stopped:'Stopped'}[s.status]||s.status;
+    const phase=s.status==='playing'?(s.waitingForMove?'Ready to move':s.settings.mode==='explore'?'Exploring':s.recovery>0?'Fresh start':'Playing'):{ready:'Ready',paused:'Paused',won:'Escaped!',rescued:'Relics rescued',gameover:'Round complete',stopped:'Stopped'}[s.status]||s.status;
     setText('phase',phase);setText('relicHud',count+' / 3');setText('catchLabel',s.settings.lives===3?'LIVES':'CATCHES');setText('catchHud',String(s.settings.lives===3?s.livesLeft:s.catches));
     setText('timerHud',Math.floor(s.elapsed/60)+':'+String(Math.floor(s.elapsed%60)).padStart(2,'0'));
     const prompt=s.waitingForMove?'Hold or drag on a path to begin. The monsters wait for your first input.':count===3?'Return to the blue home portal to escape.':'Collect the three gold relics, then return to the blue portal.';
@@ -848,13 +944,14 @@ function face(cx, cy, ex, r, look, mood, seed){
     $('pause').disabled=!['playing','paused'].includes(s.status);
     setText('pause',s.status==='paused'?'Resume':'Pause');
     $('play').disabled=s.status==='playing';setText('play',s.status==='ready'?'Play my maze':'Play a new round');
-    const overlay=['ready','paused','won','gameover','stopped'].includes(s.status);
+    const overlay=['ready','paused','won','rescued','gameover','stopped'].includes(s.status);
     $('overlay').hidden=!overlay;
     if(overlay){
       const text={
         ready:['Ready, designer?','Collect three gold relics. Bring them back to your blue portal.','Play my maze'],
         paused:['Take your time','Everything is paused. Resume, then steer when you are ready.','Resume'],
         won:['You found your way home!','Three relics collected. Did these rules make a good chase?','Play again'],
+        rescued:['Three relics saved!','A catch brought you home. Try bringing the relics home on foot next time.','Try again'],
         gameover:['Your next idea starts here','Try the same rules again, or change one thing.','Try again'],
         stopped:['Round saved','Your observations can shape the next version.','Play again']
       }[s.status];
@@ -904,12 +1001,22 @@ function face(cx, cy, ex, r, look, mood, seed){
   $('pause').onclick=()=>game.state.status==='paused'?resume():pause();
   $('overlayAction').onclick=()=>game.state.status==='paused'?resume():launch();
   $('applySettings').onclick=()=>launch();
+  $('startingRecipe').onclick=()=>{chosenPreset='starting';putSettings(STARTING);$('mapPolicy').value='fixed';$('ramp').value='off';updateSettings();launch();};
+  $('colourPalette').addEventListener('change',()=>{
+    pause('Paused to compare colours. Look at the same maze, then resume when ready.');
+    putAppearance(readAppearance());
+    if(['playing','paused','ready'].includes(game.state.status)){
+      const next={seconds:+game.state.elapsed.toFixed(3),...readAppearance()};
+      if(appearanceHistory.at(-1)?.palette!==next.palette)appearanceHistory.push(next);
+    }
+    compare();renderer.draw(game.state);
+  });
   document.querySelectorAll('[data-preset]').forEach(button=>button.onclick=()=>{
     chosenPreset=button.dataset.preset;putSettings(PRESETS[chosenPreset]);updateSettings();launch();
   });
   for(const id of Object.values(IDS))$(id).addEventListener('input',()=>{chosenPreset='custom';updateSettings();});
   for(const id of ['mapPolicy','ramp'])$(id).addEventListener('change',updateSettings);
-  $('pinA').onclick=()=>{pause('Paused for your comparison.');anchorA=clone(recipe);anchorA.mode='chase';compare();announce('A saved: the rules currently on the board. Change one thing for B.');};
+  $('pinA').onclick=()=>{pause('Paused for your comparison.');anchorA={...clone(recipe),appearance:readAppearance(),ruleVersion:RULE_VERSION};anchorA.mode='chase';compare();announce('A saved: the rules and colours currently on the board. Change one thing for B.');};
   $('playA').onclick=()=>{if(anchorA)launch('chase',anchorA,'A');};
   $('playB').onclick=()=>{if(anchorA)launch('chase',prepare('chase',true),'B');};
   $('focusMode').onclick=()=>{const on=document.body.classList.toggle('focus-mode');$('focusMode').setAttribute('aria-pressed',String(on));setText('focusMode',on?'Show design tools':'Focus on play');fitBoard();};
@@ -919,11 +1026,11 @@ function face(cx, cy, ex, r, look, mood, seed){
     $('sound').setAttribute('aria-pressed',String(soundOn));setText('sound',soundOn?'Sound on':'Sound off');
   };
   function notesData(){
-    return {version:3,title:cleanText($('designName').value,60)||'Nether 1',provenance:'Playable proposals for the designer to choose; not final Nether game rules.',choice:{$:'designer answers',favourite:$('favourite').value,verdict:$('verdict').value,noticed:cleanText($('noticed').value,4000),nextIdea:cleanText($('nextIdea').value,4000)},nextSettings:readSettings(),replay:{mapPolicy:$('mapPolicy').value,ramp:$('ramp').value,chaseRoundsStarted:chaseRound},anchorA:anchorA?clone(anchorA):null,rounds:clone(rounds),savedUnfinished:clone(savedUnfinished),current:game.state.status==='playing'||game.state.status==='paused'?{...game.snapshot(),recipe:clone(recipe),unfinished:true}:null};
+    return {version:4,ruleVersion:RULE_VERSION,title:cleanText($('designName').value,60)||'Nether 1',provenance:'Playable proposals for the designer to choose; not final Nether game rules.',choice:{$:'designer answers',favourite:$('favourite').value,verdict:$('verdict').value,noticed:cleanText($('noticed').value,4000),nextIdea:cleanText($('nextIdea').value,4000),colour:$('colourChoice').value,colourReason:cleanText($('colourReason').value,4000)},nextSettings:readSettings(),nextAppearance:readAppearance(),replay:{mapPolicy:$('mapPolicy').value,ramp:$('ramp').value,chaseRoundsStarted:chaseRound},anchorA:anchorA?clone(anchorA):null,rounds:clone(rounds),savedUnfinished:clone(savedUnfinished),current:game.state.status==='playing'||game.state.status==='paused'?{...game.snapshot(),recipe:clone(recipe),appearanceHistory:clone(appearanceHistory),unfinished:true}:null};
   }
   function notesText(){
     const n=notesData(),c=n.choice;
-    return [n.title+' — MY GAME LAB NOTES',n.provenance,'','MY DECISIONS','Favourite: '+c.favourite,'How it felt: '+c.verdict,'I noticed: '+(c.noticed||'[open]'),'My next idea: '+(c.nextIdea||'[open]'),'','ROUND RULES','Collect three relics and return home. Relics stay collected after catches. A win can include catches; it is not proof of an uncaught run.','Practice has unlimited retries; the optional three-life trial is a proposal. A/B uses the same maze, goals, seed and stage, with any changed settings listed in the recipe.','The new movement engine and mission differ from the earlier 45-second sketch; results are not directly comparable.','No final Nether layers, wall upgrades, void or hammer are implemented.','',n.current?'CURRENT ROUND IS UNFINISHED. It is kept separately from completed or stopped rounds.':'Completed or stopped rounds are listed below.',n.savedUnfinished.length?`${n.savedUnfinished.length} unfinished snapshot(s) recovered from saved drafts are included separately below.`:'','',...rounds.map(r=>`${r.recipe.comparison||'Round'} / ${r.recipe.name}: ${r.settings.mode}; ${r.seconds}s; ${r.catches} catches; ${r.relics.length}/3 relics; returned home ${r.returnedHome?'yes':'no'}.`),'','FULL DESIGN AND ROUND DETAILS',JSON.stringify(n,null,2)].join('\n');
+    return [n.title+' — MY GAME LAB NOTES',n.provenance,'','MY DECISIONS','Favourite: '+c.favourite,'How it felt: '+c.verdict,'I noticed: '+(c.noticed||'[open]'),'My next idea: '+(c.nextIdea||'[open]'),'Colour choice: '+c.colour,'Why that colour: '+(c.colourReason||'[open]'),'','ROUND RULES','Collect three relics and walk home. Relics stay collected after catches. If a catch brings all three home, the round is rescued, not escaped. A walked win may still include earlier catches.', 'Round rules: '+RULE_VERSION+'. Earlier version 3 wins may have completed automatically on a catch; their original records are retained, with return unverified.', 'Colour changes pause play and change only the drawing. Each new round records its starting palette and any later colour changes. Gold is a proposal; colour choice stays undecided until you answer.','Practice has unlimited retries; the optional three-life trial is a proposal. A/B uses the same maze, goals, seed and stage, with any changed settings listed in the recipe.','The new movement engine and mission differ from the earlier 45-second sketch; results are not directly comparable.','No final Nether layers, wall upgrades, void or hammer are implemented.','',n.current?'CURRENT ROUND IS UNFINISHED. It is kept separately from completed or stopped rounds.':'Completed or stopped rounds are listed below.',n.savedUnfinished.length?`${n.savedUnfinished.length} unfinished snapshot(s) recovered from saved drafts are included separately below.`:'','',...rounds.map(r=>`${r.recipe.comparison||'Round'} / ${r.recipe.name}: ${resultLabel(r)}; ${r.seconds}s; ${r.catches} catches; ${r.relics.length}/3 relics; colours ${colourLabel(r.recipe.appearance)}${r.appearanceHistory?.length>1?' (changed during round; see history)':''}.`),'','FULL DESIGN AND ROUND DETAILS',JSON.stringify(n,null,2)].join('\n');
   }
   function showNotes(){if(game.state.status==='playing')pause('Paused so you can keep your design notes.');$('report').value=notesText();$('report').hidden=false;setText('saveStatus','Your notes are below. Download to keep a copy.');}
   $('showNotes').onclick=showNotes;
@@ -952,7 +1059,8 @@ function face(cx, cy, ex, r, look, mood, seed){
     return r&&validRecipe(r.recipe)&&r.settings&&Array.isArray(r.relics)&&Number.isFinite(r.seconds)&&r.seconds>=0&&Number.isInteger(r.catches)&&r.catches>=0;
   }
   function validateDraft(d){
-    if(!d||d.version!==3||!d.nextSettings||!Array.isArray(d.rounds)||d.rounds.length>30||!d.rounds.every(validRound))throw Error('unsupported draft');
+    if(!d||![3,4].includes(d.version)||!d.nextSettings||!Array.isArray(d.rounds)||d.rounds.length>30||!d.rounds.every(validRound))throw Error('unsupported draft');
+    if(d.nextAppearance&&!PALETTES.includes(d.nextAppearance.palette))throw Error('unsupported colours');
     const s=d.nextSettings;
     if(!NAMES[s.brain]||![4,6,8,10,12].includes(s.monsterCount)||![0,3].includes(s.lives)||typeof s.dodge!=='boolean')throw Error('unsupported settings');
     for(const [k,min,max] of [['noticeDelay',.2,1.4],['memorySeconds',.5,4],['wrongTurnChance',0,.6],['speedScale',.75,1.1]]){
@@ -969,6 +1077,8 @@ function face(cx, cy, ex, r, look, mood, seed){
       finishCurrent();putSettings({...BASE,...d.nextSettings});chosenPreset='custom';
       $('designName').value=cleanText(d.title,60);$('favourite').value=d.choice?.favourite||'undecided';$('verdict').value=d.choice?.verdict||'undecided';
       $('noticed').value=cleanText(d.choice?.noticed,4000);$('nextIdea').value=cleanText(d.choice?.nextIdea,4000);
+      $('colourChoice').value=['undecided','original','gold','lime','my-idea'].includes(d.choice?.colour)?d.choice.colour:'undecided';
+      $('colourReason').value=cleanText(d.choice?.colourReason,4000);putAppearance(d.nextAppearance||{palette:'original'});
       $('mapPolicy').value=['fixed','reflected'].includes(d.replay?.mapPolicy)?d.replay.mapPolicy:'fixed';
       $('ramp').value=d.replay?.ramp==='gentle'?'gentle':'off';
       chaseRound=Math.max(0,Math.min(1000,Number(d.replay?.chaseRoundsStarted)||0));
@@ -976,7 +1086,7 @@ function face(cx, cy, ex, r, look, mood, seed){
       const unfinished=[...(d.savedUnfinished||[]),...(d.current&&d.current.seconds>0?[d.current]:[])];
       savedUnfinished=[...new Map(unfinished.map(r=>[JSON.stringify(r),r])).values()].slice(-30).map(r=>({...clone(r),unfinished:true}));
       anchorA=d.anchorA?clone(d.anchorA):null;
-      recipe=prepare('chase');game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});recorded=false;lastEvent=0;
+      recipe=prepare('chase');appearanceHistory=[{seconds:0,...clone(recipe.appearance)}];game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});recorded=false;lastEvent=0;
       setText('recipeName',recipe.name);setText('recipeSummary','Restored settings. Start a fresh round when you are ready.');
       updateSettings();renderRounds();hud(true);setText('draftStatus','Draft restored. A saved unfinished round stays in the download; play starts fresh.');
     }catch{setText('draftStatus','This draft could not be restored. Your current page and downloaded notes are still available.');}
@@ -991,8 +1101,8 @@ function face(cx, cy, ex, r, look, mood, seed){
     const dt=lastFrame===null?0:Math.min(.1,(now-lastFrame)/1000);lastFrame=now;
     game.step(dt);events();hud();renderer.draw(game.state);requestAnimationFrame(frame);
   }
-  putSettings(BASE);recipe=prepare('chase');game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});
-  setText('recipeName',recipe.name);setText('recipeSummary','Your exact Nether 1 · 8 monsters · 100% pace · dodge on · practice');
+  putSettings(STARTING);putAppearance({palette:'gold'});recipe=prepare('chase');appearanceHistory=[{seconds:0,...clone(recipe.appearance)}];game=NetherEngine.create({...recipe.settings,rows:recipe.rows,relicPositions:recipe.relicPositions,seed:recipe.seed,mode:'chase'});
+  setText('recipeName',recipe.name);setText('recipeSummary','Your exact Nether 1 · 10 monsters · 110% pace · dodge on · practice');
   updateSettings();renderRounds();draftAvailability();fitBoard();hud(true);requestAnimationFrame(frame);
 })();
 
