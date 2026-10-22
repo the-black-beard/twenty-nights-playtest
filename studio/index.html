@@ -797,7 +797,7 @@ function face(cx, cy, ex, r, look, mood, seed){
   const DRAFT_KEY='twenty-nights-studio-draft-v1';
   let game,recipe,rounds=[],savedUnfinished=[],anchorA=null,chaseRound=0,recorded=false,chosenPreset='starting',appearanceHistory=[];
   let activePointer=null,keys=[],lastFrame=null,lastEvent=0,lastHud=0,message='',messageUntil=0;
-  let soundOn=false,audio=null;
+  let soundOn=false,audio=null,colourPreview=false;
   const canvas=$('game'),renderer=makeNetherRenderer(canvas);
   const cleanText=(s,max=2000)=>String(s||'').slice(0,max);
   function setText(id,text){if($(id).textContent!==text)$(id).textContent=text;}
@@ -878,7 +878,7 @@ function face(cx, cy, ex, r, look, mood, seed){
     record();clearInput();
   }
   function launch(mode='chase',exact=null,tag=null){
-    finishCurrent();recipe=exact?clone(exact):prepare(mode);
+    finishCurrent();colourPreview=false;recipe=exact?clone(exact):prepare(mode);
     recipe.ruleVersion=RULE_VERSION;recipe.appearance=recipe.appearance||{palette:'original'};
     putAppearance(recipe.appearance);appearanceHistory=[{seconds:0,...clone(recipe.appearance)}];
     if(tag)recipe.comparison=tag;
@@ -894,7 +894,7 @@ function face(cx, cy, ex, r, look, mood, seed){
     if(game.state.status!=='playing')return;
     clearInput();game.pause();message=reason;messageUntil=Infinity;hud(true);
   }
-  function resume(){game.resume();message='';lastFrame=null;hud(true);canvas.focus({preventScroll:true});}
+  function resume(){colourPreview=false;game.resume();message='';lastFrame=null;hud(true);canvas.focus({preventScroll:true});}
   function renderRounds(){
     $('roundList').replaceChildren();
     if(!rounds.length){setText('roundList','Your first round will appear here. Your opinion matters more than the numbers.');return;}
@@ -944,7 +944,7 @@ function face(cx, cy, ex, r, look, mood, seed){
     $('pause').disabled=!['playing','paused'].includes(s.status);
     setText('pause',s.status==='paused'?'Resume':'Pause');
     $('play').disabled=s.status==='playing';setText('play',s.status==='ready'?'Play my maze':'Play a new round');
-    const overlay=['ready','paused','won','rescued','gameover','stopped'].includes(s.status);
+    const overlay=['ready','paused','won','rescued','gameover','stopped'].includes(s.status)&&!(colourPreview&&['ready','paused'].includes(s.status));
     $('overlay').hidden=!overlay;
     if(overlay){
       const text={
@@ -1004,12 +1004,13 @@ function face(cx, cy, ex, r, look, mood, seed){
   $('startingRecipe').onclick=()=>{chosenPreset='starting';putSettings(STARTING);$('mapPolicy').value='fixed';$('ramp').value='off';updateSettings();launch();};
   $('colourPalette').addEventListener('change',()=>{
     pause('Paused to compare colours. Look at the same maze, then resume when ready.');
+    colourPreview=true;
     putAppearance(readAppearance());
     if(['playing','paused','ready'].includes(game.state.status)){
       const next={seconds:+game.state.elapsed.toFixed(3),...readAppearance()};
       if(appearanceHistory.at(-1)?.palette!==next.palette)appearanceHistory.push(next);
     }
-    compare();renderer.draw(game.state);
+    compare();hud(true);renderer.draw(game.state);
   });
   document.querySelectorAll('[data-preset]').forEach(button=>button.onclick=()=>{
     chosenPreset=button.dataset.preset;putSettings(PRESETS[chosenPreset]);updateSettings();launch();
@@ -1074,7 +1075,7 @@ function face(cx, cy, ex, r, look, mood, seed){
     try{
       const d=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
       validateDraft(d);
-      finishCurrent();putSettings({...BASE,...d.nextSettings});chosenPreset='custom';
+      finishCurrent();colourPreview=false;putSettings({...BASE,...d.nextSettings});chosenPreset='custom';
       $('designName').value=cleanText(d.title,60);$('favourite').value=d.choice?.favourite||'undecided';$('verdict').value=d.choice?.verdict||'undecided';
       $('noticed').value=cleanText(d.choice?.noticed,4000);$('nextIdea').value=cleanText(d.choice?.nextIdea,4000);
       $('colourChoice').value=['undecided','original','gold','lime','my-idea'].includes(d.choice?.colour)?d.choice.colour:'undecided';
